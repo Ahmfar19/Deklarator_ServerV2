@@ -1,0 +1,122 @@
+const express = require('express');
+const router = express.Router();
+const multer = require('multer');
+
+const timeStampTypeController = require('../controllers/timeStampType.controller');
+const companyController = require('../controllers/company.controller');
+const noteController = require('../controllers/note.controller');
+const timerController = require('../controllers/timer.controller')
+const userController = require('../controllers/user.controller');
+const caseController = require('../controllers/case.controller');
+const timeStampController = require('../controllers/timeStamp.controller');
+const paymentController = require('../controllers/payment.controller');
+const sendEmailController = require('../controllers/sendEmail.controller');
+const resetPassword = require('../controllers/reset_password.controller');
+const messagesController = require('../controllers/message.controller');
+const companyType = require('../controllers/company_type.controller')
+const path = require('path');
+
+//import validation register schema
+const { signUpValidation } = require('../helpers/validation');
+
+const upload = multer({ dest: path.join(__dirname, 'assets/images/users') });
+
+/////////////////// register & login Routes //////////////////////
+//create user
+router.post('/user/new', signUpValidation, userController.createUser);
+router.get('/users', userController.getUsers)
+router.get('/user/image/:filename', userController.getUsersImage)
+router.get('/user/:id', userController.getSingleUser)
+router.put('/user/edit/:id', upload.single('image'), userController.updateUser)
+router.delete('/user/delete/:id', userController.deleteUser)
+router.put('/user/password/:id', userController.updateUserPassword)
+router.post('/login', userController.login);
+router.post('/verifyToken', userController.verifyToken);
+
+
+//Forget password 
+router.post('/forgetPassword', resetPassword.forgetPassword);
+//Reset Password
+router.post('/resetPassword', resetPassword.resetPassword);
+//pinCode for compare 
+router.post('/pinCode', resetPassword.checkPinCode);
+
+
+/////////////// TimeStampType Routes /////////////////
+router.post('/timeStampType/new', timeStampTypeController.createtimeStampType)
+router.get('/timeStampTypes', timeStampTypeController.getTimeStampTypes);
+router.get('/timeStampType/:id', timeStampTypeController.getSingleTimeStampType)
+router.put('/timeStampType/edit/:id', timeStampTypeController.updateTimeStampType)
+router.delete('/timeStampType/delete/:id', timeStampTypeController.deleteTimeStampType)
+
+///////////// Company Routes //////////////////
+router.get('/companies', companyController.getCompanys);
+router.get('/company/:id', companyController.getSingleCompany)
+router.post('/company/new', companyController.addCompany);
+router.put('/company/edit/:id', companyController.updateCompany);
+router.delete('/company/delete/:id', companyController.deleteCompany);
+
+///////////// Company Type //////////////////
+router.get('/companyTypes', companyType.getCompanyType);
+router.post('/companyType/new', companyType.addCompanyType);
+
+//////////////// Note Routes //////////////
+router.get('/noties', noteController.getAllNoties)
+router.post('/note/new', noteController.addNote)
+router.get('/note/:id', noteController.getSingleNote)
+router.put('/note/edit/:id', noteController.updateNote)
+router.delete('/note/delete/:id', noteController.deleteNote)
+router.get('/notes/companyId/:id', noteController.getNotesBy_CompanyId)
+
+///////////////// Case Routes /////////////////
+router.get('/cases', caseController.getCases)
+router.get('/case/:id', caseController.getSingleCase)
+router.post('/case/new', caseController.addCase)
+router.put('/case/edit/:id', caseController.updateCase)
+
+///////////////// Timer Routes /////////////////
+router.get('/timers', timerController.getTimers)
+router.get('/timer/:id', timerController.getSingleTimer)
+router.post('/timer/new', timerController.addTimer)
+router.put('/timer/edit/:id', timerController.update_Timer)
+router.delete('/timer/delete/:id', timerController.deleteTimer)
+
+/////////////// TimeStamp Routes /////////////////
+router.post('/timeStamp/new', timeStampController.createTimeStamp)
+router.get('/timeStamps', timeStampController.getTimeStamps);
+router.get('/timeStamp/:id', timeStampController.getSingleTimeStamp)
+router.put('/timeStamp/edit/:id', timeStampController.updateTimeStamp)
+router.delete('/timeStamp/delete/:id', timeStampController.deleteTimeStamp)
+router.get('/timestamps/overView', timeStampController.getTimeStamp_OverView)
+router.get('/timeStamps/date/:year/:month', timeStampController.getTimeStampsFilterBy_Year_Month)
+router.get('/timeStamps/user/:id', timeStampController.getTimeStampsFilterBy_User)
+router.get('/timeStamps/limit/:number', timeStampController.getLastLimit)
+router.get('/timeStamps/lastMonths/:months', timeStampController.getLastMonths)
+router.get('/timeStamps/filter', timeStampController.getFilterByUserCompanyType)
+
+/////////////// Payment Routes /////////////////
+router.get('/payments', paymentController.getAllPayments)
+router.get('/payment/:id', paymentController.getSinglePayment)
+router.post('/payment/new', paymentController.createPayment)
+router.put('/payment/edit/:id', paymentController.updatePayment)
+router.delete('/payment/delete/:id', paymentController.deletePayment)
+router.get('/payments/companyId/:id', paymentController.getPaymentsBy_CompanyId)
+
+/////////////// Messages Routes /////////////////
+router.get('/messages', messagesController.getMessages)
+
+/////////////// sendEmails Routes /////////////////
+router.get('/sendApi', sendEmailController.sendEmail)
+
+router.get('/checkAuth', (req, res) => {
+    const access_token = req.cookies.accessToken;
+    if (access_token) {
+        res.json({ authenticated: true });
+    } else {
+        res.json({ authenticated: false });
+    }
+});
+
+module.exports = router;
+
+
