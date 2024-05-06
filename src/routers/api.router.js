@@ -15,6 +15,8 @@ const resetPassword = require('../controllers/reset_password.controller');
 const messagesController = require('../controllers/message.controller');
 const companyType = require('../controllers/company_type.controller')
 const taskController = require('../controllers/task.controller');
+const remenderController = require('../controllers/remender.controller');
+
 const path = require('path');
 
 //import validation register schema
@@ -119,6 +121,13 @@ router.post('/task/new', taskController.addTask)
 router.put('/task/edit/:id', taskController.updateTask)
 router.delete('/task/delete/:id', taskController.deleteTask)
 
+
+/////////////// Remender Routes /////////////////
+router.get('/remenders', remenderController.getRemenders)
+router.get('/remender/:id', remenderController.getSingleRemender)
+router.post('/remender/new', remenderController.addRemender)
+router.put('/remender/edit/:id', remenderController.updateRemender)
+router.delete('/remender/delete/:id', remenderController.deleteRemender)
 
 /////////////// sendEmails Routes /////////////////
 router.get('/sendApi', sendEmailController.sendEmail)
