@@ -14,6 +14,7 @@ const sendEmailController = require('../controllers/sendEmail.controller');
 const resetPassword = require('../controllers/reset_password.controller');
 const messagesController = require('../controllers/message.controller');
 const companyType = require('../controllers/company_type.controller')
+const taskController = require('../controllers/task.controller');
 const path = require('path');
 
 //import validation register schema
@@ -109,6 +110,15 @@ router.get('/message/:id', messagesController.getSingleMessage)
 router.post('/message/new', messagesController.addMessage)
 router.put('/message/edit/:id', messagesController.updateMessage)
 router.delete('/message/delete/:id', messagesController.deleteMessage)
+
+
+/////////////// Tasks Routes /////////////////
+router.get('/tasks', taskController.getTasks)
+router.get('/task/:id', taskController.getSingleTask)
+router.post('/task/new', taskController.addTask)
+router.put('/task/edit/:id', taskController.updateTask)
+router.delete('/task/delete/:id', taskController.deleteTask)
+
 
 /////////////// sendEmails Routes /////////////////
 router.get('/sendApi', sendEmailController.sendEmail)
