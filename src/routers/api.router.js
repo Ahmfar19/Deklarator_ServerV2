@@ -102,8 +102,13 @@ router.put('/payment/edit/:id', paymentController.updatePayment)
 router.delete('/payment/delete/:id', paymentController.deletePayment)
 router.get('/payments/companyId/:id', paymentController.getPaymentsBy_CompanyId)
 
+
 /////////////// Messages Routes /////////////////
 router.get('/messages', messagesController.getMessages)
+router.get('/message/:id', messagesController.getSingleMessage)
+router.post('/message/new', messagesController.addMessage)
+router.put('/message/edit/:id', messagesController.updateMessage)
+router.delete('/message/delete/:id', messagesController.deleteMessage)
 
 /////////////// sendEmails Routes /////////////////
 router.get('/sendApi', sendEmailController.sendEmail)
