@@ -4,25 +4,27 @@ const pool = require('../databases/mysql.db');
 class Message {
     constructor(options) {
         this.staff_id = options.staff_id;
+        this.message_typ_id = options.message_typ_id;
         this.title = options.title;
         this.body = options.body;
-        this.message_date = options.message_date;
-        this.seen = options.seen;
-        
+        this.date_time = options.date_time;
+        this.seen = options.seen;     
     }
     //create
     async save() {
         const sql = `INSERT INTO message (
             staff_id,
+            message_typ_id,
             title,
             body,
-            message_date,  
+            date_time,
             seen
         ) VALUES (
             ${this.staff_id},
+            ${this.message_typ_id},
             "${this.title}",
             "${this.body}", 
-            "${this.message_date}",
+            "${this.date_time}",
              ${this.seen}
         )`;
         const result = await pool.execute(sql);
@@ -46,8 +48,8 @@ class Message {
         const sql = `UPDATE message SET 
         title = "${this.title}", 
         body = "${this.body}",
-        message_date = "${this.message_date}", 
-        seen = "${this.seen}"
+        date_time = "${this.date_time}", 
+        seen = ${this.seen}
         WHERE message_id = ${id}`;
         const [rows] = await pool.execute(sql);
         return rows;

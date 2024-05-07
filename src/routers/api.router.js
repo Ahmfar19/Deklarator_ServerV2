@@ -16,6 +16,7 @@ const messagesController = require('../controllers/message.controller');
 const companyType = require('../controllers/company_type.controller')
 const taskController = require('../controllers/task.controller');
 const remenderController = require('../controllers/remender.controller');
+const messageTypeController = require('../controllers/message_type.controller');
 
 const path = require('path');
 
@@ -128,6 +129,13 @@ router.get('/remender/:id', remenderController.getSingleRemender)
 router.post('/remender/new', remenderController.addRemender)
 router.put('/remender/edit/:id', remenderController.updateRemender)
 router.delete('/remender/delete/:id', remenderController.deleteRemender)
+
+/////////////// MessageType Routes /////////////////
+router.get('/messageTypes', messageTypeController.getMessageTypes)
+router.get('/messageType/:id', messageTypeController.getSingleMessageType)
+router.post('/messageType/new', messageTypeController.addMessageType)
+router.put('/messageType/edit/:id', messageTypeController.updateMessageType)
+router.delete('/messageType/delete/:id', messageTypeController.deleteMessageType)
 
 /////////////// sendEmails Routes /////////////////
 router.get('/sendApi', sendEmailController.sendEmail)
