@@ -1,5 +1,5 @@
 const dotenv = require('dotenv');
-
+const { sentRemenderEmail } = require('./controllers/sendEmailAuto')
 const NODE_ENV = process.env.NODE_ENV || 'development';
 if (NODE_ENV === 'development') dotenv.config();
 
@@ -17,4 +17,6 @@ app.use((err, req, res, next) => {
         status: err.statusCode
     })
 })
+
+sentRemenderEmail()
 app.listen(4000, () => console.log(`Server is running in ${NODE_ENV} mode on port: ${PORT}`));
