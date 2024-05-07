@@ -8,7 +8,7 @@ class Remender {
         this.remender_date = options.remender_date;
         this.recurrent = options.recurrent;
         this.title = options.title;
-        this.body = options.body;   
+        this.body = options.body;
     }
     //create
     async save() {
@@ -55,12 +55,49 @@ class Remender {
         return rows;
     }
 
-    static async delete_Remender(id) { 
-          const sql = `DELETE FROM remender WHERE remender_id = "${id}"`;
-          const [rows] = await pool.execute(sql);
-          return rows;      
+    static async delete_Remender(id) {
+        const sql = `DELETE FROM remender WHERE remender_id = "${id}"`;
+        const [rows] = await pool.execute(sql);
+        return rows;
     }
 
+    static async get_RemenderDate() {
+
+        const currentDate = new Date();
+        const year = currentDate.getFullYear();
+        const month = currentDate.getMonth() + 1; // Adding 1 to match SQL month format
+        const day = currentDate.getDate();
+
+        const sql = `SELECT YEAR(remender_date) AS year, MONTH(remender_date) AS month, DAY(remender_date) AS day,
+        c.email AS company_email , remender_id, recurrent 
+        FROM remender 
+        INNER JOIN company AS c ON remender.company_id = c.company_id
+        WHERE YEAR(remender_date) = ${year} AND MONTH(remender_date) = ${month} AND DAY(remender_date) = ${day}`;
+
+        const [rows] = await pool.execute(sql);
+
+        return rows;
+    }
+
+    static async updateRemenderIfReCurrentDate(id) {
+        // Get the current date
+        const currentDate = new Date();
+      
+        // Add one month to the current date
+        const remenderDate = new Date(currentDate.setMonth(currentDate.getMonth() + 1));
+      
+        // Format the date in the desired format (e.g., "YYYY-MM-DD")
+        const formattedRemenderDate = remenderDate.toISOString().slice(0, 10);
+      
+        const sql = `
+          UPDATE remender
+          SET remender_date = ?
+          WHERE remender_id = ?
+        `;
+      
+        const [rows] = await pool.execute(sql, [formattedRemenderDate, id]);
+        return rows;
+      }
 }
 
 module.exports = Remender;
