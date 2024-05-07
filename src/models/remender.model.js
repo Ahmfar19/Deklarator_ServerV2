@@ -4,25 +4,28 @@ const pool = require('../databases/mysql.db');
 class Remender {
     constructor(options) {
         this.company_id = options.company_id;
-        this.title = options.title;
-        this.body = options.body;
+        this.staff_id = options.staff_id;
         this.remender_date = options.remender_date;
-        this.re_current = options.re_current;
+        this.recurrent = options.recurrent;
+        this.title = options.title;
+        this.body = options.body;   
     }
     //create
     async save() {
         const sql = `INSERT INTO remender (
             company_id,
-            title,
-            body,
+            staff_id,
             remender_date,
-            re_current
+            recurrent,
+            title,
+            body
         ) VALUES (
             ${this.company_id},
-            "${this.title}", 
-            "${this.body}",
+            ${this.staff_id},
             "${this.remender_date}", 
-            ${this.re_current}
+            ${this.recurrent},
+            "${this.title}", 
+            "${this.body}"
         )`;
         const result = await pool.execute(sql);
         this.remender_id = result[0].insertId;
@@ -43,10 +46,10 @@ class Remender {
     //update
     async update_Remender(id) {
         const sql = `UPDATE remender SET 
-        title = "${this.title}", 
-        body = "${this.body}",
         remender_date = "${this.remender_date}",
-        re_current = ${this.re_current}
+        recurrent = ${this.recurrent},
+        title = "${this.title}", 
+        body = "${this.body}"
         WHERE remender_id = ${id}`;
         const [rows] = await pool.execute(sql);
         return rows;
@@ -56,7 +59,7 @@ class Remender {
           const sql = `DELETE FROM remender WHERE remender_id = "${id}"`;
           const [rows] = await pool.execute(sql);
           return rows;      
-      }
+    }
 
 }
 
