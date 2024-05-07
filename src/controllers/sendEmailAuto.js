@@ -1,26 +1,48 @@
-
 const Remender = require('../models/remender.model');
+const { sendEmail } = require('./sendEmail.controller')
 
-// getDate From Database
+const sendReminderEmail = () => {
+  // const intervalInMilliseconds = 6 * 60 * 60 * 1000;
+  setInterval(async function () {
+    try {
+      const data = await Remender.get_RemenderDate();
 
+      if (data?.length) {
 
-const sentRemenderEmail = async () => {
-    const data = await Remender.get_RemenderDate();
+        for (let i = 0; i < data.length; i++) {
 
-    const currentDate = new Date();
-    const nowYear = currentDate.getFullYear();
-    const nowMonth = currentDate.getMonth() + 1;
-  
-    const dbYear = data[0].year;
-    const dbMonth = data[0].month;
-  
-    if (dbYear === nowYear && dbMonth === nowMonth) {
-      console.log('send Email');
-    } else {
-      console.log('error');
+          const emailSent = await sendEmail(data[i].company_email, "title", "body");
+           
+             if (data[i].recurrent) {
+
+               if (emailSent) {
+
+                 await Remender.updateRemenderIfReCurrentDate(data[i].remender_id);
+
+               } else {
+
+                 console.error(`Failed to send email to ${data[i].company_email}`);
+               }
+             } else {
+
+               if (emailSent) {
+
+                 await Remender.delete_Remender(data[i].remender_id);
+
+               } else {
+
+                 console.error(`Failed to send email to ${data[i].company_email}`);
+               }
+             }
+     
+        }
+      }
+    } catch (error) {
+      console.log(error.message);
     }
+  }, 1000);
 };
 
 module.exports = {
-  sentRemenderEmail,
-};
+  sendReminderEmail
+}

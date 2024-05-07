@@ -3,7 +3,7 @@ const cookieParser = require('cookie-parser');
 const apiRouter = require('./routers/api.router');
 const cors = require('cors');
 require('./databases/mysql.db');
-
+const { sendReminderEmail } = require('./controllers/sendEmailAuto');
 const app = express();
 
 app.use(cookieParser());
@@ -30,7 +30,7 @@ app.use(function (req, res, next) {
     next();
 });
 // app.use(express.static(path.join(__dirname, '../dist')));
-
+// sendReminderEmail()
 app.use(cors());
 
 app.get('/', (req, res) => res.send("It, works!"));
