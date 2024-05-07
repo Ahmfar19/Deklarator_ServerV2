@@ -25,7 +25,8 @@ const sentRemenderEmail = async () => {
   const { dbYear, dbMonth } = await getDateFromDatabase();
   console.log(dbYear);
   console.log(dbMonth);
-  cron.schedule('* * * * *', () => getDateFromDatabase());
+  const cronExpression = `0 0 1 ${dbMonth} * ${dbYear}`;
+  cron.schedule(cronExpression, () => getDateFromDatabase());
 };
 
 module.exports = {
