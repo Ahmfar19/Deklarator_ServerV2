@@ -9,7 +9,7 @@ class Payment {
         this.receipt_number = options.receipt_number;
         this.payment_note = options.payment_note;
         this.payment_date = options.payment_date;
-        this.paid = options.paid;
+        this.paid = options.paid || 0;
     }
     //create
     async save() {
@@ -52,7 +52,8 @@ class Payment {
         amount = "${this.amount}", 
         receipt_number = "${this.receipt_number}", 
         payment_note = "${this.payment_note}", 
-        payment_date = "${this.payment_date}"
+        payment_date = "${this.payment_date}",
+        paid = "${this.paid}"
         WHERE payment_id = ${id}`;
         await pool.execute(sql);
     }
