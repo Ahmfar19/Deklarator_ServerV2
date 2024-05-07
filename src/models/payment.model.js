@@ -9,6 +9,7 @@ class Payment {
         this.receipt_number = options.receipt_number;
         this.payment_note = options.payment_note;
         this.payment_date = options.payment_date;
+        this.paid = options.paid;
     }
     //create
     async save() {
@@ -18,14 +19,16 @@ class Payment {
             amount,
             receipt_number,
             payment_note,
-            payment_date
+            payment_date,
+            paid
         ) VALUES (
             ${this.staff_id},
             ${this.company_id},
             ${this.amount},
             ${this.receipt_number},
             "${this.payment_note}",
-            "${this.payment_date}"
+            "${this.payment_date}",
+            ${this.paid}
         )`;
         const result = await pool.execute(sql);
         this.payment_id = result[0].insertId;
