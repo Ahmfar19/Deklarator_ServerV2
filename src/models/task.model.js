@@ -3,21 +3,21 @@ const pool = require('../databases/mysql.db');
 
 class Task {
     constructor(options) {
-        this.completed = options.completed;
+        this.staff_created = options.staff_created;
+        this.staff_assigned = options.staff_assigned;
         this.title = options.title;
-        this.body = options.body;
-        this.staff_id  = options.staff_id ;
+        this.body  = options.body ;
     }
     //create
     async save() {
         const sql = `INSERT INTO task (
-            staff_id,
-            completed,
+            staff_created,
+            staff_assigned,
             title,
             body
         ) VALUES (
-            ${this.staff_id},
-            ${this.completed}, 
+            ${this.staff_created},
+            ${this.staff_assigned}, 
             "${this.title}",
             "${this.body}"
         )`;
@@ -40,7 +40,6 @@ class Task {
     //update
     async update_Task(id) {
         const sql = `UPDATE task SET 
-        completed = "${this.completed}", 
         title = "${this.title}",
         body = "${this.body}"
         WHERE task_id = ${id}`;
