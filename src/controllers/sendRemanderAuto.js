@@ -1,20 +1,38 @@
+// const cron = require('node-cron');
+const Remender = require('../models/remender.model');
 const cron = require('node-cron');
-const { sendEmail } = require('../controllers/sendEmail.controller')
-// Define a function to be executed by the cron job
+//getDate From Database
+ const getDateFromDatabase = async () => {
 
-const myCronJob = () => {
-    const currentYear = new Date().getFullYear();
+     const data = await Remender.get_RemenderDate()
 
-    // sendEmail('osamafaroun7@gmail.com', 'hello world', 'testEmail');
-    console.log(currentYear);
+     const currentDate = new Date() 
 
-};
+     const nowYear = currentDate.getFullYear()
+     const nowMonth = currentDate.getMonth() + 1
+  
+     const dbYear = data[0].year
+     const dbMonth = data[0].month
+     
 
-// Schedule the cron job to run every day at a specific time
-cron.schedule('0 0 1 1 *', myCronJob); // This will run the task on the 1st of January every year
+     if(dbYear == nowYear && dbMonth == nowMonth) {
+      
+        console.log('send Email');
+     } else {
+       
+        console.log('error');
+     }
 
-// You can adjust the cron expression to fit your specific requirements
+     return { dbYear, dbMonth };
+ };
+
+const sentRemenderEmail = async () => {
+    const { year, month } = await getDateFromDatabase();
+    console.log(year);
+    cron.schedule('* * * * *', getDateFromDatabase);
+    
+}
 
 module.exports = {
-    myCronJob
+    sentRemenderEmail
 }

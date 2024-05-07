@@ -60,7 +60,12 @@ class Remender {
           const [rows] = await pool.execute(sql);
           return rows;      
     }
-
+    
+    static async get_RemenderDate() { 
+        const sql = 'SELECT YEAR(remender_date) AS year, MONTH(remender_date) AS month FROM remender';
+        const [rows] = await pool.execute(sql);
+        return rows;
+    }
 }
 
 module.exports = Remender;
