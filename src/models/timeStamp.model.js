@@ -121,7 +121,8 @@ class TimeStamp {
            ts.stamp_id, 
            ts.time, 
            DATE_FORMAT(ts.stamp_date, "%Y-%m-%d") AS stamp_date, 
-           c.company_name, 
+           c.company_name,
+           c.hour_cost,
            CONCAT(s.fname, ' ', s.lname) AS username , 
            tt.name_sv 
            FROM time_stamp AS ts 
