@@ -1,10 +1,10 @@
-const Remender = require('../models/remender.model');
+const Reminder = require('../models/reminder.model');
 const { sendResponse } = require('../helpers/apiResponse');
 
 
 const getRemenders = async (req, res) => {
     try {
-        const remenders = await Remender.getAll();
+        const remenders = await Reminder.getAll();
         sendResponse(res, 200, 'Ok', 'Successfully retrieved all the remenders', null, remenders);
     } catch (err) {
         sendResponse(res, 500, 'Internal Server Error', null, err.message || err, null);
@@ -14,7 +14,7 @@ const getRemenders = async (req, res) => {
 const getSingleRemender = async (req, res) => {
     try {
         const id = req.params.id;
-        const singleRemender = await Remender.get_Remender(id)
+        const singleRemender = await Reminder.getReminder(id)
         sendResponse(res, 200, 'Ok', 'Successfully retrieved  the remender', null, singleRemender);
     } catch (err) {
         sendResponse(res, 500, 'Internal Server Error', null, err.message || err, null);
@@ -23,7 +23,7 @@ const getSingleRemender = async (req, res) => {
 
 const addRemender = async (req, res) => {
     try {
-        const remender = new Remender(req.body);
+        const remender = new Reminder(req.body);
         await remender.save();
         sendResponse(res, 201, 'Created', 'Successfully created a remender.', null, remender);
 
@@ -35,8 +35,8 @@ const addRemender = async (req, res) => {
 const updateRemender = async (req, res) => {
     try {
         const id = req.params.id;
-        const remender = new Remender(req.body);
-        const data = await remender.update_Remender(id);
+        const remender = new Reminder(req.body);
+        const data = await remender.updateReminder(id);
 
         if (data.affectedRows === 0) {
             return res.json({
@@ -54,7 +54,7 @@ const updateRemender = async (req, res) => {
 const deleteRemender = async (req, res) => {
     try {
         const id = req.params.id;
-        const data = await Remender.delete_Remender(id);
+        const data = await Reminder.deleteReminder(id);
         if(data.affectedRows === 0) {
             return res.json({
                 status: 406,

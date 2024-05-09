@@ -1,7 +1,6 @@
 const pool = require('../databases/mysql.db');
 
-
-class Remender {
+class Reminder {
     constructor(options) {
         this.company_id = options.company_id;
         this.staff_id = options.staff_id;
@@ -10,9 +9,9 @@ class Remender {
         this.title = options.title;
         this.body = options.body;
     }
-    //create
+    
     async save() {
-        const sql = `INSERT INTO remender (
+        const sql = `INSERT INTO reminder (
             company_id,
             staff_id,
             remender_date,
@@ -31,21 +30,21 @@ class Remender {
         this.remender_id = result[0].insertId;
         return this.remender_id;
     }
-    //get single company
-    static async get_Remender(id) {
-        const sql = `SELECT * FROM remender WHERE remender_id = "${id}"`;
+
+    static async getReminder(id) {
+        const sql = `SELECT * FROM reminder WHERE remender_id = "${id}"`;
         const [rows] = await pool.execute(sql);
         return rows;
     }
-    //get all
+
     static async getAll() {
-        const sql = 'SELECT * FROM remender';
+        const sql = 'SELECT * FROM reminder';
         const [rows] = await pool.execute(sql);
         return rows;
     }
-    //update
-    async update_Remender(id) {
-        const sql = `UPDATE remender SET 
+
+    async updateReminder(id) {
+        const sql = `UPDATE reminder SET 
         remender_date = "${this.remender_date}",
         recurrent = ${this.recurrent},
         title = "${this.title}", 
@@ -55,13 +54,13 @@ class Remender {
         return rows;
     }
 
-    static async delete_Remender(id) {
-        const sql = `DELETE FROM remender WHERE remender_id = "${id}"`;
+    static async deleteReminder(id) {
+        const sql = `DELETE FROM reminder WHERE remender_id = "${id}"`;
         const [rows] = await pool.execute(sql);
         return rows;
     }
 
-    static async get_RemenderDate() {
+    static async getReminders() {
 
         const currentDate = new Date();
         const year = currentDate.getFullYear();
@@ -70,8 +69,8 @@ class Remender {
 
         const sql = `SELECT YEAR(remender_date) AS year, MONTH(remender_date) AS month, DAY(remender_date) AS day,
         c.email AS company_email , remender_id, recurrent 
-        FROM remender 
-        INNER JOIN company AS c ON remender.company_id = c.company_id
+        FROM reminder 
+        INNER JOIN company AS c ON reminder.company_id = c.company_id
         WHERE YEAR(remender_date) = ${year} AND MONTH(remender_date) = ${month} AND DAY(remender_date) = ${day}`;
 
         const [rows] = await pool.execute(sql);
@@ -79,18 +78,16 @@ class Remender {
         return rows;
     }
 
-    static async updateRemenderIfReCurrentDate(id) {
+    static async updateReminder(id) {
         // Get the current date
         const currentDate = new Date();
-      
         // Add one month to the current date
         const remenderDate = new Date(currentDate.setMonth(currentDate.getMonth() + 1));
-      
         // Format the date in the desired format (e.g., "YYYY-MM-DD")
         const formattedRemenderDate = remenderDate.toISOString().slice(0, 10);
       
         const sql = `
-          UPDATE remender
+          UPDATE reminder
           SET remender_date = ?
           WHERE remender_id = ?
         `;
@@ -100,4 +97,4 @@ class Remender {
       }
 }
 
-module.exports = Remender;
+module.exports = Reminder;

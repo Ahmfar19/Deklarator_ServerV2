@@ -3,7 +3,7 @@ const cookieParser = require('cookie-parser');
 const apiRouter = require('./routers/api.router');
 const cors = require('cors');
 require('./databases/mysql.db');
-const { sendReminderEmail } = require('./controllers/sendEmailAuto');
+const { sendReminderEmail } = require('./controllers/sendReminder.controller.js');
 const app = express();
 
 app.use(cookieParser());
@@ -29,8 +29,12 @@ app.use(function (req, res, next) {
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
     next();
 });
+
 // app.use(express.static(path.join(__dirname, '../dist')));
-// sendReminderEmail()
+
+// Setting an intervall every 6 hours that cehck for a reminder to send.
+sendReminderEmail();
+
 app.use(cors());
 
 app.get('/', (req, res) => res.send("It, works!"));

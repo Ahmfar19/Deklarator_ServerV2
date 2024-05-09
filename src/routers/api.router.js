@@ -123,7 +123,7 @@ router.put('/task/edit/:id', taskController.updateTask)
 router.delete('/task/delete/:id', taskController.deleteTask)
 
 
-/////////////// Remender Routes /////////////////
+/////////////// Reminder Routes /////////////////
 router.get('/remenders', remenderController.getRemenders)
 router.get('/remender/:id', remenderController.getSingleRemender)
 router.post('/remender/new', remenderController.addRemender)
