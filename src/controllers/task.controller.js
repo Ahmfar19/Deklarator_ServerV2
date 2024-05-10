@@ -14,7 +14,7 @@ const getTasks = async (req, res) => {
     try {
         const id = req.params.id;
         const singleTask = await Task.getTask(id)
-        sendResponse(res, 200, 'Ok', 'Successfully retrieved  the task', null, singleTask);
+        sendResponse(res, 200, 'Ok', 'Successfully retrieved the task', null, singleTask);
     } catch (err) {
         sendResponse(res, 500, 'Internal Server Error', null, err.message || err, null);
     }
@@ -35,7 +35,7 @@ const getTasks = async (req, res) => {
     try {
         const id = req.params.id;
         const task = new Task(req.body);
-        const data = await task.update_Task(id);
+        const data = await task.updateTask(id);
         if (data.affectedRows === 0) {
             return res.json({
                 status: 406,
@@ -63,12 +63,22 @@ const getTasks = async (req, res) => {
     catch (err) {
         sendResponse(res, 500, 'Internal Server Error', null, err.message || err, null);
     }
- }
+}
+
+const getTasksTypes = async (req, res) => {
+    try {
+        const types = await Task.getTypes();
+        sendResponse(res, 200, 'Ok', 'Successfully retrieved all the types', null, types);
+    } catch (err) {
+        sendResponse(res, 500, 'Internal Server Error', null, err.message || err, null);
+    }
+}  
 
 module.exports = {
     getTasks,
-     getSingleTask,
-     addTask,
-     updateTask,
-     deleteTask
+    getSingleTask,
+    addTask,
+    updateTask,
+    deleteTask,
+    getTasksTypes
 }

@@ -117,6 +117,7 @@ router.delete('/message/delete/:id', messagesController.deleteMessage)
 
 /////////////// Tasks Routes /////////////////
 router.get('/tasks', taskController.getTasks)
+router.get('/task/types', taskController.getTasksTypes)
 router.get('/task/:id', taskController.getSingleTask)
 router.post('/task/new', taskController.addTask)
 router.put('/task/edit/:id', taskController.updateTask)
