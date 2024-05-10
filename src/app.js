@@ -5,6 +5,7 @@ const cors = require('cors');
 require('./databases/mysql.db');
 const { sendReminderEmail } = require('./controllers/sendReminder.controller.js');
 const app = express();
+const path = require('path');
 
 app.use(cookieParser());
 app.use(express.json());
@@ -30,13 +31,18 @@ app.use(function (req, res, next) {
     next();
 });
 
-// app.use(express.static(path.join(__dirname, '../dist')));
+app.use(express.static(path.join(__dirname, '../dist')));
 
 // Setting an intervall every 6 hours that cehck for a reminder to send.
 sendReminderEmail();
 
 app.use(cors());
-
+app.get('/app', (req, res) => { 
+    res.sendFile(path.join(__dirname, '../dist/index.html')); 
+});
+app.get('/timer', (req, res) => { 
+    res.sendFile(path.join(__dirname, '../dist/index.html')); 
+});
 app.get('/', (req, res) => res.send("It, works!"));
 app.use('/api', apiRouter);
 // app.use('/server/api', apiRouter);

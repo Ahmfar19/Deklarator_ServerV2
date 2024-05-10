@@ -3,7 +3,7 @@ const User = require('../models/user.model');
 var jwt = require('jsonwebtoken');
 const path = require('path');
 const fs = require('fs');
-const { sendEmail } = require('./sendEmail.controller')
+const { sendReqularEmail } = require('./sendEmail.controller')
 const { hashPassword, comparePassword } = require('../helpers/utils');
 const { sendResponse } = require('../helpers/apiResponse');
 const mailMessags = require('../helpers/emailMessages');
@@ -101,7 +101,7 @@ const createUser = async (req, res) => {
         });
         const title = mailMessags.loginMessage.title.replace('{0}', username);
         const body = mailMessags.loginMessage.body.replace('{0}', username).replace('{1}', password);
-        sendEmail(email, title, body);
+        sendReqularEmail(email, title, body);
 
     } catch (err) {
 

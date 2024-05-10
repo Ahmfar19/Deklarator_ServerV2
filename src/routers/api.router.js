@@ -10,7 +10,6 @@ const userController = require('../controllers/user.controller');
 const caseController = require('../controllers/case.controller');
 const timeStampController = require('../controllers/timeStamp.controller');
 const paymentController = require('../controllers/payment.controller');
-const sendEmailController = require('../controllers/sendEmail.controller');
 const resetPassword = require('../controllers/reset_password.controller');
 const messagesController = require('../controllers/message.controller');
 const companyType = require('../controllers/company_type.controller')
@@ -140,7 +139,7 @@ router.put('/messageType/edit/:id', messageTypeController.updateMessageType)
 router.delete('/messageType/delete/:id', messageTypeController.deleteMessageType)
 
 /////////////// sendEmails Routes /////////////////
-router.get('/sendApi', sendEmailController.sendEmail)
+
 
 router.get('/checkAuth', (req, res) => {
     const access_token = req.cookies.accessToken;

@@ -1,5 +1,5 @@
 const ResetPassword = require('../models/resetPassword.model');
-const { sendEmail } = require('./sendEmail.controller')
+const { sendReqularEmail } = require('./sendEmail.controller')
 const crypto = require('crypto');
 const { hashPassword, getFutureDateTime, isDateTimeInPast } = require('../helpers/utils');
 const mailMessags = require('../helpers/emailMessages');
@@ -43,7 +43,7 @@ const forgetPassword = async (req, res) => {
             const title = mailMessags.pinMessage.title
             const body = mailMessags.pinMessage.body.replace('{0}', pinCode);
             
-            sendEmail(req.body.email, title, body);
+            sendReqularEmail(req.body.email, title, body);
             return res.json({
                 msg: msg
             });
@@ -64,7 +64,7 @@ const checkPinCode = async (req, res) => {
     try {
 
         const ckeckPin = await ResetPassword.checkPinIfExisted(pinCode, email)
-
+        
         if (ckeckPin.length) {
 
             const resetPasswordInformation = await ResetPassword.getResetPassword(email, pinCode)

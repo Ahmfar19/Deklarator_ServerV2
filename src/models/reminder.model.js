@@ -6,8 +6,6 @@ class Reminder {
         this.staff_id = options.staff_id;
         this.remender_date = options.remender_date;
         this.recurrent = options.recurrent;
-        this.title = options.title;
-        this.body = options.body;
     }
     
     async save() {
@@ -15,16 +13,12 @@ class Reminder {
             company_id,
             staff_id,
             remender_date,
-            recurrent,
-            title,
-            body
+            recurrent
         ) VALUES (
             ${this.company_id},
             ${this.staff_id},
             "${this.remender_date}", 
-            ${this.recurrent},
-            "${this.title}", 
-            "${this.body}"
+            ${this.recurrent}
         )`;
         const result = await pool.execute(sql);
         this.remender_id = result[0].insertId;
@@ -49,9 +43,7 @@ class Reminder {
     async updateReminder(id) {
         const sql = `UPDATE reminder SET 
         remender_date = "${this.remender_date}",
-        recurrent = ${this.recurrent},
-        title = "${this.title}", 
-        body = "${this.body}"
+        recurrent = ${this.recurrent}
         WHERE remender_id = ${id}`;
         const [rows] = await pool.execute(sql);
         return rows;

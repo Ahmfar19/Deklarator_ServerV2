@@ -97,6 +97,11 @@ class User {
         return rows;
     }
 
+    static async getAdmins() {
+        const sql = 'SELECT * FROM staff WHERE role =1';
+        const [rows] = await pool.execute(sql);
+        return rows;
+    }
 }
 
 

@@ -3,7 +3,7 @@ const pool = require('../databases/mysql.db');
 
 class MessageType {
     constructor(options) {
-        this.name = options.name;   
+        this.name = options.name;
     }
     //create
     async save() {
@@ -39,6 +39,12 @@ class MessageType {
 
     static async delete_MessageType(id) {
         const sql = `DELETE FROM message_type WHERE message_typ_id = "${id}"`;
+        const [rows] = await pool.execute(sql);
+        return rows;
+    }
+
+    static async getMessageTypeByName() {
+        const sql = 'SELECT * FROM message_type WHERE name = "danger"';
         const [rows] = await pool.execute(sql);
         return rows;
     }
