@@ -41,10 +41,15 @@ async function comparePassword(password, hashedPassword) {
     return isMatch;
 }
 
+function removeLastComma(str) {
+    return str.replace(/,$/, "");
+}
+
 module.exports = { 
     getCurrentDateTime, 
     getFutureDateTime,
     hashPassword,
     comparePassword,
-    isDateTimeInPast
+    isDateTimeInPast,
+    removeLastComma
 };
