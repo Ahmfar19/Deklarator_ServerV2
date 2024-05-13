@@ -101,7 +101,6 @@ class Reminder {
 
     static async getReminderByCompanyId(id) {
         const sql = `SELECT * FROM reminder WHERE company_id = ${id}`;
-        console.error('sql', sql);
         const [rows] = await pool.execute(sql);
         return rows;
     }
