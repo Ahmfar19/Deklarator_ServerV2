@@ -3,6 +3,7 @@ const config = require('config');
 const EMAIL_HOST = config.get('EMAIL_HOST');
 const EMAIL = config.get('EMAIL');
 const EMAIL_PASS = config.get('EMAIL_PASS');
+const path = require('path');
 
 const transporter = nodemailer.createTransport({
     host: EMAIL_HOST, // POP/IMAP Server
@@ -38,6 +39,11 @@ const sendEmailHtml = async (to, subject, htmlTemplate) => {
         to: to,
         subject: subject,
         html:htmlTemplate,
+        attachments: [{
+            filename: 'bb.png',
+            path: path.join('assets/tampletes/bb.png'),
+            cid: 'unique@kreata.ee' //same cid value as in the html img src
+        }]
     };
     return sendEmail(mailOptions)
 }

@@ -13,7 +13,7 @@ const checkForReminder = async () => {
         const data = await Reminder.getReminders();
         const admins = await User.getAdmins();
         const messageName = await MessageType.getMessageTypeByName()
-        const htmlTemplatePath = path.resolve(__dirname, '../helpers/index.html');
+        const htmlTemplatePath = path.resolve('assets/tampletes/index.html');
         const htmlTemplate = fs.readFileSync(htmlTemplatePath)
         if (!data.length) return;
 
@@ -57,7 +57,7 @@ const sendReminderEmail = () => {
     const intervalInMilliseconds = 6 * 60 * 60 * 1000;
     setInterval(function () {
         checkForReminder();
-    }, 1000);
+    }, intervalInMilliseconds);
 };
 
 module.exports = {

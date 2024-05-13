@@ -33,6 +33,9 @@ app.use(function (req, res, next) {
 
 app.use(express.static(path.join(__dirname, '../dist')));
 
+// To allow access to the assets from outside the server
+// app.use('/assets', express.static('assets'));
+
 // Setting an intervall every 6 hours that cehck for a reminder to send.
 sendReminderEmail();
 
