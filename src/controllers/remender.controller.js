@@ -68,10 +68,21 @@ const deleteRemender = async (req, res) => {
     }
 }
 
+const getCompanyReminders = async (req, res) => {
+    try {
+        const id = req.params.id;
+        const remenders = await Reminder.getReminderByCompanyId(id);
+        sendResponse(res, 200, 'Ok', 'Successfully retrieved all the remenders', null, remenders);
+    } catch (err) {
+        sendResponse(res, 500, 'Internal Server Error', null, err.message || err, null);
+    }
+}
+
 module.exports = {
     getRemenders,
     getSingleRemender,
     addRemender,
     updateRemender,
-    deleteRemender
+    deleteRemender,
+    getCompanyReminders
 };

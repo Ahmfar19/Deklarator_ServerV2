@@ -2,6 +2,7 @@
     res.status(code).send({
         statusCode: code,
         statusMessage: statusMessage,
+        ok: code === 200,
         message: message,
         error:error,
         data: data,

@@ -127,6 +127,7 @@ router.delete('/task/delete/:id', taskController.deleteTask)
 /////////////// Reminder Routes /////////////////
 router.get('/remenders', remenderController.getRemenders)
 router.get('/remender/:id', remenderController.getSingleRemender)
+router.get('/remender/company/:id', remenderController.getCompanyReminders)
 router.post('/remender/new', remenderController.addRemender)
 router.put('/remender/edit/:id', remenderController.updateRemender)
 router.delete('/remender/delete/:id', remenderController.deleteRemender)

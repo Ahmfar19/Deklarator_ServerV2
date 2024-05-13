@@ -36,9 +36,12 @@ class Reminder {
         const [rows] = await pool.execute(sql);
         return rows;
     }
-
+    
     static async getAll() {
-        const sql = 'SELECT * FROM reminder';
+        const sql = `
+        SELECT reminder.*, company.company_name, DATE_FORMAT(reminder.remender_date, "%Y-%m-%d") AS remender_date
+        FROM reminder
+        JOIN company ON reminder.company_id = company.company_id;`;
         const [rows] = await pool.execute(sql);
         return rows;
     }
@@ -94,7 +97,14 @@ class Reminder {
       
         const [rows] = await pool.execute(sql, [formattedRemenderDate, id]);
         return rows;
-      }
+    }
+
+    static async getReminderByCompanyId(id) {
+        const sql = `SELECT * FROM reminder WHERE company_id = ${id}`;
+        console.error('sql', sql);
+        const [rows] = await pool.execute(sql);
+        return rows;
+    }
 }
 
 module.exports = Reminder;
