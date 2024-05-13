@@ -159,13 +159,27 @@ const getSingleUser = async (req, res) => {
 
 const updateUser = async (req, res) => {
     try {
+        
+        const { username, email } = req.body
+        const id = req.params.id;
+       
+        const checkUser = await User.checkUserUpdate(username, email, id)
+    
+        if (checkUser.length) { 
+            return res.json({
+                status: 406,
+                stautsCode: 'Not Acceptable',
+                message: 'dek_alert_user_editFail_userNameOrEmail_exsists'
+            })
+        }
+
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             return res.status(400).json({ errors: errors.array() })
         }
 
         const userData = req.body;
-        const id = req.params.id;
+        
 
         if (req.file) {
             const imageName = await uploadImage(req.file, id);
