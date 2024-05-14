@@ -56,6 +56,17 @@ async function getNowDate_time() {
     const formattedDateTime = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
     return formattedDateTime
 }
+
+async function isToday(dateString) {
+    const date = new Date(dateString);
+    const today = new Date();
+    return (
+      date.getDate() === today.getDate() &&
+      date.getMonth() === today.getMonth() &&
+      date.getFullYear() === today.getFullYear()
+    );
+}
+
 module.exports = {
     getCurrentDateTime,
     getFutureDateTime,
@@ -63,5 +74,6 @@ module.exports = {
     comparePassword,
     isDateTimeInPast,
     removeLastComma,
-    getNowDate_time
+    getNowDate_time,
+    isToday
 };
