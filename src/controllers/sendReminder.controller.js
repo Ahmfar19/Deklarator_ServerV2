@@ -49,18 +49,19 @@ const checkForReminder = async () => {
         }
       
     } catch (error) {
-        // console.log(error.message);
+         console.log(error.message);
     }
 };
 
 const sendReminderEmail = () => {
-    const intervalInMilliseconds = 6 * 60 * 60 * 1000;
+     const intervalInMilliseconds = 6 * 60 * 60 * 1000;
     setInterval(function () {
         checkForReminder();
     }, intervalInMilliseconds);
 };
 
 module.exports = {
-    sendReminderEmail
+    sendReminderEmail,
+    checkForReminder
 }
 

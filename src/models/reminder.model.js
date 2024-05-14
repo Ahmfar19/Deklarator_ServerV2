@@ -56,12 +56,10 @@ class Reminder {
     }
 
     static async getReminders() {
-
         const currentDate = new Date();
-        const year = currentDate.getFullYear();
-        const month = currentDate.getMonth() + 1; // Adding 1 to match SQL month format
-        const day = currentDate.getDate();
-
+        const isoDate = currentDate.toISOString(); // Convert to ISO format
+        const [year, month, day] = isoDate.split('T')[0].split('-'); // Extract year, month, and day from ISO format
+       
         const sql = `SELECT YEAR(remender_date) AS year, MONTH(remender_date) AS month, DAY(remender_date) AS day,
         c.email AS company_email , remender_id, recurrent 
         FROM reminder 
