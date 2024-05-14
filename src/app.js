@@ -40,14 +40,11 @@ app.use(express.static(path.join(__dirname, '../dist')));
 sendReminderEmail();
 
 app.use(cors());
-app.get('/app', (req, res) => { 
-    res.sendFile(path.join(__dirname, '../dist/index.html')); 
-});
-app.get('/timer', (req, res) => { 
-    res.sendFile(path.join(__dirname, '../dist/index.html')); 
-});
+
 app.get('/', (req, res) => res.send("It, works!"));
 app.use('/api', apiRouter);
+
+// When dist
 // app.use('/server/api', apiRouter);
 
 module.exports = app;
