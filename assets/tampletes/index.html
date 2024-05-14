@@ -2,87 +2,79 @@
 <html>
 
 <head>
-  <style>
-    img {
-      display: block;
-      margin: 0 auto;
-      max-width: 100%;
-      height: auto;
-    }
+    <style>
+        body {
+            font-family: sans-serif;
+        }
+        .content {
+            padding: 3rem 3rem 1.5rem;
+            width: auto;
+        }
 
-    .p {
-      line-height: 1.5;
-      padding: 5% 10%;
-      font-size: 16px;
-      /* Responsive font size based on viewport width */
-      font-weight: 700;
-    }
+        img {
+            display: block;
+            margin: 0 auto;
+            max-width: 500px;
+            height: auto;
+            width: 60%;
+        }
 
-    .p2 {
-      line-height: 1.5;
-      padding: 2% 10%;
-      font-size: 15px;
-      /* Responsive font size based on viewport width */
-      font-weight: 800;
-    }
+        .p {
+            line-height: 1.5;
+            padding: 10px 10px 0px 10px;
+            font-size: 16px;
+        }
 
-    .en {
-      font-size: 15px;
-      /* Responsive font size based on viewport width */
-      font-weight: 900;
-      font-style: italic;
-      line-height: 1.5;
-    }
+        .en {
+            font-size: 15px;
+            font-weight: 900;
+            font-style: italic !important;
+            line-height: 1.5;
+        }
 
-    ul {
-      padding: 0 10%;
-      font-size: 15px;
-      /* Responsive font size based on viewport width */
-    }
-
-    li {
-      padding: 1vw 0;
-    }
-
-    @media screen and (max-width: 768px) {
-
-      .p,
-      .p2,
-      .en,
-      ul,
-      li {
-        padding: 5% 5%;
-        font-size: 3vw;
-      }
-    }
-  </style>
+        li {
+            padding: 5px 0;
+        }
+    </style>
 </head>
 
 <body>
-  <!-- <img src="/assets/tampletes/bb.png" alt="not available" /> -->
-  <img src="cid:unique@kreata.ee" alt="not available" />
-  <p class="p">
-    Kära kund, <br />
-    Det här är en automatisk påminnelse. <br />
-    Nu är det dags att skicka in ert underlag för föregående månad till oss, så att vi kan bokföra och/eller ordna
-    lönerna*. <br />
-    För att undvika förseningsavgifter måste underlagen vara oss tillhanda absolut senast den 5:e i varje månad.<br />
-    Låt mig veta snarast om du har några frågor.<br />
-    Med vänlig hälsning,<br />
-    Deklarator AB<br />
-    <en class="en">Ghazi Alhabib
-    </en>
-  </p>
-  <p class="p2">
-    *Gällande löner behöver underlaget innehålla följande:
-    <ul>
-      <li>vem/vilka har arbetat</li>
-      <li>vilken löneform (tim/mån)</li>
-      <li>eventuella avvikelser (semester, sjukdom, vab, föräldraledighet)</li>
-      <li>eventuella lönestödsanställningar</li>
-      <li>eventuella nyanställningar</li>
-    </ul>
-  </p>
+    <div class="content">
+        <img src="/assets/tampletes/bb.png" alt="" />
+        <img src="cid:unique@kreata.ee" alt="" />
+
+        <p class="p">
+            <strong>Kära kund,</strong> <br /> <br>
+            Det här är en automatisk påminnelse. <br />
+            Nu är det dags att skicka in ert underlag för föregående månad till oss, så att vi kan bokföra och/eller ordna lönerna*. <br />
+            För att undvika förseningsavgifter måste underlagen vara oss tillhanda absolut senast den <strong>5:e i varje månad</strong>.<br />
+
+            <br>
+            Låt mig veta snarast om du har några frågor.<br />
+
+            <br>
+            Med vänlig hälsning,<br />
+            Deklarator AB<br />
+    
+            <br>
+            <en class="en">
+                Ghazi Alhabib
+            </en>
+        </p>
+
+        <p class="p">
+            <span>*Gällande löner behöver underlaget innehålla följande:</span>
+        </p>
+
+        <ul>
+            <li>vem/vilka har arbetat</li>
+            <li>vilken löneform (tim/mån)</li>
+            <li>eventuella avvikelser (semester, sjukdom, vab, föräldraledighet)</li>
+            <li>eventuella lönestödsanställningar</li>
+            <li>eventuella nyanställningar</li>
+        </ul>
+    </div>
+
 </body>
 
 </html>
