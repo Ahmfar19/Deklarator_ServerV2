@@ -9,18 +9,23 @@ const fs = require('fs');
 const mailMessags = require('../helpers/emailMessages');
 
 const checkForReminder = async () => {
+    
     try {
+        
         const data = await Reminder.getReminders();
+       
+        if (!data.length) return;
+       
         const admins = await User.getAdmins();
         const messageName = await MessageType.getMessageTypeByName()
-        const htmlTemplatePath = path.resolve('assets/tampletes/index.html');
-        const htmlTemplate = fs.readFileSync(htmlTemplatePath)
-        if (!data.length) return;
-
+      
         const { title } = mailMessags.reminder;
        
         for (let i = 0; i < data.length; i++) {
-     
+          
+            const htmlTemplatePath = path.resolve(`assets/tampletes/${data[i].tamplate_name}.html`);    
+            const htmlTemplate = fs.readFileSync(htmlTemplatePath)
+        
             const emailSent = await sendEmailHtml(data[i].company_email, title, htmlTemplate);
 
             if (data[i].recurrent) {
@@ -54,7 +59,7 @@ const checkForReminder = async () => {
 };
 
 const sendReminderEmail = () => {
-    const intervalInMilliseconds = 6 * 60 * 60 * 1000;
+     const intervalInMilliseconds = 6 * 60 * 60 * 1000;
     setInterval(function () {
         checkForReminder();
     }, intervalInMilliseconds);

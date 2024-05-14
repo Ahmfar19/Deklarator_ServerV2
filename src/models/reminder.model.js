@@ -4,6 +4,7 @@ class Reminder {
     constructor(options) {
         this.company_id = options.company_id;
         this.staff_id = options.staff_id;
+        this.tamplate_id = options.tamplate_id;
         this.remender_date = options.remender_date;
         this.recurrent = options.recurrent;
     }
@@ -12,11 +13,13 @@ class Reminder {
         const sql = `INSERT INTO reminder (
             company_id,
             staff_id,
+            tamplate_id,
             remender_date,
             recurrent
         ) VALUES (
             ${this.company_id},
             ${this.staff_id},
+            ${this.tamplate_id},
             "${this.remender_date}", 
             ${this.recurrent}
         )`;
@@ -58,14 +61,14 @@ class Reminder {
     static async getReminders() {
 
         const currentDate = new Date();
-        const year = currentDate.getFullYear();
-        const month = currentDate.getMonth() + 1; // Adding 1 to match SQL month format
-        const day = currentDate.getDate();
-
+        const isoDate = currentDate.toISOString(); // Convert to ISO format
+        const [year, month, day] = isoDate.split('T')[0].split('-'); // Extract year, month, and day from ISO format
+    
         const sql = `SELECT YEAR(remender_date) AS year, MONTH(remender_date) AS month, DAY(remender_date) AS day,
-        c.email AS company_email , remender_id, recurrent 
+        c.email AS company_email , remender_id, recurrent , t.tamplate_name
         FROM reminder 
         INNER JOIN company AS c ON reminder.company_id = c.company_id
+        INNER JOIN tamplate AS t ON reminder.tamplate_id = t.tamplate_id
         WHERE YEAR(remender_date) = ${year} AND MONTH(remender_date) = ${month} AND DAY(remender_date) = ${day}`;
 
         const [rows] = await pool.execute(sql);

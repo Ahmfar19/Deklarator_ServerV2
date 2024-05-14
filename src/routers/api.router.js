@@ -16,6 +16,7 @@ const companyType = require('../controllers/company_type.controller')
 const taskController = require('../controllers/task.controller');
 const remenderController = require('../controllers/remender.controller');
 const messageTypeController = require('../controllers/message_type.controller');
+const TamplateController = require('../controllers/tamplate.controller');
 
 const path = require('path');
 
@@ -131,6 +132,7 @@ router.post('/remender/new', remenderController.addRemender)
 router.put('/remender/edit/:id', remenderController.updateRemender)
 router.delete('/remender/delete/:id', remenderController.deleteRemender)
 
+
 /////////////// MessageType Routes /////////////////
 router.get('/messageTypes', messageTypeController.getMessageTypes)
 router.get('/messageType/:id', messageTypeController.getSingleMessageType)
@@ -138,8 +140,8 @@ router.post('/messageType/new', messageTypeController.addMessageType)
 router.put('/messageType/edit/:id', messageTypeController.updateMessageType)
 router.delete('/messageType/delete/:id', messageTypeController.deleteMessageType)
 
-/////////////// sendEmails Routes /////////////////
-
+/////////////// Tamplates Routes /////////////////
+router.get('/tamplates', TamplateController.getTamplatesName)
 
 router.get('/checkAuth', (req, res) => {
     const access_token = req.cookies.accessToken;
