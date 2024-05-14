@@ -6,7 +6,7 @@ class Reminder {
         this.staff_id = options.staff_id;
         this.tamplate_id = options.tamplate_id;
         this.remender_date = options.remender_date;
-        this.recurrent = options.recurrent;
+        this.recurrent = options.recurrent || 0;
     }
     
     async save() {
@@ -45,6 +45,7 @@ class Reminder {
 
     async updateReminder(id) {
         const sql = `UPDATE reminder SET 
+        company_id = ${this.company_id},
         remender_date = "${this.remender_date}",
         recurrent = ${this.recurrent}
         WHERE remender_id = ${id}`;
