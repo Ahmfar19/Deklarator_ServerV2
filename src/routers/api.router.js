@@ -17,6 +17,8 @@ const taskController = require('../controllers/task.controller');
 const remenderController = require('../controllers/remender.controller');
 const messageTypeController = require('../controllers/message_type.controller');
 const TamplateController = require('../controllers/tamplate.controller');
+const checkListController = require('../controllers/checkList.controller');
+
 
 const path = require('path');
 
@@ -142,6 +144,11 @@ router.delete('/messageType/delete/:id', messageTypeController.deleteMessageType
 
 /////////////// Tamplates Routes /////////////////
 router.get('/tamplates', TamplateController.getTamplatesName)
+
+/////////////// checkListItems Routes /////////////////
+router.get('/checkListItems', checkListController.getcheckListItems)
+router.put('/checklist/edit/:id', checkListController.updateStatus)
+
 
 router.get('/checkAuth', (req, res) => {
     const access_token = req.cookies.accessToken;

@@ -54,7 +54,7 @@ const checkForReminder = async () => {
         }
       
     } catch (error) {
-        // console.log(error.message);
+         console.log(error.message);
     }
 };
 
@@ -66,6 +66,7 @@ const sendReminderEmail = () => {
 };
 
 module.exports = {
-    sendReminderEmail
+    sendReminderEmail,
+    checkForReminder
 }
 

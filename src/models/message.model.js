@@ -46,9 +46,6 @@ class Message {
     //update
     async update_Message(id) {
         const sql = `UPDATE message SET 
-        title = "${this.title}", 
-        body = "${this.body}",
-        date_time = "${this.date_time}", 
         seen = ${this.seen}
         WHERE message_id = ${id}`;
         const [rows] = await pool.execute(sql);

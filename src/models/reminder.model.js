@@ -60,7 +60,6 @@ class Reminder {
     }
 
     static async getReminders() {
-
         const currentDate = new Date();
         const isoDate = currentDate.toISOString(); // Convert to ISO format
         const [year, month, day] = isoDate.split('T')[0].split('-'); // Extract year, month, and day from ISO format

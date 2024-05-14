@@ -40,7 +40,6 @@ app.use(express.static(path.join(__dirname, '../dist')));
 sendReminderEmail();
 
 app.use(cors());
-
 app.get('/', (req, res) => res.send("It, works!"));
 app.use('/api', apiRouter);
 
