@@ -39,7 +39,12 @@ class Message {
     }
     //get all
     static async getAll() {
-        const sql = 'SELECT * FROM message';
+        const sql = `
+            SELECT message.*, message_type.variant
+            FROM message
+            JOIN message_type ON message.message_typ_id = message_type.message_typ_id;
+        `;
+        console.error('sql', sql);
         const [rows] = await pool.execute(sql);
         return rows;
     }
