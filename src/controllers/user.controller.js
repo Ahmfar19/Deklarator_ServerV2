@@ -92,67 +92,43 @@ const createUser = async (req, res) => {
         });
 
         await user.createUser();
+     
+        sendResponse(res, 201, 'Created', 'Successfully created a user.', null, user);
 
-        res.status(201).send({
-            statusCode: 201,
-            statusMessage: 'Created',
-            message: 'Successfully created a user.',
-            data: user,
-        });
         const title = mailMessags.loginMessage.title.replace('{0}', username);
         const body = mailMessags.loginMessage.body.replace('{0}', username).replace('{1}', password);
         sendReqularEmail(email, title, body);
 
     } catch (err) {
-
-        res.status(500).send({
-            statusCode: 500,
-            statusMessage: 'Internal Server Error',
-            message: null,
-            data: null,
-            error: err.message || err
-        });
+     
+        sendResponse(res, 500, 'Internal Server Error', null, err.message || err, null);
+    
     }
 }
 
 const getUsers = async (req, res) => {
     try {
         const users = await User.getAllUsers();
-        res.send({
-            statusCode: 200,
-            statusMessage: 'Ok',
-            message: 'Successfully retrieved all the users.',
-            data: users,
-        });
+      
+        sendResponse(res, 200, 'Ok', 'Successfully retrieved all the users.', null, users);
+       
     } catch (err) {
-        res.status(500).send({
-            statusCode: 500,
-            statusMessage: 'Internal Server Error',
-            message: null,
-            data: null,
-            error: err.message || err
-        });
+        sendResponse(res, 500, 'Internal Server Error', null, err.message || err, null);
     }
 };
 
 const getSingleUser = async (req, res) => {
     try {
-        const id = req.params.id;
+      
+        const id = req.params.id; 
         const singleUser = await User.getUserById(id)
-        res.send({
-            statusCode: 200,
-            statusMessage: 'Ok',
-            message: 'Successfully retrieved the single user.',
-            data: singleUser,
-        });
+
+        sendResponse(res, 200, 'Ok', 'Successfully retrieved the single user.', null, singleUser);
+      
     } catch (err) {
-        res.status(500).send({
-            statusCode: 500,
-            statusMessage: 'Internal Server Error as',
-            message: null,
-            data: null,
-            error: err.message || err
-        });
+   
+        sendResponse(res, 500, 'Internal Server Error', null, err.message || err, null);
+
     }
 
 };
@@ -164,8 +140,9 @@ const updateUser = async (req, res) => {
         const id = req.params.id;
        
         const checkUser = await User.checkUserUpdate(username, email, id)
-    
+         
         if (checkUser.length) { 
+          
             return res.json({
                 status: 406,
                 stautsCode: 'Not Acceptable',
@@ -188,21 +165,13 @@ const updateUser = async (req, res) => {
 
         const user = new User(userData);
         await user.updateUser(id);
-
-        return res.status(202).send({
-            statusCode: 202,
-            statusMessage: 'Accepted',
-            message: 'Successfully updated a user.',
-            data: null,
-        });
+   
+        sendResponse(res, 202, 'Accepted', 'Successfully updated a user.', null, null);
+  
     } catch (err) {
-        res.status(500).send({
-            statusCode: 500,
-            statusMessage: 'Internal Server Error',
-            message: null,
-            data: null,
-            error: err.message || err
-        });
+    
+        sendResponse(res, 500, 'Internal Server Error', null, err.message || err, null);
+
     }
 };
 
@@ -231,44 +200,28 @@ const updateUserPassword = async (req, res) => {
         const newPaawordHash = await hashPassword(new_password);
 
         await User.updatePassword(id, newPaawordHash);
+       
+        sendResponse(res, 200, 'Ok', 'Successfully update the password', null, null);
 
-        res.send({
-            statusCode: 200,
-            statusMessage: 'Ok',
-            message: 'Successfully update the password',
-            data: null,
-        });
     }
     catch (err) {
-        res.status(500).send({
-            statusCode: 500,
-            statusMessage: 'Internal Server Error',
-            message: null,
-            data: null,
-            error: err.message || err
-        });
+     
+        sendResponse(res, 500, 'Internal Server Error', null, err.message || err, null);
     }
 };
 
 const deleteUser = async (req, res) => {
     const id = req.params.id;
     try {
+     
         const data = await User.deleteUser(id);
-        res.send({
-            statusCode: 200,
-            statusMessage: 'Ok',
-            message: 'Successfully deleted a user.',
-            data: data,
-        });
+        sendResponse(res, 200, 'Ok', 'Successfully deleted a user.', null, data);
+       
     }
     catch (err) {
-        res.status(500).send({
-            statusCode: 500,
-            statusMessage: 'Internal Server Error as',
-            message: null,
-            data: null,
-            error: err.message || err
-        });
+     
+        sendResponse(res, 500, 'Internal Server Error', null, err.message || err, null);
+      
     }
 };
 

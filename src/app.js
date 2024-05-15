@@ -31,7 +31,7 @@ app.use(function (req, res, next) {
     next();
 });
 
-app.use(express.static(path.join(__dirname, '../dist')));
+// app.use(express.static(path.join(__dirname, '../dist')));
 
 // To allow access to the assets from outside the server
 // app.use('/assets', express.static('assets'));
@@ -40,6 +40,13 @@ app.use(express.static(path.join(__dirname, '../dist')));
 sendReminderEmail();
 
 app.use(cors());
+
+// app.get('/app', (req, res) => { 
+//     res.sendFile(path.join(__dirname, '../dist/index.html')); 
+// });
+// app.get('/timer', (req, res) => { 
+//     res.sendFile(path.join(__dirname, '../dist/index.html')); 
+// });
 app.get('/', (req, res) => res.send("It, works!"));
 app.use('/api', apiRouter);
 
