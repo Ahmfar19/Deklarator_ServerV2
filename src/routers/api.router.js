@@ -25,7 +25,7 @@ const path = require('path');
 //import validation register schema
 const { signUpValidation } = require('../helpers/validation');
 
-const upload = multer({ dest: path.join(__dirname, 'assets/images/users') });
+const upload = multer({ dest: path.join('assets/images/users') });
 
 /////////////////// register & login Routes //////////////////////
 //create user
