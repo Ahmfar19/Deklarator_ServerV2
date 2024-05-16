@@ -4,6 +4,7 @@ const apiRouter = require('./routers/api.router');
 const cors = require('cors');
 require('./databases/mysql.db');
 const { sendReminderEmail } = require('./controllers/sendReminder.controller.js');
+const { deleteOldMessages } = require('./controllers/message.controller.js')
 const app = express();
 const path = require('path');
 
@@ -38,7 +39,7 @@ app.use(function (req, res, next) {
 
 // Setting an intervall every 6 hours that cehck for a reminder to send.
 sendReminderEmail();
-
+deleteOldMessages()
 app.use(cors());
 
 // app.get('/app', (req, res) => { 

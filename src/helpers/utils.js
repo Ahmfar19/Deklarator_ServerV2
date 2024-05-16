@@ -45,7 +45,7 @@ function removeLastComma(str) {
     return str.replace(/,$/, "");
 }
 
-async function getNowDate_time() {
+function getNowDate_time() {
     const currentDate = new Date();
     const year = currentDate.getFullYear();
     const month = currentDate.getMonth() + 1; // Adding 1 to match SQL month format
@@ -57,14 +57,26 @@ async function getNowDate_time() {
     return formattedDateTime
 }
 
-async function isToday(dateString) {
+function isToday(dateString) {
     const date = new Date(dateString);
     const today = new Date();
     return (
-      date.getDate() === today.getDate() &&
-      date.getMonth() === today.getMonth() &&
-      date.getFullYear() === today.getFullYear()
+        date.getDate() === today.getDate() &&
+        date.getMonth() === today.getMonth() &&
+        date.getFullYear() === today.getFullYear()
     );
+}
+
+function getLastWeekDate() {
+
+    const currentDate = new Date();
+    const isoDate = currentDate.toISOString();
+    const lastWeekDate = new Date(Date.parse(isoDate) - 7 * 24 * 60 * 60 * 1000);
+
+    // Format the lastWeekDate to 'YYYY-MM-DD'
+    const formattedLastWeekDate = lastWeekDate.toISOString().slice(0, 10);
+
+    return formattedLastWeekDate;
 }
 
 module.exports = {
@@ -75,5 +87,6 @@ module.exports = {
     isDateTimeInPast,
     removeLastComma,
     getNowDate_time,
-    isToday
+    isToday,
+    getLastWeekDate
 };

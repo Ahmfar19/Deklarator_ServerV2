@@ -23,7 +23,7 @@ class Message {
             ${this.staff_id},
             ${this.message_typ_id},
             "${this.title}",
-            "${this.body}", 
+            '${this.body}', 
             "${this.date_time}",
              ${this.seen}
         )`;
@@ -60,6 +60,12 @@ class Message {
     static async delete_Message(id) {
         const sql = `DELETE FROM message WHERE message_id = "${id}"`;
         const [rows] = await pool.execute(sql);
+        return rows;
+    }
+
+    static async deleteMessageBeforWeek(date) {
+        const sql = `DELETE FROM message WHERE date_time <= ?`;
+        const [rows] = await pool.execute(sql, [date]);
         return rows;
     }
 }

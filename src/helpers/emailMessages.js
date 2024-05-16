@@ -11,7 +11,11 @@ const mailMessags = {
     reminder :{
         title:"title",
         body:"This is a body"
-    } 
+    },
+    message: {
+        title: "dek_message_failedToSendReminder_title",
+        body:"dek_message_failedToSendReminder_body",
+    }
 };
 
 module.exports = mailMessags;

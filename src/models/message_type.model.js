@@ -43,9 +43,9 @@ class MessageType {
         return rows;
     }
 
-    static async getMessageTypeByName() {
-        const sql = 'SELECT * FROM message_type WHERE variant = "danger"';
-        const [rows] = await pool.execute(sql);
+    static async getMessageTypeByName(variant) {
+        const sql = 'SELECT * FROM message_type WHERE variant = ?';
+        const [rows] = await pool.execute(sql, [variant]);
         return rows;
     }
 }

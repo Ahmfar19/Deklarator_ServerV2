@@ -1,5 +1,6 @@
 const Message = require('../models/message.model');
 const { sendResponse } = require('../helpers/apiResponse');
+const { getLastWeekDate } = require('../helpers/utils');
 
 const getMessages = async (req, res) => {
     try {
@@ -8,7 +9,7 @@ const getMessages = async (req, res) => {
     } catch (err) {
         sendResponse(res, 500, 'Internal Server Error', null, err.message || err, null);
     }
-}  
+}
 
 const getSingleMessage = async (req, res) => {
     try {
@@ -53,7 +54,7 @@ const deleteMessage = async (req, res) => {
     try {
         const id = req.params.id;
         const data = await Message.delete_Message(id);
-        if(data.affectedRows === 0) {
+        if (data.affectedRows === 0) {
             return res.json({
                 status: 406,
                 message: "not message found to delete"
@@ -66,10 +67,31 @@ const deleteMessage = async (req, res) => {
     }
 }
 
+const deleteBeforWeek = async () => {
+    
+    try {
+        const oldDate = getLastWeekDate();
+
+        await Message.deleteMessageBeforWeek(oldDate)
+    } catch (error) {
+        // console.log(error);
+    }
+ 
+}
+
+
+
+const deleteOldMessages = () => {
+    const intervalInMilliseconds = 7 * 24 * 60 * 60 * 1000; // Calculate milliseconds in a week
+    setInterval(function () {
+         deleteBeforWeek()
+    }, intervalInMilliseconds);
+}
 module.exports = {
     getMessages,
     getSingleMessage,
     addMessage,
     updateMessage,
-    deleteMessage
+    deleteMessage,
+    deleteOldMessages
 }

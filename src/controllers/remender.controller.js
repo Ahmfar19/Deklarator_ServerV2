@@ -29,7 +29,7 @@ const addRemender = async (req, res) => {
 
         await remender.save();
 
-        const today = await isToday(remender.remender_date)
+        const today = isToday(remender.remender_date)
 
         if (today) {
             checkForReminder()
@@ -55,7 +55,7 @@ const updateRemender = async (req, res) => {
             })
         }
        
-        const today = await isToday(remender.remender_date)
+        const today = isToday(remender.remender_date)
         if(today){
             checkForReminder()
         }
