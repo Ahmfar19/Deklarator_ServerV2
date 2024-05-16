@@ -114,6 +114,7 @@ router.get('/messages', messagesController.getMessages)
 router.get('/message/:id', messagesController.getSingleMessage)
 router.post('/message/new', messagesController.addMessage)
 router.put('/message/edit/:id', messagesController.updateMessage)
+router.put('/message/upateseen/:id', messagesController.updateSeenBeforeId)
 router.delete('/message/delete/:id', messagesController.deleteMessage)
 
 

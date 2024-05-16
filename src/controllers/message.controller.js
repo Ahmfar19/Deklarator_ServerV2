@@ -68,18 +68,23 @@ const deleteMessage = async (req, res) => {
 }
 
 const deleteBeforWeek = async () => {
-    
     try {
         const oldDate = getLastWeekDate();
-
         await Message.deleteMessageBeforWeek(oldDate)
     } catch (error) {
-        // console.log(error);
+        return;
     }
- 
 }
 
-
+const updateSeenBeforeId = async (req, res) => {
+    const id = req.params.id; 
+    try {
+        await Message.updateSeenBeforeId(id);
+        sendResponse(res, 200, 'Accepted', 'Successfully update the messages seen.', null, null);
+    } catch (error) {
+        return;
+    }
+}
 
 const deleteOldMessages = () => {
     const intervalInMilliseconds = 7 * 24 * 60 * 60 * 1000; // Calculate milliseconds in a week
@@ -93,5 +98,6 @@ module.exports = {
     addMessage,
     updateMessage,
     deleteMessage,
-    deleteOldMessages
+    deleteOldMessages,
+    updateSeenBeforeId
 }

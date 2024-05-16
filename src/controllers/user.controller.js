@@ -157,7 +157,7 @@ const updateUser = async (req, res) => {
 
         const userData = req.body;
         
-
+        
         if (req.file) {
             const imageName = await uploadImage(req.file, id);
             userData.image = imageName;

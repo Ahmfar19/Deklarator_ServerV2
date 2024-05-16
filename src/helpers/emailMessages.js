@@ -9,7 +9,7 @@ const mailMessags = {
         body:"You have requested a PIN code for verification purposes.\nPlease find your unique PIN code below.\npinCode :{0}"
     },
     reminder :{
-        title:"title",
+        title:"Påminnelse",
         body:"This is a body"
     },
     message: {

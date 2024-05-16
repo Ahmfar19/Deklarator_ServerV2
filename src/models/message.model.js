@@ -44,7 +44,6 @@ class Message {
             FROM message
             JOIN message_type ON message.message_typ_id = message_type.message_typ_id;
         `;
-        console.error('sql', sql);
         const [rows] = await pool.execute(sql);
         return rows;
     }
@@ -66,6 +65,12 @@ class Message {
     static async deleteMessageBeforWeek(date) {
         const sql = `DELETE FROM message WHERE date_time <= ?`;
         const [rows] = await pool.execute(sql, [date]);
+        return rows;
+    }
+
+    static async updateSeenBeforeId(beforeID) {
+        const sql = `UPDATE message SET seen=1 WHERE message_id <= ${beforeID}`;
+        const [rows] = await pool.execute(sql);
         return rows;
     }
 }
