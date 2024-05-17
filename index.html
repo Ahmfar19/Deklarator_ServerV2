@@ -1,116 +1,32 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>File Download Test</title>
 </head>
-
 <body>
-    <h2>Server test</h2>
-</body>
+    <h1>File Download Test</h1>
+    <p>Click the button to download a file:</p>
+    <button onclick="downloadFile('example.txt', '123')">Download File</button>
 
-<script>
-    console.error('AA',);
-
-    // fetch('https://emp.deklarator.se/test/api/casetypes')
-    // fetch('https://emp.deklarator.se/test/')
-
-
-    // fetch('http://localhost:4000/api/company')
-    //     .then((res) => res.json())
-    //     .then((data) => {
-    //         console.log(data); // Do something with the data
-    //     })
-    //     .catch((error) => {
-    //         console.error('Error:', error);
-    //     });
-
-
-
-    // POST
-    // fetch('http://localhost:4000/api/company/new', {
-    //     method: "POST",
-    //     body: JSON.stringify({
-    //         company_name: "Mcdonalds",
-    //         organization_number: 22112,
-    //         contact_person: "Ahmad faroun",
-    //         address: "Mossgatan",
-    //         postcode: 33213,
-    //         city: "Halmstad",
-    //         email: "example@example.com",
-    //         phone: "090000223",
-    //         hour_cost: 7
-    //     }),
-    //     headers: {
-    //         "Content-type": "application/json; charset=UTF-8"
-    //     }
-    // })
-    //     .then(async (response) => {
-    //         if (!response.ok) {
-    //             console.error('Response not OK. Status:', await response.json());
-
-
-    //             throw new Error('Network response was not ok');
-    //         }
-    //         return response.json();
-    //     })
-    //     .then(data => {
-    //         console.log('Response data:', data); // Log the response data
-    //     })
-    //     .catch(error => {
-    //         console.error('There was a problem with the fetch operation:', error);
-    //     });
-
-    // PUT
-    // fetch('http://localhost:4000/api/company/edit/18', {
-    //     method: "PUT",
-    //     body: JSON.stringify({
-    //         company_name: "Mcdonalds",
-    //         organization_number: 22112,
-    //         contact_person: "Ahmad faroun",
-    //         address: "Mossgatan",
-    //         postcode: 33213,
-    //         city: "Halmstad",
-    //         email: "example@example.com",
-    //         phone: "090000223",
-    //         hour_cost: 70
-    //     }),
-    //     headers: {
-    //         "Content-type": "application/json; charset=UTF-8"
-    //     }
-    // })
-    //     .then(async (response) => {
-    //         if (!response.ok) {
-    //             console.error('Response not OK. Status:', await response.json());
-    //             throw new Error('Network response was not ok');
-    //         }
-    //         return response.json();
-    //     })
-    //     .then(data => {
-    //         console.log('Response data:', data); // Log the response data
-    //     })
-    //     .catch(error => {
-    //         console.error('There was a problem with the fetch operation:', error);
-    //     });
-
-    // DELETE
-    fetch('http://localhost:4000/api/company/delete/18', {
-        method: 'DELETE',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-    }).then(async (response) => {
-        if (!response.ok) {
-            console.error('Response not OK. Status:',  response);
-
-            return response.json()
-            // throw new Error('Network response was not ok');
+    <script>
+        function downloadFile(filename, company_id) {
+            fetch(`http://localhost:4000/api/download/${company_id}/${filename}`)
+                .then(response => {
+                    if (response.ok) {
+                        return response.text();
+                    } else {
+                        throw new Error('Error downloading file');
+                    }
+                })
+                .then(html => {
+                    const downloadWindow = window.open('', 'Download', 'width=400,height=300');
+                    downloadWindow.document.write(html);
+                    downloadWindow.document.close();
+                })
+                .catch(error => {
+                    alert(error.message);
+                });
         }
-    }).then((res) => {
-        console.error('res', res);
-    })
-</script>
-
+    </script>
+</body>
 </html>

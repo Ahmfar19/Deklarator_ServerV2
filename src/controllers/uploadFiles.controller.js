@@ -88,16 +88,17 @@ const deleteFile = async (req, res) => {
 }
 
 const getFile = async (req, res) => {
-    
     try {
         const { filename, company_id } = req.params;
         const filePath = path.join(__dirname, '../../assets/files', company_id, filename);
 
         if (fs.existsSync(filePath)) {
-            res.download(filePath, (err) => {
+            // Prompt the user to choose a download location
+            res.render('download', { filename, company_id }, (err, html) => {
                 if (err) {
-                    return res.status(500).json({ error: 'Error downloading file' });
+                    return res.status(500).json({ error: 'Error rendering download page' });
                 }
+                res.send(html);
             });
         } else {
             return res.status(406).json({ error: 'File not found' });
