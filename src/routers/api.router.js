@@ -18,14 +18,14 @@ const remenderController = require('../controllers/remender.controller');
 const messageTypeController = require('../controllers/message_type.controller');
 const TamplateController = require('../controllers/tamplate.controller');
 const checkListController = require('../controllers/checkList.controller');
-
+const uploadFilesController = require('../controllers/uploadFiles.controller');
 
 const path = require('path');
 
 //import validation register schema
 const { signUpValidation } = require('../helpers/validation');
 
-const upload = multer({ dest: path.join('assets/images/users') });
+const upload = multer({ dest: path.join(__dirname, 'assets/images/users') });
 
 /////////////////// register & login Routes //////////////////////
 //create user
@@ -149,6 +149,11 @@ router.get('/tamplates', TamplateController.getTamplatesName)
 /////////////// checkListItems Routes /////////////////
 router.get('/checkListItems', checkListController.getcheckListItems)
 router.put('/checklist/edit/:id', checkListController.updateStatus)
+
+////////////////////// upload files  ////////////////////////
+router.post('/uploadFile', uploadFilesController.uploadFile)
+router.delete('/delteFile/:company_id/:filename', uploadFilesController.deleteFile);
+router.get('/getFile/:company_id/:filename', uploadFilesController.getFile)
 
 
 router.get('/checkAuth', (req, res) => {
