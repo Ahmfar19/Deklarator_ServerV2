@@ -1,7 +1,6 @@
 const express = require('express');
 const router = express.Router();
 const multer = require('multer');
-const fs = require('fs');
 
 const timeStampTypeController = require('../controllers/timeStampType.controller');
 const companyController = require('../controllers/company.controller');
@@ -28,46 +27,7 @@ const { signUpValidation } = require('../helpers/validation');
 const upload = multer({ dest: path.join(__dirname, 'assets/images/users') });
 
 
-const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        // Extract data from req.body to create the folder name
 
-        const folderName = req.body.company_id; // Assuming folderName is a key in req.body
-
-        const uploadPath = path.join(__dirname, '../../assets/files', folderName);
-
-        
-
-        const directoryPath = path.join(__dirname, `../../assets/files/${folderName}/${file.originalname}`);
-      
-        if (fs.existsSync(directoryPath)) {
-       
-            const error = new Error(`File ${file.originalname} already exists in the directory.`);
-            cb(error, null);
-
-        } else {
-
-            // Create the folder using the dynamically generated folder name
-            fs.mkdir(uploadPath, { recursive: true }, (err) => {
-
-                if (err) {
-
-                    console.error('Error creating folder:', err);
-
-                    cb(err, null);
-                } else {
-                    cb(null, uploadPath);
-                }
-            });
-        }
-    },
-    filename: function (req, file, cb) {
-        cb(null, file.originalname); // Keep the original file name
-    }
-});
-
-
-const uploadFile = multer({ storage: storage });
 
 
 /////////////////// register & login Routes //////////////////////
@@ -184,7 +144,7 @@ router.delete('/messageType/delete/:id', messageTypeController.deleteMessageType
 
 
 ////////////////////// upload files  ////////////////////////
-router.post('/uploadFile', uploadFile.single('file'), uploadFilesController.uploadFile)
+router.post('/uploadFile', uploadFilesController.uploadFile)
 router.delete('/delteFile/:company_id/:filename', uploadFilesController.deleteFile);
 router.get('/getFile/:company_id/:filename', uploadFilesController.getFile)
 
