@@ -3,9 +3,7 @@ const pool = require('../databases/mysql.db');
 
 class CheckList {
     constructor(options) {
-        this.company_id = options.company_id;
-        this.item_name = options.item_name;
-        this.completed = options.completed;
+        this.text = options.text;
     }
 
     //get all
@@ -15,7 +13,7 @@ class CheckList {
         return rows;
     }
 
-     async updateCheck(id){
+    async updateCheck(id){
         const sql = `UPDATE checklist SET 
         company_id = ${this.company_id},
         completed = ${this.completed}
