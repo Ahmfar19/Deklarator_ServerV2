@@ -3,8 +3,6 @@ const path = require('path');
 const fs = require('fs');
 const multer = require('multer');
 
-
-
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
         // Extract data from req.body to create the folder name
@@ -109,8 +107,49 @@ const getFile = async (req, res) => {
     }
 }
 
+const getFiles = async (req, res) => {
+    try {
+        const { company_id } = req.params;
+        const directoryPath = path.join(__dirname, '../../assets/files', company_id);
+
+        // Read all files in the directory
+        const files = fs.readdirSync(directoryPath);
+
+        if (files.length === 0) {
+            return res.send({
+                statusCode: 406,
+                ok: false,
+                message: 'No files found',
+            });
+        }
+
+        // Prepare file details
+        const filesDetails = await Promise.all(files.map(async filename => {
+            const filePath = path.join(directoryPath, filename);
+            const customPath = `assets/files/${company_id}/${filename}`;
+            const stats = fs.statSync(filePath);
+            const fileSizeMB = stats.size / (1024 * 1024);
+            return {
+                filename,
+                path: customPath,
+                size: +fileSizeMB.toFixed(2)
+            };
+        }));
+
+        // Send file details as response
+        return res.send({
+            statusCode: 406,
+            ok: true,
+            data: filesDetails
+        });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+}
+
 module.exports = {
     uploadFile,
     deleteFile,
-    getFile
+    getFile,
+    getFiles
 };
