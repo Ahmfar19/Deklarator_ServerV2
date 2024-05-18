@@ -8,7 +8,5 @@ module.exports = {
     EMAIL_HOST: process.env.EMAIL_HOST || '',
     EMAIL: process.env.EMAIL || '',
     EMAIL_PASS: process.env.EMAIL_PASS || '',
-    JWT_SECRET_KEY: process.env.JWT_SECRET_KEY || ''
+    JWT_SECRET_KEY: process.env.JWT_SECRET_KEY || '',
 };
-
-

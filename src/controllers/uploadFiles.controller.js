@@ -1,19 +1,16 @@
-
 const path = require('path');
 const fs = require('fs');
 const multer = require('multer');
 
-//upload single File
+// upload single File
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-      
         const folderName = req.body.company_id;
         const uploadPath = getUploadPath(folderName);
 
         if (!fs.existsSync(uploadPath)) {
             fs.mkdir(uploadPath, { recursive: true }, (err) => {
                 if (err) {
-                   
                     cb(err, null);
                 } else {
                     cb(null, uploadPath);
@@ -34,7 +31,7 @@ const storage = multer.diskStorage({
         } else {
             cb(null, file.originalname);
         }
-    }
+    },
 });
 
 function getUploadPath(folderName) {
@@ -50,17 +47,15 @@ function getUniqueFilename(file, folderName) {
     return file.originalname.replace(/\.[^/.]+$/, '') + '-' + uniqueSuffix + path.extname(file.originalname);
 }
 
-//upload Multi File
+// upload Multi File
 const storageMulti = multer.diskStorage({
     destination: (req, file, cb) => {
-      
         const folderName = req.body.company_id;
         const uploadPath = getUploadPath(folderName);
 
         if (!fs.existsSync(uploadPath)) {
             fs.mkdir(uploadPath, { recursive: true }, (err) => {
                 if (err) {
-                 
                     cb(err, null);
                 } else {
                     cb(null, uploadPath);
@@ -81,10 +76,8 @@ const storageMulti = multer.diskStorage({
         } else {
             cb(null, file.originalname);
         }
-    }
+    },
 });
-
-
 
 const uploadSingleFile = multer({ storage: storage });
 const uploadMultiFile = multer({ storage: storageMulti });
@@ -92,7 +85,6 @@ const uploadMultiFile = multer({ storage: storageMulti });
 const uploadFile = (req, res) => {
     uploadSingleFile.single('file')(req, res, (err) => {
         try {
-         
             if (err instanceof multer.MulterError) {
                 if (err.code === 'LIMIT_UNEXPECTED_FILE') {
                     return res.status(400).json({ error: 'Too many files uploaded' });
@@ -131,10 +123,9 @@ const deleteFile = async (req, res) => {
     } catch (error) {
         return res.status(500).json({ error: 'Internal server error' });
     }
-}
+};
 
 const getFile = async (req, res) => {
-
     try {
         const { filename, company_id } = req.params;
         const filePath = path.join(__dirname, '../../assets/files', company_id, filename);
@@ -151,7 +142,7 @@ const getFile = async (req, res) => {
     } catch (error) {
         res.status(500).json({ error: error });
     }
-}
+};
 
 const getFiles = async (req, res) => {
     try {
@@ -178,7 +169,7 @@ const getFiles = async (req, res) => {
             return {
                 filename,
                 path: customPath,
-                size: +fileSizeMB.toFixed(2)
+                size: +fileSizeMB.toFixed(2),
             };
         }));
 
@@ -186,16 +177,15 @@ const getFiles = async (req, res) => {
         return res.send({
             statusCode: 406,
             ok: true,
-            data: filesDetails
+            data: filesDetails,
         });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
-}
+};
 
 const uploadMultiFiles = async (req, res) => {
     try {
-    
         uploadMultiFile.array('files')(req, res, (err) => {
             if (err instanceof multer.MulterError) {
                 // A Multer error occurred when uploading
@@ -207,10 +197,9 @@ const uploadMultiFiles = async (req, res) => {
             }
         });
     } catch (error) {
-     
         return res.status(500).json({ error: 'An error occurred during file upload' });
     }
-}
+};
 
 const previewFile = async (req, res) => {
     const { company_id, filename } = req.params;
@@ -227,7 +216,7 @@ const previewFile = async (req, res) => {
     } else {
         res.status(400).send('Unsupported file type');
     }
-}
+};
 
 module.exports = {
     uploadFile,
@@ -235,5 +224,5 @@ module.exports = {
     getFile,
     getFiles,
     uploadMultiFiles,
-    previewFile
+    previewFile,
 };

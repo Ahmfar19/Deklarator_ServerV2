@@ -1,4 +1,3 @@
-
 const pool = require('../databases/mysql.db');
 
 class ResetPassword {
@@ -7,7 +6,7 @@ class ResetPassword {
         this.pinCode = options.pinCode;
         this.expiresAt = options.expiresAt;
     }
-    //create
+    // create
     async save() {
         const sql = `INSERT INTO reset_password (
             email,
@@ -26,7 +25,6 @@ class ResetPassword {
         const [rows] = await pool.execute(sql);
         return rows;
     }
-
 
     static async updatePassword(email, newPassword) {
         const sql = `UPDATE staff SET 
@@ -58,9 +56,9 @@ class ResetPassword {
                          pinCode = ?, 
                          expiresAt = ?
                      WHERE email = ?`;
-      
+
         const values = [this.email, this.pinCode, this.expiresAt, userEmail];
-      
+
         await pool.execute(sql, values);
     }
 
@@ -68,7 +66,7 @@ class ResetPassword {
         const sql = `SELECT * FROM reset_password WHERE pinCode = ? AND email = ?`;
         const [rows] = await pool.execute(sql, [PinCode, email]);
         return rows;
-      }
+    }
 }
 
 module.exports = ResetPassword;

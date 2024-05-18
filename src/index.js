@@ -8,7 +8,6 @@ const config = require('config');
 const PORT = config.get('PORT');
 const app = require('./app');
 
-
 const pingWebsite = () => {
     const start = new Date();
     const url = 'https://system.deklarator.se';

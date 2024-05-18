@@ -1,11 +1,10 @@
-
 const pool = require('../databases/mysql.db');
 class TimeStampType {
     constructor(options) {
         this.name_sv = options.name_sv;
     }
 
-    //create
+    // create
     async save() {
         const sql = `INSERT INTO timestamp_type (
             name_sv

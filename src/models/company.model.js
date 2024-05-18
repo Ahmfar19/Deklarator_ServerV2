@@ -1,6 +1,5 @@
 const pool = require('../databases/mysql.db');
 
-
 class Company {
     constructor(options) {
         this.type_id = options.type_id;
@@ -14,7 +13,7 @@ class Company {
         this.phone = options.phone;
         this.hour_cost = options.hour_cost;
     }
-    //create
+    // create
     async save() {
         const sql = `INSERT INTO company (
             type_id,
@@ -43,21 +42,21 @@ class Company {
         this.company_id = result[0].insertId;
         return this.company_id;
     }
-    //get single company
+    // get single company
     static async getCompany(id) {
         const sql = `SELECT * FROM company WHERE company_id = "${id}"`;
         // eslint-disable-next-line no-unused-vars
         const [rows, fields] = await pool.execute(sql);
         return rows;
     }
-    //get all
+    // get all
     static async getAll() {
         const sql = 'SELECT * FROM company';
         // eslint-disable-next-line no-unused-vars
         const [rows, fields] = await pool.execute(sql);
         return rows;
     }
-    //update
+    // update
     async updateCompany(id) {
         const sql = `UPDATE company SET 
         type_id = "${this.type_id}", 
@@ -74,7 +73,7 @@ class Company {
         const [rows] = await pool.execute(sql);
         return rows;
     }
-    //delete
+    // delete
     static async findByIdAndDelete(id) {
         const sql = `DELETE FROM company WHERE company_id = "${id}"`;
         const [rows] = await pool.execute(sql);
@@ -85,25 +84,24 @@ class Company {
         let valid = true;
         for (const key in this) {
             const toValidate = [
-                "company_name",
-                "contact_person",
-                "email",
-                "hour_cost"
-            ]
+                'company_name',
+                'contact_person',
+                'email',
+                'hour_cost',
+            ];
             if (toValidate.includes(key)) {
                 if (!this[key]) {
                     valid = false;
                     break;
-                } else if (typeof this[key] === "string" && this[key]?.trim() === "") {
+                } else if (typeof this[key] === 'string' && this[key]?.trim() === '') {
                     valid = false;
                     break;
-                } else if (this[key] === "") {
+                } else if (this[key] === '') {
                     valid = false;
                     break;
                 }
-            };
-
-        };
+            }
+        }
         return valid;
     }
 }

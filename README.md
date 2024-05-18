@@ -41,10 +41,10 @@ The point of this backend application is to test CRUD operations with MySQL data
 
 ### Built With
 
--   [Node.js](https://nodejs.org/en/)
--   [Express](https://expressjs.com/)
--   [Cors](https://www.npmjs.com/package/cors)
--   [MySQL2](https://www.npmjs.com/package/mysql2)
+- [Node.js](https://nodejs.org/en/)
+- [Express](https://expressjs.com/)
+- [Cors](https://www.npmjs.com/package/cors)
+- [MySQL2](https://www.npmjs.com/package/mysql2)
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
@@ -60,9 +60,9 @@ git clone https://github.com/almoggutin/Node-Express-REST-API-MySQL-JS-Example
 
 **Instructions**
 
--   After cloning the the repository run `npm i` in order to install all the dependencies.
--   Create an env file in the root of the project named .env and fill in the follwing variables: PORT, DB_HOST, DB_PORT, DB_USERNAME, DB_USERNAME_PASSWORD, DB_NAME.
--   In the sql directory, there are sql files that you will need to execute in order to initialize the database.
+- After cloning the the repository run `npm i` in order to install all the dependencies.
+- Create an env file in the root of the project named .env and fill in the follwing variables: PORT, DB_HOST, DB_PORT, DB_USERNAME, DB_USERNAME_PASSWORD, DB_NAME.
+- In the sql directory, there are sql files that you will need to execute in order to initialize the database.
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 

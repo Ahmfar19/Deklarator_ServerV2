@@ -1,11 +1,10 @@
 const pool = require('../databases/mysql.db');
 
-
 class CompanyType {
     constructor(options) {
         this.type_name = options.type_name;
     }
-    //create
+    // create
     async save() {
         const sql = `INSERT INTO company_type (
             type_name
@@ -16,7 +15,7 @@ class CompanyType {
         this.type_id = result[0].insertId;
         return this.type_id;
     }
-    //get all
+    // get all
     static async getAll() {
         const sql = 'SELECT * FROM company_type';
         const [rows] = await pool.execute(sql);

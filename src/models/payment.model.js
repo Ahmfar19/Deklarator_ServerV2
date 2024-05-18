@@ -1,6 +1,5 @@
 const pool = require('../databases/mysql.db');
 
-
 class Payment {
     constructor(options) {
         this.staff_id = options.staff_id;
@@ -11,7 +10,7 @@ class Payment {
         this.payment_date = options.payment_date;
         this.paid = options.paid || 0;
     }
-    //create
+    // create
     async save() {
         const sql = `INSERT INTO payment (
             staff_id,
@@ -34,19 +33,19 @@ class Payment {
         this.payment_id = result[0].insertId;
         return this.payment_id;
     }
-    //get single 
+    // get single
     static async getPaymentById(id) {
         const sql = `SELECT * FROM payment WHERE payment_id = "${id}"`;
         const [rows] = await pool.execute(sql);
         return rows;
     }
-    //get all
+    // get all
     static async getAll_Payments() {
         const sql = 'SELECT * FROM payment';
         const [rows] = await pool.execute(sql);
         return rows;
     }
-    //update
+    // update
     async update_Payment(id) {
         const sql = `UPDATE payment SET 
         amount = "${this.amount}", 
@@ -57,7 +56,7 @@ class Payment {
         WHERE payment_id = ${id}`;
         await pool.execute(sql);
     }
-    //delete
+    // delete
     static async delete_payment(id) {
         const sql = `DELETE FROM payment WHERE payment_id = "${id}"`;
         await pool.execute(sql);
@@ -70,7 +69,8 @@ class Payment {
     }
 
     static async getPaymentsByCompanyId(id) {
-        const sql = `SELECT *, DATE_FORMAT(payment_date, "%Y-%m-%d") AS payment_date FROM payment WHERE company_id = "${id}"`;
+        const sql =
+            `SELECT *, DATE_FORMAT(payment_date, "%Y-%m-%d") AS payment_date FROM payment WHERE company_id = "${id}"`;
         const [rows] = await pool.execute(sql);
         return rows;
     }

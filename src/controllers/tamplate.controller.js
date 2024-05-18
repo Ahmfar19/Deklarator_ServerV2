@@ -8,8 +8,8 @@ const getTamplatesName = async (req, res) => {
     } catch (err) {
         sendResponse(res, 500, 'Internal Server Error', null, err.message || err, null);
     }
-}
+};
 
 module.exports = {
-    getTamplatesName
-}
+    getTamplatesName,
+};

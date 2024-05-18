@@ -7,9 +7,8 @@ const sendResponse = (res, code, statusMessage, message, error, data) => {
         error: error,
         data: data,
     });
-}
-
-module.exports = {
-    sendResponse
 };
 
+module.exports = {
+    sendResponse,
+};

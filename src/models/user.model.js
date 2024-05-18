@@ -81,7 +81,7 @@ class User {
         const [rows] = await pool.execute(sql);
         return rows;
     }
-    
+
     static async checkIfUserExisted(email, username) {
         const sql = `SELECT * FROM staff WHERE email = ? OR username = ?`;
         const [rows] = await pool.execute(sql, [email, username]);
@@ -102,6 +102,5 @@ class User {
         return rows;
     }
 }
-
 
 module.exports = User;

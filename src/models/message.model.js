@@ -1,6 +1,5 @@
 const pool = require('../databases/mysql.db');
 
-
 class Message {
     constructor(options) {
         this.staff_id = options.staff_id;
@@ -8,9 +7,9 @@ class Message {
         this.title = options.title;
         this.body = options.body;
         this.date_time = options.date_time;
-        this.seen = options.seen;     
+        this.seen = options.seen;
     }
-    //create
+    // create
     async save() {
         const sql = `INSERT INTO message (
             staff_id,
@@ -31,13 +30,13 @@ class Message {
         this.message_id = result[0].insertId;
         return this.message_id;
     }
-    //get single company
+    // get single company
     static async getMessage(id) {
         const sql = `SELECT * FROM message WHERE message_id = "${id}"`;
         const [rows] = await pool.execute(sql);
         return rows;
     }
-    //get all
+    // get all
     static async getAll() {
         const sql = `
             SELECT message.*, message_type.variant
@@ -47,7 +46,7 @@ class Message {
         const [rows] = await pool.execute(sql);
         return rows;
     }
-    //update
+    // update
     async update_Message(id) {
         const sql = `UPDATE message SET 
         seen = ${this.seen}

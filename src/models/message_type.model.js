@@ -1,11 +1,10 @@
 const pool = require('../databases/mysql.db');
 
-
 class MessageType {
     constructor(options) {
         this.variant = options.variant;
     }
-    //create
+    // create
     async save() {
         const sql = `INSERT INTO message_type (
             variant
@@ -16,19 +15,19 @@ class MessageType {
         this.message_typ_id = result[0].insertId;
         return this.message_typ_id;
     }
-    //get single MessageType
+    // get single MessageType
     static async getMessageType(id) {
         const sql = `SELECT * FROM message_type WHERE message_typ_id = "${id}"`;
         const [rows] = await pool.execute(sql);
         return rows;
     }
-    //get all
+    // get all
     static async getAll() {
         const sql = 'SELECT * FROM message_type';
         const [rows] = await pool.execute(sql);
         return rows;
     }
-    //update
+    // update
     async update_MessageType(id) {
         const sql = `UPDATE message_type SET 
         variant = "${this.variant}"

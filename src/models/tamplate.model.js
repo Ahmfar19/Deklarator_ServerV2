@@ -4,8 +4,8 @@ class Tamplate {
     constructor(options) {
         this.tamplate_name = options.tamplate_name;
     }
-    
-    static async getAll(){
+
+    static async getAll() {
         const sql = 'SELECT * FROM tamplate';
         const [rows] = await pool.execute(sql);
         return rows;

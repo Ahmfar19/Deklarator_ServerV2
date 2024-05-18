@@ -44,7 +44,8 @@ class User {
     }
 
     async save() {
-        const sql = `INSERT INTO users (id, first_name, last_name, age) VALUES (UUID(), "${this.firstName}", "${this.lastName}", ${this.age})`;
+        const sql =
+            `INSERT INTO users (id, first_name, last_name, age) VALUES (UUID(), "${this.firstName}", "${this.lastName}", ${this.age})`;
         await pool.execute(sql);
     }
 
@@ -56,7 +57,8 @@ class User {
     }
 
     static async findByIdAndUpdate(id, options) {
-        const sql = `UPDATE users SET first_name = "${options.firstName}", last_name = "${options.lastName}", age = ${options.age} WHERE id = "${id}"`;
+        const sql =
+            `UPDATE users SET first_name = "${options.firstName}", last_name = "${options.lastName}", age = ${options.age} WHERE id = "${id}"`;
         await pool.execute(sql);
     }
 

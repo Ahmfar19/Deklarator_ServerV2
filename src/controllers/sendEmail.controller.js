@@ -11,13 +11,11 @@ const transporter = nodemailer.createTransport({
     secure: true, // Indicates if the connection should use SSL
     auth: {
         user: EMAIL, // Your email address
-        pass: EMAIL_PASS // Your password
-    }
+        pass: EMAIL_PASS, // Your password
+    },
 });
 
-
 const sendEmailAttachment = async (to, subject, filename, content) => {
-
     let mailOptions = {
         from: EMAIL,
         to: to,
@@ -26,27 +24,27 @@ const sendEmailAttachment = async (to, subject, filename, content) => {
             {
                 filename: filename,
                 content: content,
-                encoding: 'binary'
-            }
-        ]
+                encoding: 'binary',
+            },
+        ],
     };
-    return sendEmail(mailOptions)
-}
+    return sendEmail(mailOptions);
+};
 
 const sendEmailHtml = async (to, subject, htmlTemplate) => {
     let mailOptions = {
         from: EMAIL,
         to: to,
         subject: subject,
-        html:htmlTemplate,
+        html: htmlTemplate,
         attachments: [{
             filename: 'bb.png',
             path: path.join('assets/tampletes/bb.png'),
-            cid: 'unique@kreata.ee' //same cid value as in the html img src
-        }]
+            cid: 'unique@kreata.ee', // same cid value as in the html img src
+        }],
     };
-    return sendEmail(mailOptions)
-}
+    return sendEmail(mailOptions);
+};
 
 const sendReqularEmail = async (to, subject, text) => {
     let mailOptions = {
@@ -55,14 +53,14 @@ const sendReqularEmail = async (to, subject, text) => {
         subject: subject,
         text: text,
     };
-    return sendEmail(mailOptions)
-}
+    return sendEmail(mailOptions);
+};
 
 const sendEmail = async (mailOptions) => {
     return new Promise((resolve) => {
-        transporter.sendMail(mailOptions, function (error, info) {
+        transporter.sendMail(mailOptions, function(error, info) {
             if (error) {
-                console.log("Error sending email", error);
+                console.log('Error sending email', error);
                 resolve(false);
             } else {
                 console.log('Email sent: ' + info.response);
@@ -70,13 +68,10 @@ const sendEmail = async (mailOptions) => {
             }
         });
     });
-}
-
-
-
+};
 
 module.exports = {
     sendReqularEmail,
     sendEmailAttachment,
-    sendEmailHtml
-}
+    sendEmailHtml,
+};

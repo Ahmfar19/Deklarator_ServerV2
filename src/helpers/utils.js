@@ -26,7 +26,7 @@ function getFutureDateTime() {
 }
 
 function isDateTimeInPast(dateTimeToCheck) {
-    const currentDateTime = new Date(getCurrentDateTime())
+    const currentDateTime = new Date(getCurrentDateTime());
     const providedDateTime = new Date(dateTimeToCheck);
     return providedDateTime.getTime() < currentDateTime.getTime();
 }
@@ -44,7 +44,7 @@ async function comparePassword(password, hashedPassword) {
 }
 
 function removeLastComma(str) {
-    return str.replace(/,$/, "");
+    return str.replace(/,$/, '');
 }
 
 function getNowDate_time() {
@@ -56,16 +56,16 @@ function getNowDate_time() {
     const minutes = currentDate.getMinutes();
     const seconds = currentDate.getSeconds();
     const formattedDateTime = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
-    return formattedDateTime
+    return formattedDateTime;
 }
 
 function isToday(dateString) {
     const date = new Date(dateString);
     const today = new Date();
     return (
-        date.getDate() === today.getDate() &&
-        date.getMonth() === today.getMonth() &&
-        date.getFullYear() === today.getFullYear()
+        date.getDate() === today.getDate()
+        && date.getMonth() === today.getMonth()
+        && date.getFullYear() === today.getFullYear()
     );
 }
 
@@ -85,11 +85,11 @@ async function verifyToken(fingerprint, token) {
             if (error) {
                 resolve(false);
             } else {
-                const authenticated = fingerprint === decoded.id
+                const authenticated = fingerprint === decoded.id;
                 resolve(authenticated);
             }
         });
-    })
+    });
 }
 
 module.exports = {
@@ -102,5 +102,5 @@ module.exports = {
     getNowDate_time,
     isToday,
     getLastWeekDate,
-    verifyToken
+    verifyToken,
 };

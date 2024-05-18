@@ -1,13 +1,12 @@
 const pool = require('../databases/mysql.db');
 const { removeLastComma } = require('../helpers/utils');
 
-
 class Task {
     constructor(options) {
         this.staff_created = options.staff_created;
         this.staff_assigned = options.staff_assigned;
         this.title = options.title;
-        this.body  = options.body;
+        this.body = options.body;
         this.type_id = options.type_id;
         this.task_order = options.task_order;
     }
@@ -58,26 +57,26 @@ class Task {
         let sql = 'UPDATE task SET';
 
         if (this.type_id) {
-            sql += ` type_id = ${this.type_id},`
+            sql += ` type_id = ${this.type_id},`;
         }
         if (this.staff_created) {
-            sql += ` staff_created = ${this.staff_created},`
+            sql += ` staff_created = ${this.staff_created},`;
         }
         if (this.staff_assigned) {
-            sql += ` staff_assigned = ${this.staff_assigned},`
+            sql += ` staff_assigned = ${this.staff_assigned},`;
         }
         if (this.title) {
-            sql += ` title = "${this.title}",`
+            sql += ` title = "${this.title}",`;
         }
         if (this.body) {
-            sql += ` body = "${this.body}",`
+            sql += ` body = "${this.body}",`;
         }
         if (this.task_order != undefined) {
-            sql += ` task_order = ${this.task_order}`
+            sql += ` task_order = ${this.task_order}`;
         }
 
-        sql = removeLastComma(sql)
-        sql += ` WHERE task_id = ${id}`
+        sql = removeLastComma(sql);
+        sql += ` WHERE task_id = ${id}`;
         const [rows] = await pool.execute(sql);
         return rows;
     }

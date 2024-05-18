@@ -1,4 +1,3 @@
-
 const pool = require('../databases/mysql.db');
 class Case {
     constructor(options) {
@@ -7,7 +6,7 @@ class Case {
         this.type_id = options.type_id;
         this.date = options.date;
     }
-    //create
+    // create
     async save() {
         const sql = `INSERT INTO cases (
             company_id,
@@ -22,27 +21,27 @@ class Case {
         )`;
         await pool.execute(sql);
     }
-    //get all
+    // get all
     static async getAll() {
         const sql = 'SELECT * FROM  cases';
         // eslint-disable-next-line no-unused-vars
         const [rows] = await pool.execute(sql);
         return rows;
     }
-    //get single caseType
+    // get single caseType
     static async getCase(id) {
         const sql = `SELECT * FROM cases WHERE case_id = "${id}"`;
         const [rows] = await pool.execute(sql);
         return rows;
     }
-    //update
+    // update
     async update(id) {
         const sql = `UPDATE cases SET 
         case_id = "${this.case_name}"
         WHERE type_id = ${id}`;
         await pool.execute(sql);
     }
-    //delete
+    // delete
     static async findByIdAndDelete(id) {
         const sql = `DELETE FROM case_type WHERE type_id = "${id}"`;
         await pool.execute(sql);
@@ -53,7 +52,6 @@ class Case {
         const [rows] = await pool.execute(sql);
         return rows;
     }
-
 }
 
 module.exports = Case;

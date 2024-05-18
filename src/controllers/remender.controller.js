@@ -1,7 +1,7 @@
 const Reminder = require('../models/reminder.model');
 const { sendResponse } = require('../helpers/apiResponse');
 const { isToday } = require('../helpers/utils');
-const { checkForReminder } = require('./sendReminder.controller')
+const { checkForReminder } = require('./sendReminder.controller');
 
 const getRemenders = async (req, res) => {
     try {
@@ -10,37 +10,35 @@ const getRemenders = async (req, res) => {
     } catch (err) {
         sendResponse(res, 500, 'Internal Server Error', null, err.message || err, null);
     }
-}
+};
 
 const getSingleRemender = async (req, res) => {
     try {
         const id = req.params.id;
-        const singleRemender = await Reminder.getReminder(id)
+        const singleRemender = await Reminder.getReminder(id);
         sendResponse(res, 200, 'Ok', 'Successfully retrieved  the remender', null, singleRemender);
     } catch (err) {
         sendResponse(res, 500, 'Internal Server Error', null, err.message || err, null);
     }
-}
+};
 
 const addRemender = async (req, res) => {
     try {
-
         const remender = new Reminder(req.body);
 
         await remender.save();
 
-        const today = isToday(remender.remender_date)
+        const today = isToday(remender.remender_date);
 
         if (today) {
-            checkForReminder()
+            checkForReminder();
         }
 
         sendResponse(res, 201, 'Created', 'Successfully created a remender.', null, remender);
-
     } catch (err) {
         sendResponse(res, 500, 'Internal Server Error', null, err.message || err, null);
     }
-}
+};
 
 const updateRemender = async (req, res) => {
     try {
@@ -51,21 +49,20 @@ const updateRemender = async (req, res) => {
         if (data.affectedRows === 0) {
             return res.json({
                 status: 406,
-                message: "not remender found to update"
-            })
+                message: 'not remender found to update',
+            });
         }
-       
-        const today = isToday(remender.remender_date)
-        if(today){
-            checkForReminder()
+
+        const today = isToday(remender.remender_date);
+        if (today) {
+            checkForReminder();
         }
 
         sendResponse(res, 202, 'Accepted', 'Successfully updated a remender.', null, remender);
     } catch (err) {
         sendResponse(res, 500, 'Internal Server Error', null, err.message || err, null);
     }
-
-}
+};
 
 const deleteRemender = async (req, res) => {
     try {
@@ -74,15 +71,14 @@ const deleteRemender = async (req, res) => {
         if (data.affectedRows === 0) {
             return res.json({
                 status: 406,
-                message: "not remender found to delete"
-            })
+                message: 'not remender found to delete',
+            });
         }
         sendResponse(res, 202, 'Accepted', 'Successfully deleted a remnder.', null, null);
-    }
-    catch (err) {
+    } catch (err) {
         sendResponse(res, 500, 'Internal Server Error', null, err.message || err, null);
     }
-}
+};
 
 const getCompanyReminders = async (req, res) => {
     try {
@@ -92,7 +88,7 @@ const getCompanyReminders = async (req, res) => {
     } catch (err) {
         sendResponse(res, 500, 'Internal Server Error', null, err.message || err, null);
     }
-}
+};
 
 module.exports = {
     getRemenders,
@@ -100,5 +96,5 @@ module.exports = {
     addRemender,
     updateRemender,
     deleteRemender,
-    getCompanyReminders
+    getCompanyReminders,
 };
