@@ -1,4 +1,6 @@
 const bcrypt = require('bcryptjs');
+var jwt = require('jsonwebtoken');
+const config = require('config');
 
 function getCurrentDateTime() {
     const now = new Date();
@@ -68,15 +70,26 @@ function isToday(dateString) {
 }
 
 function getLastWeekDate() {
-
     const currentDate = new Date();
     const isoDate = currentDate.toISOString();
     const lastWeekDate = new Date(Date.parse(isoDate) - 7 * 24 * 60 * 60 * 1000);
-
     // Format the lastWeekDate to 'YYYY-MM-DD'
     const formattedLastWeekDate = lastWeekDate.toISOString().slice(0, 10);
-
     return formattedLastWeekDate;
+}
+
+async function verifyToken(fingerprint, token) {
+    const JWT_SECRET_KEY = config.get('JWT_SECRET_KEY');
+    return new Promise((resolve) => {
+        jwt.verify(token, JWT_SECRET_KEY, (error, decoded) => {
+            if (error) {
+                resolve(false);
+            } else {
+                const authenticated = fingerprint === decoded.id
+                resolve(authenticated);
+            }
+        });
+    })
 }
 
 module.exports = {
@@ -88,5 +101,6 @@ module.exports = {
     removeLastComma,
     getNowDate_time,
     isToday,
-    getLastWeekDate
+    getLastWeekDate,
+    verifyToken
 };

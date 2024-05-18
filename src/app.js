@@ -7,6 +7,7 @@ const { sendReminderEmail } = require('./controllers/sendReminder.controller.js'
 const { deleteOldMessages } = require('./controllers/message.controller.js')
 const app = express();
 const path = require('path');
+const { verifyToken } = require('./helpers/utils.js')
 
 app.use(cookieParser());
 app.use(express.json());
@@ -35,7 +36,18 @@ app.use(function (req, res, next) {
 // app.use(express.static(path.join(__dirname, '../dist')));
 
 // To allow access to the assets from outside the server
-// app.use('/assets', express.static('assets'));
+async function verifyInlogged(req, res, next) {
+    const token = req.cookies.accessToken
+    const fingerprint = req.query.cid + req.cookies.staff_id;
+    const authenticated = await verifyToken(fingerprint, token);
+    if (authenticated) {
+        next();
+    } else {
+        res.status(403).send('Forbidden');
+    }
+}
+
+app.use('/assets', verifyInlogged, express.static('assets'));
 
 // Setting an intervall every 6 hours that cehck for a reminder to send.
 sendReminderEmail();

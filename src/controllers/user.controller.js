@@ -266,19 +266,15 @@ const verifyToken = async (req, res) => {
    
         if (req?.headers?.authorization?.startsWith('Bearer')) {
             let token = req.headers.authorization.split(" ")[1]
-   
             if (token) {
               
                 jwt.verify(token, JWT_SECRET_KEY, (error, decoded) => {
-               
                     if (error) {
                         return res.json({
                             statusCode: 401,
                             message: "invalid token",
                         });
-   
                     } else {
-   
                         const checkUserDevice = fingerprint + user_id
                         if (checkUserDevice === decoded.id) {
                             return res.json({
@@ -294,7 +290,6 @@ const verifyToken = async (req, res) => {
                         }
                     }
                 });
-   
             } else {
                 return res.json({
                     statusCode: 401,

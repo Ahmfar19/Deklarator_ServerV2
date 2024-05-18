@@ -211,10 +211,29 @@ const uploadMultiFiles = async (req, res) => {
         return res.status(500).json({ error: 'An error occurred during file upload' });
     }
 }
+
+const previewFile = async (req, res) => {
+    const { company_id, filename } = req.params;
+    const filePath = path.join(__dirname, '../../assets/files', company_id, filename);
+    const ext = path.extname(filePath).toLowerCase();
+    if (ext === '.txt') {
+        res.setHeader('Content-Type', 'text/plain');
+        fs.readFile(filePath, 'utf8', (err, data) => {
+            if (err) {
+                return res.status(500).send('Error reading file');
+            }
+            res.send(data);
+        });
+    } else {
+        res.status(400).send('Unsupported file type');
+    }
+}
+
 module.exports = {
     uploadFile,
     deleteFile,
     getFile,
     getFiles,
-    uploadMultiFiles
+    uploadMultiFiles,
+    previewFile
 };
