@@ -155,7 +155,7 @@ router.post('/uploadFile', uploadFilesController.uploadFile)
 router.delete('/delteFile/:company_id/:filename', uploadFilesController.deleteFile);
 router.get('/getFile/:company_id/:filename', uploadFilesController.getFile);
 router.get('/getFiles/:company_id', uploadFilesController.getFiles)
-
+router.post('/uploadMultipleFiles', uploadFilesController.uploadMultiFiles)
 
 
 router.get('/checkAuth', (req, res) => {

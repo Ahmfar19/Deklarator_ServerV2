@@ -4,6 +4,8 @@
 # OS
 .DS_Store
 
+/assets/files
+
 # ENV
 .env*
 *.env
