@@ -3,50 +3,96 @@ const path = require('path');
 const fs = require('fs');
 const multer = require('multer');
 
+//upload single File
 const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        // Extract data from req.body to create the folder name
-
-        const folderName = req.body.company_id; // Assuming folderName is a key in req.body
-
-        const uploadPath = path.join(__dirname, '../../assets/files', folderName);
-
-        
-
-        const directoryPath = path.join(__dirname, `../../assets/files/${folderName}/${file.originalname}`);
+    destination: (req, file, cb) => {
       
-        if (fs.existsSync(directoryPath)) {
-       
-            const error = new Error(`File ${file.originalname} already exists in the directory.`);
-            cb(error, null);
+        const folderName = req.body.company_id;
+        const uploadPath = getUploadPath(folderName);
 
-        } else {
-
-            // Create the folder using the dynamically generated folder name
+        if (!fs.existsSync(uploadPath)) {
             fs.mkdir(uploadPath, { recursive: true }, (err) => {
-
                 if (err) {
-
-                    console.error('Error creating folder:', err);
-
+                   
                     cb(err, null);
                 } else {
                     cb(null, uploadPath);
                 }
             });
+        } else {
+            cb(null, uploadPath);
         }
     },
-    filename: function (req, file, cb) {
-        cb(null, file.originalname); // Keep the original file name
+    filename: (req, file, cb) => {
+        const folderName = req.body.company_id;
+        const uploadPath = getUploadPath(folderName);
+        const directoryPath = path.join(uploadPath, file.originalname);
+
+        if (fs.existsSync(directoryPath)) {
+            const uniqueFilename = getUniqueFilename(file);
+            cb(null, uniqueFilename);
+        } else {
+            cb(null, file.originalname);
+        }
+    }
+});
+
+function getUploadPath(folderName) {
+    return path.join(__dirname, '../../assets/files', folderName);
+}
+
+const folderCounters = {};
+
+function getUniqueFilename(file, folderName) {
+    let folderCount = (folderCounters[folderName] || 0) + 1;
+    folderCounters[folderName] = folderCount;
+    const uniqueSuffix = folderCount;
+    return file.originalname.replace(/\.[^/.]+$/, '') + '-' + uniqueSuffix + path.extname(file.originalname);
+}
+
+//upload Multi File
+const storageMulti = multer.diskStorage({
+    destination: (req, file, cb) => {
+      
+        const folderName = req.body.company_id;
+        const uploadPath = getUploadPath(folderName);
+
+        if (!fs.existsSync(uploadPath)) {
+            fs.mkdir(uploadPath, { recursive: true }, (err) => {
+                if (err) {
+                 
+                    cb(err, null);
+                } else {
+                    cb(null, uploadPath);
+                }
+            });
+        } else {
+            cb(null, uploadPath);
+        }
+    },
+    filename: (req, file, cb) => {
+        const folderName = req.body.company_id;
+        const uploadPath = getUploadPath(folderName);
+        const directoryPath = path.join(uploadPath, file.originalname);
+
+        if (fs.existsSync(directoryPath)) {
+            const uniqueFilename = getUniqueFilename(file);
+            cb(null, uniqueFilename);
+        } else {
+            cb(null, file.originalname);
+        }
     }
 });
 
 
-const uploadFiles = multer({ storage: storage });
+
+const uploadSingleFile = multer({ storage: storage });
+const uploadMultiFile = multer({ storage: storageMulti });
 
 const uploadFile = (req, res) => {
-    uploadFiles.single('file')(req, res, (err) => {
+    uploadSingleFile.single('file')(req, res, (err) => {
         try {
+         
             if (err instanceof multer.MulterError) {
                 if (err.code === 'LIMIT_UNEXPECTED_FILE') {
                     return res.status(400).json({ error: 'Too many files uploaded' });
@@ -88,7 +134,7 @@ const deleteFile = async (req, res) => {
 }
 
 const getFile = async (req, res) => {
-    
+
     try {
         const { filename, company_id } = req.params;
         const filePath = path.join(__dirname, '../../assets/files', company_id, filename);
@@ -147,9 +193,28 @@ const getFiles = async (req, res) => {
     }
 }
 
+const uploadMultiFiles = async (req, res) => {
+    try {
+    
+        uploadMultiFile.array('files')(req, res, (err) => {
+            if (err instanceof multer.MulterError) {
+                // A Multer error occurred when uploading
+                return res.status(400).json({ error: 'Error uploading files' });
+            } else if (err) {
+                return res.status(500).json({ error: 'Internal server error' });
+            } else {
+                return res.status(200).json({ message: 'Files uploaded successfully' });
+            }
+        });
+    } catch (error) {
+     
+        return res.status(500).json({ error: 'An error occurred during file upload' });
+    }
+}
 module.exports = {
     uploadFile,
     deleteFile,
     getFile,
-    getFiles
+    getFiles,
+    uploadMultiFiles
 };

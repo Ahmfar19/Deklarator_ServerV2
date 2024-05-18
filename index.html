@@ -1,116 +1,58 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Multiple File Upload</title>
 </head>
-
 <body>
-    <h2>Server test</h2>
-</body>
+<h1>Upload Multiple Files</h1>
+<form id="uploadForm" enctype="multipart/form-data">
+    <input type="file" name="files" multiple>
+    <button type="submit">Upload Files</button>
+</form>
+<div id="message"></div>
+
 
 <script>
-    console.error('AA',);
+const form = document.getElementById('uploadForm');
+const messageDiv = document.getElementById('message');
 
-    // fetch('https://emp.deklarator.se/test/api/casetypes')
-    // fetch('https://emp.deklarator.se/test/')
+form.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    
+    const files = document.querySelector('input[type="file"]').files;
+    const formData = new FormData();
+    const companyId = '123'; // Replace '123' with the actual company ID
 
+    // Append the company ID to the FormData object
+    formData.append('company_id', companyId);
 
-    // fetch('http://localhost:4000/api/company')
-    //     .then((res) => res.json())
-    //     .then((data) => {
-    //         console.log(data); // Do something with the data
-    //     })
-    //     .catch((error) => {
-    //         console.error('Error:', error);
-    //     });
+    for (let i = 0; i < files.length; i++) {
+        formData.append('files', files[i]);
+    }
 
+    try {
+        const response = await fetch('http://localhost:4000/api/uploadMultipleFiles', {
+            method: 'POST',
+            body: formData
+        });
 
+        const data = await response.json();
 
-    // POST
-    // fetch('http://localhost:4000/api/company/new', {
-    //     method: "POST",
-    //     body: JSON.stringify({
-    //         company_name: "Mcdonalds",
-    //         organization_number: 22112,
-    //         contact_person: "Ahmad faroun",
-    //         address: "Mossgatan",
-    //         postcode: 33213,
-    //         city: "Halmstad",
-    //         email: "example@example.com",
-    //         phone: "090000223",
-    //         hour_cost: 7
-    //     }),
-    //     headers: {
-    //         "Content-type": "application/json; charset=UTF-8"
-    //     }
-    // })
-    //     .then(async (response) => {
-    //         if (!response.ok) {
-    //             console.error('Response not OK. Status:', await response.json());
-
-
-    //             throw new Error('Network response was not ok');
-    //         }
-    //         return response.json();
-    //     })
-    //     .then(data => {
-    //         console.log('Response data:', data); // Log the response data
-    //     })
-    //     .catch(error => {
-    //         console.error('There was a problem with the fetch operation:', error);
-    //     });
-
-    // PUT
-    // fetch('http://localhost:4000/api/company/edit/18', {
-    //     method: "PUT",
-    //     body: JSON.stringify({
-    //         company_name: "Mcdonalds",
-    //         organization_number: 22112,
-    //         contact_person: "Ahmad faroun",
-    //         address: "Mossgatan",
-    //         postcode: 33213,
-    //         city: "Halmstad",
-    //         email: "example@example.com",
-    //         phone: "090000223",
-    //         hour_cost: 70
-    //     }),
-    //     headers: {
-    //         "Content-type": "application/json; charset=UTF-8"
-    //     }
-    // })
-    //     .then(async (response) => {
-    //         if (!response.ok) {
-    //             console.error('Response not OK. Status:', await response.json());
-    //             throw new Error('Network response was not ok');
-    //         }
-    //         return response.json();
-    //     })
-    //     .then(data => {
-    //         console.log('Response data:', data); // Log the response data
-    //     })
-    //     .catch(error => {
-    //         console.error('There was a problem with the fetch operation:', error);
-    //     });
-
-    // DELETE
-    fetch('http://localhost:4000/api/company/delete/18', {
-        method: 'DELETE',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-    }).then(async (response) => {
-        if (!response.ok) {
-            console.error('Response not OK. Status:',  response);
-
-            return response.json()
-            // throw new Error('Network response was not ok');
+        if (response.ok) {
+            messageDiv.textContent = data.message;
+            messageDiv.style.color = 'green';
+        } else {
+            messageDiv.textContent = data.error;
+            messageDiv.style.color = 'red';
         }
-    }).then((res) => {
-        console.error('res', res);
-    })
+    } catch (error) {
+        console.error('An error occurred:', error);
+        messageDiv.textContent = 'An error occurred during file upload';
+        messageDiv.style.color = 'red';
+    }
+});
 </script>
-
+</body>
 </html>
