@@ -12,7 +12,6 @@ const app = express();
 app.use(cookieParser());
 app.use(express.json());
 
-
 const NODE_ENV = process.env.NODE_ENV || 'production';
 const whitelist = [];
 const corsOptions = {

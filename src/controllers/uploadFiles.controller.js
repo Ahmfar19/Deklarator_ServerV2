@@ -165,11 +165,10 @@ const getFiles = async (req, res) => {
             const filePath = path.join(directoryPath, filename);
             const customPath = `assets/files/${company_id}/${filename}`;
             const stats = fs.statSync(filePath);
-            const fileSizeMB = stats.size / (1024 * 1024);
             return {
                 filename,
                 path: customPath,
-                size: +fileSizeMB.toFixed(2),
+                size: stats.size,
             };
         }));
 
