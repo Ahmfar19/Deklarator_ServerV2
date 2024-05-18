@@ -41,7 +41,8 @@ class Message {
         const sql = `
             SELECT message.*, message_type.variant
             FROM message
-            JOIN message_type ON message.message_typ_id = message_type.message_typ_id;
+            JOIN message_type ON message.message_typ_id = message_type.message_typ_id
+            ORDER BY message.message_id DESC;
         `;
         const [rows] = await pool.execute(sql);
         return rows;
@@ -68,7 +69,7 @@ class Message {
     }
 
     static async updateSeenBeforeId(beforeID) {
-        const sql = `UPDATE message SET seen=1 WHERE message_id <= ${beforeID}`;
+        const sql = `UPDATE message SET seen=1 WHERE message_id >= ${beforeID}`;
         const [rows] = await pool.execute(sql);
         return rows;
     }

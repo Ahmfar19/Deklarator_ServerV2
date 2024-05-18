@@ -9,18 +9,15 @@ const PORT = config.get('PORT');
 const app = require('./app');
 
 const pingWebsite = () => {
-    const start = new Date();
     const url = 'https://system.deklarator.se';
-    https.get(url, (res) => {
-        const end = new Date();
-        const time = end - start;
-    }).on('error', (err) => {
+    https.get(url, () => {
+    }).on('error', () => {
         return;
     });
 };
 
 // setInterval(() => {
 //     pingWebsite();
-// }, 5 * 60 * 1000)
+// }, 4 * 60 * 1000)
 
 app.listen(4000, () => console.log(`Server is running in ${NODE_ENV} mode on port: ${PORT}`));
