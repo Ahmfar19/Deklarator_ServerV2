@@ -15,6 +15,23 @@ const transporter = nodemailer.createTransport({
     },
 });
 
+const sendEmailToGroup = async (to, bccEmails, subject, htmlTemplate) => {
+    let mailOptions = {
+        from: EMAIL,
+        to: to,
+        bcc: bccEmails,
+        subject: subject,
+        html: htmlTemplate,
+        attachments: [{
+            filename: 'bb.png',
+            path: path.join('assets/tampletes/bb.png'),
+            cid: 'unique@kreata.ee', // same cid value as in the html img src
+        }],
+    };
+    return sendEmail(mailOptions);
+};
+
+
 const sendEmailAttachment = async (to, subject, filename, content) => {
     let mailOptions = {
         from: EMAIL,
@@ -58,7 +75,7 @@ const sendReqularEmail = async (to, subject, text) => {
 
 const sendEmail = async (mailOptions) => {
     return new Promise((resolve) => {
-        transporter.sendMail(mailOptions, function(error, info) {
+        transporter.sendMail(mailOptions, function (error, info) {
             if (error) {
                 console.log('Error sending email', error);
                 resolve(false);
@@ -74,4 +91,5 @@ module.exports = {
     sendReqularEmail,
     sendEmailAttachment,
     sendEmailHtml,
+    sendEmailToGroup
 };
