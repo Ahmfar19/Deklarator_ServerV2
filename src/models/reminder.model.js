@@ -64,8 +64,14 @@ class Reminder {
         const isoDate = currentDate.toISOString(); // Convert to ISO format
         const [year, month, day] = isoDate.split('T')[0].split('-'); // Extract year, month, and day from ISO format
 
-        const sql = `SELECT YEAR(remender_date) AS year, MONTH(remender_date) AS month, DAY(remender_date) AS day,
-        c.email AS company_email , remender_id, recurrent , t.tamplate_name, c.company_name
+        const sql = `SELECT YEAR(remender_date) AS year, 
+        MONTH(remender_date) AS month, 
+        DAY(remender_date) AS day,
+        c.email AS company_email, 
+        remender_id, recurrent, 
+        t.tamplate_name, 
+        t.tamplate_id,
+        c.company_name
         FROM reminder 
         INNER JOIN company AS c ON reminder.company_id = c.company_id
         INNER JOIN tamplate AS t ON reminder.tamplate_id = t.tamplate_id
