@@ -10,6 +10,16 @@ const getcheckListItems = async (req, res) => {
     }
 };
 
+const getCompanyCheckList = async (req, res) => {
+    try {
+        const id = req.params.id;
+        const chicklistItems = await CheckList.getByCompanyId(id);
+        sendResponse(res, 200, 'Ok', 'Successfully retrieved all the chicklistItems', null, chicklistItems);
+    } catch (err) {
+        sendResponse(res, 500, 'Internal Server Error', null, err.message || err, null);
+    }
+};
+
 const updateStatus = async (req, res) => {
     try {
         const id = req.params.id;
@@ -31,7 +41,20 @@ const updateStatus = async (req, res) => {
         sendResponse(res, 500, 'Internal Server Error', null, err.message || err, null);
     }
 };
+
+const createCopmpanyCheckList = async (req, res) => {
+    try {
+        const company_id = req.params.id;
+        await CheckList.updateCheck(company_id);
+        sendResponse(res, 202, 'Accepted', 'Checklist created successfully.', null, null);
+    } catch (err) {
+        sendResponse(res, 500, 'Internal Server Error', null, err.message || err, null);
+    }
+};
+
 module.exports = {
     getcheckListItems,
     updateStatus,
+    createCopmpanyCheckList,
+    getCompanyCheckList,
 };

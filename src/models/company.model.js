@@ -51,7 +51,11 @@ class Company {
     }
     // get all
     static async getAll() {
-        const sql = 'SELECT * FROM company';
+        const sql = `
+            SELECT company.*, type_name 
+            FROM company
+            JOIN company_type ON company.type_id = company_type.type_id;
+        `;
         // eslint-disable-next-line no-unused-vars
         const [rows, fields] = await pool.execute(sql);
         return rows;

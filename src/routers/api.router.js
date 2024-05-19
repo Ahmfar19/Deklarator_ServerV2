@@ -119,6 +119,7 @@ router.get('/tasks', taskController.getTasks);
 router.get('/task/types', taskController.getTasksTypes);
 router.get('/task/:id', taskController.getSingleTask);
 router.post('/task/new', taskController.addTask);
+router.post('/multitask/new', taskController.addMultiTask);
 router.put('/task/edit/:id', taskController.updateTask);
 router.delete('/task/delete/:id', taskController.deleteTask);
 
@@ -142,7 +143,9 @@ router.get('/tamplates', TamplateController.getTamplatesName);
 
 /////////////// checkListItems Routes /////////////////
 router.get('/checkListItems', checkListController.getcheckListItems);
+router.get('/checklist/company/:id', checkListController.getCompanyCheckList);
 router.put('/checklist/edit/:id', checkListController.updateStatus);
+router.post('/checklist/new/:id', checkListController.createCopmpanyCheckList);
 
 ////////////////////// upload files  ////////////////////////
 router.post('/uploadFile', uploadFilesController.uploadFile);

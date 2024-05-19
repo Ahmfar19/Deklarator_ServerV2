@@ -1,4 +1,5 @@
 const Company = require('../models/company.model');
+const CheckList = require('../models/checkList.model');
 const { sendResponse } = require('../helpers/apiResponse');
 
 const getSingleCompany = async (req, res) => {
@@ -28,6 +29,7 @@ const addCompany = async (req, res) => {
             );
         }
         await company.save();
+        CheckList.createCompanyCheckList(company.company_id);
         sendResponse(res, 201, 'Created', 'Successfully created a company.', null, company);
     } catch (err) {
         sendResponse(res, 500, 'Internal Server Error', null, err.message || err, null);

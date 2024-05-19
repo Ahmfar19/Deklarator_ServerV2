@@ -9,6 +9,7 @@ class Task {
         this.body = options.body;
         this.type_id = options.type_id;
         this.task_order = options.task_order;
+        this.company_id = options.company_id;
     }
 
     async save() {
@@ -16,20 +17,69 @@ class Task {
             type_id,
             staff_created,
             staff_assigned,
+            company_id,
             title,
             body,
             task_order
         ) VALUES (
             ${this.type_id},
             ${this.staff_created},
-            ${this.staff_assigned}, 
+            ${this.staff_assigned},
+            ${this.company_id},
             "${this.title}",
             "${this.body}",
             ${this.task_order}
         )`;
+
         const result = await pool.execute(sql);
         this.task_id = result[0].insertId;
         return this.task_id;
+    }
+
+    async saveMulti() {
+        // Validate that companyIds is an array
+        if (!Array.isArray(this.company_id) || this.company_id.length === 0) {
+            throw new Error('companyIds should be a non-empty array');
+        }
+
+        if (!Array.isArray(this.task_order) || this.task_order.length !== this.company_id.length) {
+            throw new Error('newOrders should be an array with the same length as companyIds');
+        }
+
+        let values = '';
+        for (let i = 0; i < this.company_id.length; i++) {
+            values += `
+                (${this.type_id},
+                ${this.staff_created},
+                ${this.staff_assigned},
+                ${this.company_id[i]},
+                '${this.title}',
+                '${this.body}',
+                ${this.task_order[i]})
+            `;
+
+            // Add comma if it's not the last value
+            if (i < this.company_id.length - 1) {
+                values += ', ';
+            }
+        }
+
+        const sql = `INSERT INTO task (
+            type_id,
+            staff_created,
+            staff_assigned,
+            company_id,
+            title,
+            body,
+            task_order
+        ) VALUES ${values}`;
+
+        const [result] = await pool.execute(sql);
+        const insertedTaskIds = [];
+        for (let i = 0; i < result.affectedRows; i++) {
+            insertedTaskIds.push(result.insertId + i);
+        }
+        return insertedTaskIds;
     }
 
     static async getTask(id) {
@@ -46,9 +96,11 @@ class Task {
 
     static async getAll() {
         const sql = `
-        SELECT task.*, CONCAT(staff.fname, ' ', staff.lname) AS assigned
+        SELECT task.*, CONCAT(staff.fname, ' ', staff.lname) AS assigned, company_name
         FROM task
-        JOIN staff on task.staff_assigned = staff.staff_id`;
+        JOIN staff on task.staff_assigned = staff.staff_id
+        JOIN company on task.company_id = company.company_id
+        `;
         const [rows] = await pool.execute(sql);
         return rows;
     }

@@ -23,8 +23,18 @@ const getSingleTask = async (req, res) => {
 const addTask = async (req, res) => {
     try {
         const task = new Task(req.body);
-        await task.save();
-        sendResponse(res, 201, 'Created', 'Successfully created a message.', null, task);
+        const task_id = await task.save();
+        sendResponse(res, 201, 'Created', 'Successfully created a message.', null, { task_id: task_id });
+    } catch (err) {
+        sendResponse(res, 500, 'Internal Server Error', null, err.message || err, null);
+    }
+};
+
+const addMultiTask = async (req, res) => {
+    try {
+        const task = new Task(req.body);
+        const insertedTaskIds = await task.saveMulti();
+        sendResponse(res, 201, 'Created', 'Successfully created a message.', null, { task_ids: insertedTaskIds });
     } catch (err) {
         sendResponse(res, 500, 'Internal Server Error', null, err.message || err, null);
     }
@@ -79,4 +89,5 @@ module.exports = {
     updateTask,
     deleteTask,
     getTasksTypes,
+    addMultiTask,
 };
