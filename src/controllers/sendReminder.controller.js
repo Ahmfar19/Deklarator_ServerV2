@@ -8,22 +8,19 @@ const path = require('path');
 const fs = require('fs');
 const mailMessags = require('../helpers/emailMessages');
 
-function getHtmlTemplate(tamplateName) {
+const getHtmlTemplate = (tamplateName) => {
     const htmlTemplatePath = path.resolve(`assets/tampletes/${tamplateName}.html`);
     const htmlTemplate = fs.readFileSync(htmlTemplatePath);
     return htmlTemplate;
-}
+};
 
 const sendEmails = async (templateId, templateArray, title) => {
-    const emailsSent = [];
-
     for (const item of templateArray) {
         const htmlTemplate = getHtmlTemplate(item.tamplate_name);
         const emailSent = await sendEmailHtml(item.company_email, title, htmlTemplate);
-        emailsSent.push(emailSent);
+       
+        return emailSent// Log the email sending result directly
     }
-
-    return emailsSent;
 };
 
 const checkForReminder = async () => {
@@ -45,17 +42,13 @@ const checkForReminder = async () => {
             templates[item.tamplate_id].push(item);
         }
 
-        const promises = Object.keys(templates).map(async (templateId) => {
+        for (const templateId of Object.keys(templates)) {
             if (templates[templateId].length) {
-                return await sendEmails(templateId, templates[templateId], title);
+              const emailSent =  await sendEmails(templateId, templates[templateId], title);
+              console.log(emailSent);
             }
-        });
-
-        const allEmailsSent = await Promise.all(promises);
-
-
-        console.log(allEmailsSent);
-     
+           
+        }
 
     } catch (error) {
         // Handle errors appropriately
