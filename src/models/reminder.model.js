@@ -27,13 +27,11 @@ class Reminder {
         this.remender_id = result[0].insertId;
         return this.remender_id;
     }
-
     static async getReminder(id) {
         const sql = `SELECT * FROM reminder WHERE remender_id = "${id}"`;
         const [rows] = await pool.execute(sql);
         return rows;
     }
-
     static async getAll() {
         const sql = `
         SELECT reminder.*, company.company_name, DATE_FORMAT(reminder.remender_date, "%Y-%m-%d") AS remender_date
@@ -42,7 +40,6 @@ class Reminder {
         const [rows] = await pool.execute(sql);
         return rows;
     }
-
     async updateReminder(id) {
         const sql = `UPDATE reminder SET 
         company_id = ${this.company_id},
@@ -52,13 +49,11 @@ class Reminder {
         const [rows] = await pool.execute(sql);
         return rows;
     }
-
     static async deleteReminder(id) {
         const sql = `DELETE FROM reminder WHERE remender_id = "${id}"`;
         const [rows] = await pool.execute(sql);
         return rows;
     }
-
     static async getReminders() {
         const currentDate = new Date();
         const isoDate = currentDate.toISOString(); // Convert to ISO format
@@ -81,8 +76,8 @@ class Reminder {
 
         return rows;
     }
-
-    static async updateReminder(id) {
+    //1
+    static async updateReminderEveryMonth(id) {
         // Get the current date
         const currentDate = new Date();
         // Add one month to the current date
@@ -98,8 +93,85 @@ class Reminder {
 
         const [rows] = await pool.execute(sql, [formattedRemenderDate, id]);
         return rows;
-    }
+    } 
+    //2
+    static async updateReminderEveryWeek(id) {
+        const currentDate = new Date();
 
+        // Add 7 days (1 week) to the current date
+        const reminderDate = new Date(currentDate.setDate(currentDate.getDate() + 7));
+
+        // Format the date in the desired format (e.g., "YYYY-MM-DD")
+        const formattedReminderDate = reminderDate.toISOString().slice(0, 10);
+
+        const sql = `
+        UPDATE reminder
+        SET remender_date = ?
+        WHERE remender_id = ?
+      `;
+
+        const [rows] = await pool.execute(sql, [formattedReminderDate, id]);
+        return rows;
+    }
+    //3
+    static async updateReminderEveryTwoWeek(id) {
+        const currentDate = new Date();
+
+        // Add 14 days (2 weeks) to the current date
+        const reminderDate = new Date(currentDate.setDate(currentDate.getDate() + 14));
+        // Format the date in the desired format (e.g., "YYYY-MM-DD")
+        const formattedReminderDate = reminderDate.toISOString().slice(0, 10);
+
+        const sql = `
+        UPDATE reminder
+        SET remender_date = ?
+        WHERE remender_id = ?
+      `;
+
+        const [rows] = await pool.execute(sql, [formattedReminderDate, id]);
+        return rows;
+    }
+    //4
+    static async updateReminderEveryThreeWeek(id) {
+        const currentDate = new Date();
+
+        // Add 14 days (2 weeks) to the current date
+        const reminderDate = new Date(currentDate.setDate(currentDate.getDate() + 21));
+        // Format the date in the desired format (e.g., "YYYY-MM-DD")
+        const formattedReminderDate = reminderDate.toISOString().slice(0, 10);
+
+        const sql = `
+        UPDATE reminder
+        SET remender_date = ?
+        WHERE remender_id = ?
+      `;
+
+        const [rows] = await pool.execute(sql, [formattedReminderDate, id]);
+        return rows;
+    }
+    //5
+    static async updataReminderEveryFirstDayInWeek(id) {
+        // Get the current date
+        const currentDate = new Date();
+
+        // Calculate the first day of the current week
+        const firstDayOfWeek = new Date(currentDate.setDate(currentDate.getDate() - currentDate.getDay()));
+
+        // Calculate the first day of the next week
+        const firstDayOfNextWeek = new Date(firstDayOfWeek.setDate(firstDayOfWeek.getDate() + 7));
+
+        // Format the date in the desired format (e.g., "YYYY-MM-DD")
+        const formattedFirstDayOfNextWeek = firstDayOfNextWeek.toISOString().slice(0, 10);
+
+        const sql = `
+        UPDATE reminder
+        SET remender_date = ?
+        WHERE remender_id = ?
+      `;
+
+        const [rows] = await pool.execute(sql, [formattedFirstDayOfNextWeek, id]);
+        return rows;
+    }
     static async getReminderByCompanyId(id) {
         const sql = `SELECT * FROM reminder WHERE company_id = ${id}`;
         const [rows] = await pool.execute(sql);

@@ -3,7 +3,7 @@ const Message = require('../models/message.model');
 const MessageType = require('../models/message_type.model');
 const User = require('../models/user.model');
 const Tamplate = require('../models/tamplate.model')
-const { sendEmailToGroup, sendEmailHtml } = require('./sendEmail.controller');
+const { sendEmailToGroup } = require('./sendEmail.controller');
 const { getNowDate_time } = require('../helpers/utils');
 const path = require('path');
 const fs = require('fs');
@@ -36,91 +36,104 @@ const checkForReminder = async () => {
 
                 const bccEmails = []
                 const tamplateName = tamplatesArray[templateId][0].tamplate_name;
-              
+
                 tamplatesArray[templateId].forEach(async (item) => {
-                  
+
                     bccEmails.push(item.company_email)
-
-                    if (item.recurrent) {
-                        await Reminder.updateReminder(item.remender_id);
-                    } else {
-                        await Reminder.deleteReminder(item.remender_id);
+                   
+                    switch (item.recurrent) {
+                        case 1:
+                            await Reminder.updateReminderEveryMonth(item.remender_id)
+                            break;
+                        case 2:
+                            await Reminder.updateReminderEveryWeek(item.remender_id)
+                            break;
+                        case 3:
+                            await Reminder.updateReminderEveryTwoWeek(item.remender_id)
+                            break;
+                        case 4:
+                            await Reminder.updateReminderEveryThreeWeek(item.remender_id)
+                            break;
+                        case 5:
+                            await Reminder.updataReminderEveryFirstDayInWeek(item.remender_id)
+                            break;
+                        default:
+                            await Reminder.deleteReminder(item.remender_id)
                     }
-
                 });
 
-               const htmlTemplatePath = path.resolve(`assets/tampletes/${tamplateName}.html`);
-               const htmlTemplate = fs.readFileSync(htmlTemplatePath);
-               const emailSent = await sendEmailToGroup('ahmad996cyc@gmail.com', bccEmails, title, htmlTemplate)
-               
-               if (!emailSent) {
-                   const title = mailMessags.message.title;
-                   const body = mailMessags.message.body;
+                const htmlTemplatePath = path.resolve(`assets/tampletes/${tamplateName}.html`);
+                const htmlTemplate = fs.readFileSync(htmlTemplatePath);
+                const emailSent = await sendEmailToGroup('ahmad996cyc@gmail.com', bccEmails, title, htmlTemplate)
 
-                   const nowDateTime = getNowDate_time();
+                if (!emailSent) {
+                    const title = mailMessags.message.title;
+                    const body = mailMessags.message.body;
 
-                   const bodyString = JSON.stringify({
-                       key: body,
-                       params: {
-                           0:tamplateName  
-                       },
-                   });
+                    const nowDateTime = getNowDate_time();
 
-               for (const admin of admins) {
-                   const message = new Message({
-                       staff_id: admin.staff_id,
-                       message_typ_id: messageName[0].message_typ_id,
-                       title: title,
-                       body: bodyString,
-                       date_time: nowDateTime,
-                       seen: false,
-                   });
-             
-                    await message.save();
-               }
-               }
+                    const bodyString = JSON.stringify({
+                        key: body,
+                        params: {
+                            0: tamplateName
+                        },
+                    });
+
+                    for (const admin of admins) {
+                        const message = new Message({
+                            staff_id: admin.staff_id,
+                            message_typ_id: messageName[0].message_typ_id,
+                            title: title,
+                            body: bodyString,
+                            date_time: nowDateTime,
+                            seen: false,
+                        });
+
+                        await message.save();
+                    }
+                }
             }
         });
 
-          for (let i = 0; i < data.length; i++) {
-               const htmlTemplatePath = path.resolve(`assets/tampletes/${data[i].tamplate_name}.html`);
-               const htmlTemplate = fs.readFileSync(htmlTemplatePath);
-               const emailSent = await sendEmailHtml(data[i].company_email, title, htmlTemplate);
+        // for (let i = 0; i < data.length; i++) {
+        //     const htmlTemplatePath = path.resolve(`assets/tampletes/${data[i].tamplate_name}.html`);
+        //     const htmlTemplate = fs.readFileSync(htmlTemplatePath);
+        //     const emailSent = await sendEmailHtml(data[i].company_email, title, htmlTemplate);
 
-               if (data[i].recurrent) {
-                   await Reminder.updateReminder(data[i].remender_id);
-               } else {
-                   await Reminder.deleteReminder(data[i].remender_id);
-               }
+        //     if (data[i].recurrent) {
+        //         await Reminder.updateReminder(data[i].remender_id);
+        //     } else {
+        //         await Reminder.deleteReminder(data[i].remender_id);
+        //     }
 
-               if (!emailSent) {
-                   const title = mailMessags.message.title;
-                   const body = mailMessags.message.body;
+        //     if (!emailSent) {
+        //         const title = mailMessags.message.title;
+        //         const body = mailMessags.message.body;
 
-                   const nowDateTime = getNowDate_time();
+        //         const nowDateTime = getNowDate_time();
 
-                   const bodyString = JSON.stringify({
-                       key: body,
-                       params: {
-                           0: data[i].company_name,
-                           1: data[i].tamplate_name,
-                       },
-                   });
+        //         const bodyString = JSON.stringify({
+        //             key: body,
+        //             params: {
+        //                 0: data[i].company_name,
+        //                 1: data[i].tamplate_name,
+        //             },
+        //         });
 
-               for (const admin of admins) {
-                   const message = new Message({
-                       staff_id: admin.staff_id,
-                       message_typ_id: messageName[0].message_typ_id,
-                       title: title,
-                       body: bodyString,
-                       date_time: nowDateTime,
-                       seen: false,
-                   });
+        //         for (const admin of admins) {
+        //             const message = new Message({
+        //                 staff_id: admin.staff_id,
+        //                 message_typ_id: messageName[0].message_typ_id,
+        //                 title: title,
+        //                 body: bodyString,
+        //                 date_time: nowDateTime,
+        //                 seen: false,
+        //             });
 
-                   await message.save();
-               }
-               }
-         }
+        //             await message.save();
+        //         }
+        //     }
+        // }
 
 
     } catch (error) {
