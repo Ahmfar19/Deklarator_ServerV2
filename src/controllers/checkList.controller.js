@@ -45,8 +45,18 @@ const updateStatus = async (req, res) => {
 const createCopmpanyCheckList = async (req, res) => {
     try {
         const company_id = req.params.id;
-        await CheckList.updateCheck(company_id);
+        await CheckList.createCompanyCheckList(company_id);
         sendResponse(res, 202, 'Accepted', 'Checklist created successfully.', null, null);
+    } catch (err) {
+        sendResponse(res, 500, 'Internal Server Error', null, err.message || err, null);
+    }
+};
+
+const updateChecklist = async (req, res) => {
+    try {
+        const { list, company_id } = req.body;
+        await CheckList.updateChecklist(company_id, list);
+        sendResponse(res, 202, 'Accepted', 'Checklist updated successfully.', null, null);
     } catch (err) {
         sendResponse(res, 500, 'Internal Server Error', null, err.message || err, null);
     }
@@ -57,4 +67,5 @@ module.exports = {
     updateStatus,
     createCopmpanyCheckList,
     getCompanyCheckList,
+    updateChecklist,
 };

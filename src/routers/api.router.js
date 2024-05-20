@@ -144,7 +144,7 @@ router.get('/tamplates', TamplateController.getTamplatesName);
 /////////////// checkListItems Routes /////////////////
 router.get('/checkListItems', checkListController.getcheckListItems);
 router.get('/checklist/company/:id', checkListController.getCompanyCheckList);
-router.put('/checklist/edit/:id', checkListController.updateStatus);
+router.put('/checklist/edit', checkListController.updateChecklist);
 router.post('/checklist/new/:id', checkListController.createCopmpanyCheckList);
 
 ////////////////////// upload files  ////////////////////////

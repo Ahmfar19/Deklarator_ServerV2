@@ -24,11 +24,23 @@ class CheckList {
 
     async updateCheck(id) {
         const sql = `UPDATE checklist SET 
-        company_id = ${this.company_id},
         completed = ${this.completed}
         WHERE item_id = ${id}`;
         const [rows] = await pool.execute(sql);
         return rows;
+    }
+
+    static async updateChecklist(company_id, list) {
+        if (!list || !company_id) {
+            throw new Error('Invalid argument');
+        }
+
+        Object.entries(list).forEach(async ([id, completed]) => {
+            const sql =
+                `UPDATE company_checklist SET completed = ${completed} WHERE item_id = ${id} AND company_id = ${company_id};`;
+            await pool.execute(sql);
+        });
+        return true;
     }
 
     static async createCompanyCheckList(company_id) {
