@@ -40,6 +40,16 @@ const addRemender = async (req, res) => {
     }
 };
 
+const addMultiReminder = async (req, res) => {
+    try {
+        const reminder = new Reminder(req.body);
+        const addedReminders = await reminder.saveMulti();
+        sendResponse(res, 201, 'Created', 'Successfully created the reminders.', null, addedReminders || []);
+    } catch (err) {
+        sendResponse(res, 500, 'Internal Server Error', null, err.message || err, null);
+    }
+};
+
 const updateRemender = async (req, res) => {
     try {
         const id = req.params.id;
@@ -97,4 +107,5 @@ module.exports = {
     updateRemender,
     deleteRemender,
     getCompanyReminders,
+    addMultiReminder,
 };

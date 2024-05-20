@@ -28,6 +28,41 @@ class Reminder {
         return this.remender_id;
     }
 
+    async saveMulti() {
+        // Validate that companyIds is an array
+        if (!Array.isArray(this.company_id) || this.company_id.length === 0) {
+            throw new Error('companyIds should be a non-empty array');
+        }
+
+        let values = '';
+        for (let i = 0; i < this.company_id.length; i++) {
+            values += `
+                (${this.company_id[i]},
+                ${this.staff_id},
+                ${this.tamplate_id},
+                "${this.remender_date}", 
+                ${this.recurrent})
+            `;
+
+            // Add comma if it's not the last value
+            if (i < this.company_id.length - 1) {
+                values += ', ';
+            }
+        }
+
+        const sql = `INSERT INTO reminder (
+            company_id,
+            staff_id,
+            tamplate_id,
+            remender_date,
+            recurrent
+        ) VALUES ${values}`;
+
+        const [result] = await pool.execute(sql);
+        const data = await this.geRangeReminder(result.insertId, result.insertId + result.affectedRows - 1);
+        return data;
+    }
+
     static async getReminder(id) {
         const sql = `SELECT * FROM reminder WHERE remender_id = "${id}"`;
         const [rows] = await pool.execute(sql);
@@ -96,6 +131,17 @@ class Reminder {
 
     static async getReminderByCompanyId(id) {
         const sql = `SELECT * FROM reminder WHERE company_id = ${id}`;
+        const [rows] = await pool.execute(sql);
+        return rows;
+    }
+
+    async geRangeReminder(from, to) {
+        const sql = `
+            SELECT reminder.*, company.company_name, DATE_FORMAT(reminder.remender_date, "%Y-%m-%d") AS remender_date
+            FROM reminder
+            JOIN company ON reminder.company_id = company.company_id
+            WHERE remender_id >= ${from} AND remender_id <= ${to};
+        `;
         const [rows] = await pool.execute(sql);
         return rows;
     }

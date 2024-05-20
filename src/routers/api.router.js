@@ -128,6 +128,7 @@ router.get('/remenders', remenderController.getRemenders);
 router.get('/remender/:id', remenderController.getSingleRemender);
 router.get('/remender/company/:id', remenderController.getCompanyReminders);
 router.post('/remender/new', remenderController.addRemender);
+router.post('/multiremender/new', remenderController.addMultiReminder);
 router.put('/remender/edit/:id', remenderController.updateRemender);
 router.delete('/remender/delete/:id', remenderController.deleteRemender);
 
