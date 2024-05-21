@@ -31,7 +31,6 @@ const sendEmailToGroup = async (to, bccEmails, subject, htmlTemplate) => {
     return sendEmail(mailOptions);
 };
 
-
 const sendEmailAttachment = async (to, subject, filename, content) => {
     let mailOptions = {
         from: EMAIL,
@@ -75,7 +74,7 @@ const sendReqularEmail = async (to, subject, text) => {
 
 const sendEmail = async (mailOptions) => {
     return new Promise((resolve) => {
-        transporter.sendMail(mailOptions, function (error, info) {
+        transporter.sendMail(mailOptions, function(error, info) {
             if (error) {
                 console.log('Error sending email', error);
                 resolve(false);
@@ -91,5 +90,5 @@ module.exports = {
     sendReqularEmail,
     sendEmailAttachment,
     sendEmailHtml,
-    sendEmailToGroup
+    sendEmailToGroup,
 };

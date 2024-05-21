@@ -112,7 +112,7 @@ class Reminder {
 
         return rows;
     }
-    //1
+    // 1
     static async updateReminderEveryMonth(id) {
         // Get the current date
         const currentDate = new Date();
@@ -129,8 +129,8 @@ class Reminder {
 
         const [rows] = await pool.execute(sql, [formattedRemenderDate, id]);
         return rows;
-    } 
-    //2
+    }
+    // 2
     static async updateReminderEveryWeek(id) {
         const currentDate = new Date();
 
@@ -149,7 +149,7 @@ class Reminder {
         const [rows] = await pool.execute(sql, [formattedReminderDate, id]);
         return rows;
     }
-    //3
+    // 3
     static async updateReminderEveryTwoWeek(id) {
         const currentDate = new Date();
 
@@ -167,7 +167,7 @@ class Reminder {
         const [rows] = await pool.execute(sql, [formattedReminderDate, id]);
         return rows;
     }
-    //4
+    // 4
     static async updateReminderEveryThreeWeek(id) {
         const currentDate = new Date();
 
@@ -185,7 +185,7 @@ class Reminder {
         const [rows] = await pool.execute(sql, [formattedReminderDate, id]);
         return rows;
     }
-    //5
+    // 5
     static async updataReminderEveryFirstDayInWeek(id) {
         // Get the current date
         const currentDate = new Date();
