@@ -5,7 +5,6 @@ const { sendResponse } = require('../helpers/apiResponse');
 const iconv = require('iconv-lite');
 // upload single File
 
-
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
         const folderName = req.body.company_id;
@@ -30,7 +29,6 @@ const storage = multer.diskStorage({
 
         // Decode the file name using iconv-lite
         originalName = iconv.decode(Buffer.from(originalName, 'latin1'), 'utf8');
-        console.log(originalName);
         const directoryPath = path.join(uploadPath, originalName);
 
         if (fs.existsSync(directoryPath)) {
@@ -45,11 +43,9 @@ const uploadFiles = multer({ storage: storage });
 
 const deleteFile = async (req, res) => {
     try {
-        const { filename, company_id } = req.params;
-        // Decode the filename received from the request parameters
-        const decodedFilename = iconv.decode(Buffer.from(filename, 'latin1'), 'utf8');
-        
-        const filePath = path.join(__dirname, '../../assets/files', company_id, decodedFilename);
+        const { company_id } = req.params;
+        const filename = req.body.filename;
+        const filePath = path.join(__dirname, '../../assets/files', company_id, filename);
 
         if (fs.existsSync(filePath)) {
             fs.unlink(filePath, (err) => {
@@ -73,30 +69,30 @@ function getUniqueFilename(file, folderName) {
     folderCounters[folderName] = folderCount;
     const uniqueSuffix = folderCount;
     return file.originalname.replace(/\.[^/.]+$/, '') + '-' + uniqueSuffix + path.extname(file.originalname);
-};
+}
 
 function getUploadPath(folderName) {
     return path.join(__dirname, '../../assets/files', folderName);
-};
+}
 
 const uploadFile = (req, res) => {
     uploadFiles.single('file')(req, res, (err) => {
         try {
             if (err instanceof multer.MulterError) {
-                if (err.code === 'LIMIT_UNEXPECTED_FILE') {              
-                 return sendResponse(res, 400, 'Internal Server Error', null, 'Too many files uploaded', null);                 
+                if (err.code === 'LIMIT_UNEXPECTED_FILE') {
+                    return sendResponse(res, 400, 'Internal Server Error', null, 'Too many files uploaded', null);
                 }
-                return   sendResponse(res, 400, 'Internal Server Error', null, 'File upload error' , null);
+                return sendResponse(res, 400, 'Internal Server Error', null, 'File upload error', null);
             } else if (err) {
-                return  sendResponse(res, 500, 'Internal Server Error', null, err.message || err, null);
+                return sendResponse(res, 500, 'Internal Server Error', null, err.message || err, null);
             }
             if (!req.file) {
-                return  sendResponse(res, 400, 'Internal Server Error', null, 'No file uploaded' , null);    
+                return sendResponse(res, 400, 'Internal Server Error', null, 'No file uploaded', null);
             }
-            return   res.status(200).json({ 
-                message: 'File uploaded successfully', 
-                file: req.file ,
-                ok: true
+            return res.status(200).json({
+                message: 'File uploaded successfully',
+                file: req.file,
+                ok: true,
             });
         } catch (error) {
             sendResponse(res, 500, 'Internal Server Error', null, error.message || error, null);
@@ -112,7 +108,7 @@ const getFile = async (req, res) => {
         if (fs.existsSync(filePath)) {
             res.download(filePath, (err) => {
                 if (err) {
-                    return  sendResponse(res, 500, 'Internal Server Error', null,'Error downloading file', null);
+                    return sendResponse(res, 500, 'Internal Server Error', null, 'Error downloading file', null);
                 }
             });
         } else {
@@ -158,7 +154,6 @@ const getFiles = async (req, res) => {
             data: filesDetails,
         });
     } catch (error) {
-
         sendResponse(res, 500, 'Internal Server Error', null, error.message || error, null);
     }
 };
@@ -170,11 +165,9 @@ const uploadMultiFiles = async (req, res) => {
                 // A Multer error occurred when uploading
                 return res.status(400).json({ error: 'Error uploading files' });
             } else if (err) {
-              return sendResponse(res, 500, 'Internal Server Error', null, err.message || err, null);
-                 
-        
+                return sendResponse(res, 500, 'Internal Server Error', null, err.message || err, null);
             } else {
-              return  sendResponse(res, 200, 'Ok', 'Files uploaded successfully', null, null);    
+                return sendResponse(res, 200, 'Ok', 'Files uploaded successfully', null, null);
             }
         });
     } catch (error) {
