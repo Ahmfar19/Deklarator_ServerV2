@@ -39,7 +39,7 @@ async function verifyInlogged(req, res, next) {
         res.status(403).send('Forbidden');
     }
 }
-app.use('/assets', verifyInlogged, express.static('assets'));
+app.use('/assets', express.static('assets'));
 
 // Setting an intervall every 6 hours that cehck for a reminder to send.
 sendReminderEmail();
@@ -53,14 +53,14 @@ app.use('/api', apiRouter);
 // app.use('/server/api', apiRouter);
 
 // ***************** When testing the fronEnd by this server **************** //
-// const path = require('path');
-// app.use(express.static(path.join(__dirname, '../dist')));
-// app.get('/app', (req, res) => {
-//     res.sendFile(path.join(__dirname, '../dist/index.html'));
-// });
-// app.get('/timer', (req, res) => {
-//     res.sendFile(path.join(__dirname, '../dist/index.html'));
-// });
+const path = require('path');
+app.use(express.static(path.join(__dirname, '../dist')));
+app.get('/app', (req, res) => {
+    res.sendFile(path.join(__dirname, '../dist/index.html'));
+});
+app.get('/timer', (req, res) => {
+    res.sendFile(path.join(__dirname, '../dist/index.html'));
+});
 
 module.exports = app;
 
