@@ -27,9 +27,7 @@ const addRemender = async (req, res) => {
         const remender = new Reminder(req.body);
 
         await remender.save();
-
         const today = isToday(remender.remender_date);
-
         if (today) {
             checkForReminder();
         }
@@ -44,6 +42,10 @@ const addMultiReminder = async (req, res) => {
     try {
         const reminder = new Reminder(req.body);
         const addedReminders = await reminder.saveMulti();
+        const today = isToday(req.body.remender_date);
+        if (today) {
+            checkForReminder();
+        }
         sendResponse(res, 201, 'Created', 'Successfully created the reminders.', null, addedReminders || []);
     } catch (err) {
         sendResponse(res, 500, 'Internal Server Error', null, err.message || err, null);

@@ -8,6 +8,8 @@ const { getNowDate_time } = require('../helpers/utils');
 const path = require('path');
 const fs = require('fs');
 const mailMessags = require('../helpers/emailMessages');
+const config = require('config');
+const ADMIN_EMAIL = config.get('ADMIN_EMAIL');
 
 const checkForReminder = async () => {
     try {
@@ -62,7 +64,7 @@ const checkForReminder = async () => {
 
                 const htmlTemplatePath = path.resolve(`assets/tampletes/${tamplateName}.html`);
                 const htmlTemplate = fs.readFileSync(htmlTemplatePath);
-                const emailSent = await sendEmailToGroup('ahmad996cyc@gmail.com', bccEmails, title, htmlTemplate);
+                const emailSent = await sendEmailToGroup(ADMIN_EMAIL, bccEmails, title, htmlTemplate);
 
                 if (!emailSent) {
                     const title = mailMessags.message.title;
@@ -97,6 +99,7 @@ const checkForReminder = async () => {
     }
 };
 
+// eslint-disable-next-line no-unused-vars
 const checkForSingleReminder = async () => {
     try {
         const data = await Reminder.getReminders();
