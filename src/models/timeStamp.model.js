@@ -61,8 +61,11 @@ class TimeStamp {
 
     // get relationShip fields with timeStamp
     static async getTimeStampOverView() {
-        const sql =
-            `SELECT * FROM time_stamp JOIN company ON time_stamp.company_id = company.company_id JOIN staff ON time_stamp.staff_id = staff.staff_id JOIN timestamp_type ON time_stamp.type_id = timestamp_type.type_id`;
+        const sql = `SELECT * FROM time_stamp JOIN 
+            company ON time_stamp.company_id = company.company_id 
+            JOIN staff ON time_stamp.staff_id = staff.staff_id 
+            JOIN timestamp_type ON time_stamp.type_id = timestamp_type.type_id
+        `;
         const [rows] = await pool.execute(sql);
         return rows;
     }
@@ -130,6 +133,7 @@ class TimeStamp {
            ts.time, 
            DATE_FORMAT(ts.stamp_date, "%Y-%m-%d") AS stamp_date, 
            c.company_name,
+           c.company_id,
            c.hour_cost,
            CONCAT(s.fname, ' ', s.lname) AS username , 
            tt.name_sv 
