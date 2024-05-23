@@ -2,13 +2,13 @@ const pool = require('../databases/mysql.db');
 
 class Tamplate {
     constructor(options) {
-        this.template_body = options.template_body;
+        this.tamplate_body = options.tamplate_body;
     }
     async save() {
         const sql = `INSERT INTO tamplate (
-            template_body
+            tamplate_body
         ) VALUES (
-            "${this.template_body}"
+            "${this.tamplate_body}"
         )`;
         const result = await pool.execute(sql);     
         this.tamplate_id  = result[0].insertId;
@@ -22,8 +22,8 @@ class Tamplate {
 
     async update_tamplate(id) {
         const sql = `UPDATE tamplate SET 
-        template_body = '${this.template_body}'
-        WHERE template_id = ${id}`;
+        tamplate_body = "${this.tamplate_body}"
+        WHERE tamplate_id = ${id}`;
         const [rows] = await pool.execute(sql);
         return rows;
     }
