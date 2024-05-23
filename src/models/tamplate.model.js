@@ -22,8 +22,10 @@ class Tamplate {
 
     async update_tamplate(id) {
         const sql = `UPDATE tamplate SET 
-        template_body = "${this.template_body}"
+        template_body = '${this.template_body}'
         WHERE template_id = ${id}`;
+
+        console.error('sql', sql);
         const [rows] = await pool.execute(sql);
         return rows;
     }
