@@ -100,7 +100,7 @@ class Reminder {
         DAY(remender_date) AS day,
         c.email AS company_email, 
         remender_id, recurrent, 
-        t.tamplate_name, 
+        t.tamplate_body, 
         t.tamplate_id,
         c.company_name
         FROM reminder 

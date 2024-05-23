@@ -141,7 +141,8 @@ router.delete('/messageType/delete/:id', messageTypeController.deleteMessageType
 
 /////////////// Tamplates Routes /////////////////
 router.get('/tamplates', TamplateController.getTamplatesName);
-
+router.post('/tamplate/new', TamplateController.createTamplate)
+router.put('/template/edit/:id', TamplateController.updateTamplate)
 /////////////// checkListItems Routes /////////////////
 router.get('/checkListItems', checkListController.getcheckListItems);
 router.get('/checklist/company/:id', checkListController.getCompanyCheckList);

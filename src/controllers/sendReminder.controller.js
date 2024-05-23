@@ -14,7 +14,7 @@ const ADMIN_EMAIL = config.get('ADMIN_EMAIL');
 const checkForReminder = async () => {
     try {
         const data = await Reminder.getReminders();
-
+  
         if (!data.length) return;
 
         const tamplates = await Tamplate.getAll();
@@ -24,6 +24,7 @@ const checkForReminder = async () => {
 
         const { title } = mailMessags.reminder;
 
+   
         const tamplatesArray = {};
         tamplates.map(tamplate => {
             tamplatesArray[tamplate.tamplate_id] = [];
@@ -35,9 +36,10 @@ const checkForReminder = async () => {
 
         Object.keys(tamplatesArray).forEach(async (templateId) => {
             if (tamplatesArray[templateId].length) {
-                const bccEmails = [];
-                const tamplateName = tamplatesArray[templateId][0].tamplate_name;
-
+             
+                const bccEmails = [];  
+                const tamplateBody = tamplatesArray[templateId][0].tamplate_body;
+               
                 tamplatesArray[templateId].forEach(async (item) => {
                     bccEmails.push(item.company_email);
 
@@ -62,40 +64,43 @@ const checkForReminder = async () => {
                     }
                 });
 
-                const htmlTemplatePath = path.resolve(`assets/tampletes/${tamplateName}.html`);
-                const htmlTemplate = fs.readFileSync(htmlTemplatePath);
-                const emailSent = await sendEmailToGroup(ADMIN_EMAIL, bccEmails, title, htmlTemplate);
+                 const htmlTemplatePath = path.resolve(`assets/tampletes/index.html`);
+                 let htmlTemplate = fs.readFileSync(htmlTemplatePath, 'utf-8');
+                 
+                 htmlTemplate = htmlTemplate.replace('{{tamplateBody}}', tamplateBody)
+               
+                 const emailSent = await sendEmailToGroup(ADMIN_EMAIL, bccEmails, title, htmlTemplate);
 
-                if (!emailSent) {
-                    const title = mailMessags.message.title;
-                    const body = mailMessags.message.body;
+                 if (!emailSent) {
+                     const title = mailMessags.message.title;
+                     const body = mailMessags.message.body;
 
-                    const nowDateTime = getNowDate_time();
+                     const nowDateTime = getNowDate_time();
 
-                    const bodyString = JSON.stringify({
-                        key: body,
-                        params: {
-                            0: tamplateName,
-                        },
-                    });
+                     const bodyString = JSON.stringify({
+                         key: body,
+                         params: {
+                             0: tamplateBody,
+                         },
+                     });
 
-                    for (const admin of admins) {
-                        const message = new Message({
-                            staff_id: admin.staff_id,
-                            message_typ_id: messageName[0].message_typ_id,
-                            title: title,
-                            body: bodyString,
-                            date_time: nowDateTime,
-                            seen: false,
-                        });
+                     for (const admin of admins) {
+                         const message = new Message({
+                             staff_id: admin.staff_id,
+                             message_typ_id: messageName[0].message_typ_id,
+                             title: title,
+                             body: bodyString,
+                             date_time: nowDateTime,
+                             seen: false,
+                         });
 
-                        await message.save();
-                    }
-                }
+                         await message.save();
+                     }
+                 }
             }
         });
     } catch (error) {
-        // console.log(error.message);
+        //  console.log(error.message);
     }
 };
 
