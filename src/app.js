@@ -39,6 +39,7 @@ async function verifyInlogged(req, res, next) {
         res.status(403).send('Forbidden');
     }
 }
+
 app.use('/assets', verifyInlogged, express.static('assets'));
 
 // Setting an intervall every 6 hours that cehck for a reminder to send.
@@ -46,7 +47,7 @@ sendReminderEmail();
 // Setting an intervall every 7 days to delete messages
 deleteOldMessages();
 
-app.get('/', (req, res) => res.send('It, works!'));
+// app.get('/', (req, res) => res.send('It, works!'));
 app.use('/api', apiRouter);
 
 // ***************** When uploading to the production server **************** //
@@ -55,12 +56,17 @@ app.use('/api', apiRouter);
 // ***************** When testing the fronEnd by this server **************** //
 // const path = require('path');
 // app.use(express.static(path.join(__dirname, '../dist')));
-// app.get('/app', (req, res) => {
+
+// app.get('/*', (req, res, next) => {
+//     if (req.path.startsWith('/assets')) {
+//         return next();
+//     }
 //     res.sendFile(path.join(__dirname, '../dist/index.html'));
 // });
-// app.get('/timer', (req, res) => {
-//     res.sendFile(path.join(__dirname, '../dist/index.html'));
-// });
+
+// app.use('/assets', verifyInlogged, express.static('assets'));
+
+// ***************** END **************** //
 
 module.exports = app;
 
