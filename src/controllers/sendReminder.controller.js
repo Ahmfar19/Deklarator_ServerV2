@@ -14,7 +14,7 @@ const ADMIN_EMAIL = config.get('ADMIN_EMAIL');
 const checkForReminder = async () => {
     try {
         const data = await Reminder.getReminders();
-  
+
         if (!data.length) return;
 
         const tamplates = await Tamplate.getAll();
@@ -24,7 +24,6 @@ const checkForReminder = async () => {
 
         const { title } = mailMessags.reminder;
 
-   
         const tamplatesArray = {};
         tamplates.map(tamplate => {
             tamplatesArray[tamplate.tamplate_id] = [];
@@ -36,10 +35,9 @@ const checkForReminder = async () => {
 
         Object.keys(tamplatesArray).forEach(async (templateId) => {
             if (tamplatesArray[templateId].length) {
-             
-                const bccEmails = [];  
+                const bccEmails = [];
                 const tamplateBody = tamplatesArray[templateId][0].tamplate_body;
-               
+
                 tamplatesArray[templateId].forEach(async (item) => {
                     bccEmails.push(item.company_email);
 
@@ -64,39 +62,39 @@ const checkForReminder = async () => {
                     }
                 });
 
-                 const htmlTemplatePath = path.resolve(`assets/tampletes/index.html`);
-                 let htmlTemplate = fs.readFileSync(htmlTemplatePath, 'utf-8');
-                 
-                 htmlTemplate = htmlTemplate.replace('{{tamplateBody}}', tamplateBody)
-               
-                 const emailSent = await sendEmailToGroup(ADMIN_EMAIL, bccEmails, title, htmlTemplate);
+                const htmlTemplatePath = path.resolve(`assets/tampletes/index.html`);
+                let htmlTemplate = fs.readFileSync(htmlTemplatePath, 'utf-8');
 
-                 if (!emailSent) {
-                     const title = mailMessags.message.title;
-                     const body = mailMessags.message.body;
+                htmlTemplate = htmlTemplate.replace('{{tamplateBody}}', tamplateBody);
 
-                     const nowDateTime = getNowDate_time();
+                const emailSent = await sendEmailToGroup(ADMIN_EMAIL, bccEmails, title, htmlTemplate);
 
-                     const bodyString = JSON.stringify({
-                         key: body,
-                         params: {
-                             0: tamplateBody,
-                         },
-                     });
+                if (!emailSent) {
+                    const title = mailMessags.message.title;
+                    const body = mailMessags.message.body;
 
-                     for (const admin of admins) {
-                         const message = new Message({
-                             staff_id: admin.staff_id,
-                             message_typ_id: messageName[0].message_typ_id,
-                             title: title,
-                             body: bodyString,
-                             date_time: nowDateTime,
-                             seen: false,
-                         });
+                    const nowDateTime = getNowDate_time();
 
-                         await message.save();
-                     }
-                 }
+                    const bodyString = JSON.stringify({
+                        key: body,
+                        params: {
+                            0: tamplateBody,
+                        },
+                    });
+
+                    for (const admin of admins) {
+                        const message = new Message({
+                            staff_id: admin.staff_id,
+                            message_typ_id: messageName[0].message_typ_id,
+                            title: title,
+                            body: bodyString,
+                            date_time: nowDateTime,
+                            seen: false,
+                        });
+
+                        await message.save();
+                    }
+                }
             }
         });
     } catch (error) {

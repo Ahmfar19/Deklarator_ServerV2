@@ -125,6 +125,7 @@ router.delete('/task/delete/:id', taskController.deleteTask);
 
 /////////////// Reminder Routes /////////////////
 router.get('/remenders', remenderController.getRemenders);
+router.get('/remender/filter', remenderController.getFilterdReminder);
 router.get('/remender/:id', remenderController.getSingleRemender);
 router.get('/remender/company/:id', remenderController.getCompanyReminders);
 router.post('/remender/new', remenderController.addRemender);
@@ -141,8 +142,8 @@ router.delete('/messageType/delete/:id', messageTypeController.deleteMessageType
 
 /////////////// Tamplates Routes /////////////////
 router.get('/tamplates', TamplateController.getTamplatesName);
-router.post('/tamplate/new', TamplateController.createTamplate)
-router.put('/template/edit/:id', TamplateController.updateTamplate)
+router.post('/tamplate/new', TamplateController.createTamplate);
+router.put('/template/edit/:id', TamplateController.updateTamplate);
 /////////////// checkListItems Routes /////////////////
 router.get('/checkListItems', checkListController.getcheckListItems);
 router.get('/checklist/company/:id', checkListController.getCompanyCheckList);

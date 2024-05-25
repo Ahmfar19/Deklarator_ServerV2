@@ -14,7 +14,7 @@ const createTamplate = async (req, res) => {
     try {
         const tamplateBody = new Tamplate(req.body);
         await tamplateBody.save();
-       
+
         sendResponse(res, 201, 'Created', 'Successfully created a tamplateBody.', null, tamplateBody);
     } catch (err) {
         sendResponse(res, 500, 'Internal Server Error', null, err.message || err, null);
@@ -36,9 +36,9 @@ const updateTamplate = async (req, res) => {
     } catch (err) {
         sendResponse(res, 500, 'Internal Server Error', null, err.message || err, null);
     }
-}
+};
 module.exports = {
     getTamplatesName,
     createTamplate,
-    updateTamplate
+    updateTamplate,
 };

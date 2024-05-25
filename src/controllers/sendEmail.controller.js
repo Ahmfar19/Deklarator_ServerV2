@@ -16,7 +16,6 @@ const transporter = nodemailer.createTransport({
 });
 
 const sendEmailToGroup = async (to, bccEmails, subject, htmlTemplate) => {
-   
     let mailOptions = {
         from: EMAIL,
         to: to,

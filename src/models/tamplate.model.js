@@ -10,9 +10,9 @@ class Tamplate {
         ) VALUES (
             "${this.tamplate_body}"
         )`;
-        const result = await pool.execute(sql);     
-        this.tamplate_id  = result[0].insertId;
-        return this.tamplate_id ;
+        const result = await pool.execute(sql);
+        this.tamplate_id = result[0].insertId;
+        return this.tamplate_id;
     }
     static async getAll() {
         const sql = 'SELECT * FROM tamplate';

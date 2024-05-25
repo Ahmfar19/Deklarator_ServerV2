@@ -16,7 +16,7 @@ const getSingleRemender = async (req, res) => {
     try {
         const id = req.params.id;
         const singleRemender = await Reminder.getReminder(id);
-        sendResponse(res, 200, 'Ok', 'Successfully retrieved  the remender', null, singleRemender);
+        sendResponse(res, 200, 'Ok', 'Successfully retrieved the remender', null, singleRemender);
     } catch (err) {
         sendResponse(res, 500, 'Internal Server Error', null, err.message || err, null);
     }
@@ -102,6 +102,16 @@ const getCompanyReminders = async (req, res) => {
     }
 };
 
+const getFilterdReminder = async (req, res) => {
+    const { key, value } = req.query;
+    try {
+        const remenders = await Reminder.getReminderByFilter(key, value);
+        sendResponse(res, 200, 'Ok', 'Successfully retrieved the remenders', null, remenders);
+    } catch (err) {
+        sendResponse(res, 500, 'Internal Server Error', null, err.message || err, null);
+    }
+};
+
 module.exports = {
     getRemenders,
     getSingleRemender,
@@ -110,4 +120,5 @@ module.exports = {
     deleteRemender,
     getCompanyReminders,
     addMultiReminder,
+    getFilterdReminder,
 };
