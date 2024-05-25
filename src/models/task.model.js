@@ -96,10 +96,19 @@ class Task {
 
     static async getAll() {
         const sql = `
-        SELECT task.*, CONCAT(staff.fname, ' ', staff.lname) AS assigned, company_name
-        FROM task
-        JOIN staff on task.staff_assigned = staff.staff_id
-        JOIN company on task.company_id = company.company_id
+        SELECT 
+        task.*, 
+        CONCAT(assigned_staff.fname, ' ', assigned_staff.lname) AS assigned,
+        CONCAT(creator_staff.fname, ' ', creator_staff.lname) AS creator,
+        company.company_name
+        FROM 
+            task
+        JOIN 
+            staff AS assigned_staff ON task.staff_assigned = assigned_staff.staff_id
+        JOIN 
+            staff AS creator_staff ON task.staff_created = creator_staff.staff_id
+        JOIN 
+            company ON task.company_id = company.company_id;
         `;
         const [rows] = await pool.execute(sql);
         return rows;
