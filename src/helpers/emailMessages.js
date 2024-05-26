@@ -18,7 +18,7 @@ const mailMessags = {
     },
     guestEmail: {
         title: 'Dear {0}',
-        body: 'Congratulations on successfully registering with Deklarator.\nBelow are your account details: \nUsername: {0} and password: {1}',
+        body: 'Congratulations on successfully registering with Deklarator.\nBelow are your account details: \nUsername: {0} \npassword: {1}',
     },
 };
 

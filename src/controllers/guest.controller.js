@@ -7,40 +7,48 @@ const config = require('config');
 const JWT_SECRET_KEY = config.get('JWT_SECRET_KEY');
 var jwt = require('jsonwebtoken');
 const ADMIN_EMAIL = config.get('ADMIN_EMAIL');
-//register
+
+const createGuestAccount = async (company_id) => {
+    const data = await Guest.getEmail(company_id)
+    const password = await generatePassword();
+    const hashedPassword = await hashPassword(password);
+
+    if (!hashedPassword) {
+        throw new Error('Password error');
+    }
+
+    const guest = new Guest({
+        company_id: company_id,
+        password: hashedPassword
+    })
+
+    await guest.save();
+
+    const title = mailMessags.guestEmail.title.replace('{0}', data[0].company_name);
+    const body = mailMessags.guestEmail.body.replace('{0}', data[0].email).replace('{1}', password);
+
+    sendCCEmail(data[0].email, ADMIN_EMAIL, title, body)
+}
+
 const addGuest = async (req, res) => {
+    const { companyIds } = req.body
+
+    if (!Array.isArray(companyIds) && !companyIds.length) {
+        sendResponse(res, 500, 'Invalid argument', null, null);
+        return;
+    }
+
     try {
-        const { company_id } = req.body
-      
-        const data = await Guest.getEmail(company_id)
+        const promises = companyIds.map(company_id => createGuestAccount(company_id));
+        await Promise.all(promises);
 
-        const password = await generatePassword();
-
-        const hashedPassword = await hashPassword(password);
-
-        if (!hashedPassword) {
-            throw new Error('Password error');
-        }
-
-        const guest = new Guest({
-            company_id: company_id,
-            password: hashedPassword
-        })
-
-         await guest.save();
-         sendResponse(res, 201, 'Created', 'Successfully created a guest.', null, guest);
-
-           const title = mailMessags.guestEmail.title.replace('{0}', data[0].company_name);
-           const body = mailMessags.guestEmail.body.replace('{0}', data[0].email).replace('{1}', password);
-
-           sendCCEmail(data[0].email, ADMIN_EMAIL,title, body)
-
+        sendResponse(res, 200, 'Success', 'All guest accounts created successfully', null, null);
     } catch (err) {
         sendResponse(res, 500, 'Internal Server Error', null, err.message || err, null);
     }
+    
 };
 
-//login
 const loginGuest = async (req, res) => {
     try {
         const { email, password, fingerprint } = req.body;
@@ -71,7 +79,6 @@ const loginGuest = async (req, res) => {
         sendResponse(res, 500, 'Internal Server Error', null, error.message || error, null);
     }
 }
-
 
 module.exports = {
     addGuest,
