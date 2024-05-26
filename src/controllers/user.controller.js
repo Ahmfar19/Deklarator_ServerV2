@@ -39,6 +39,11 @@ async function uploadImage(file, userID) {
     const fileExtension = path.extname(file.originalname);
     const newFileName = `user_${userID}${fileExtension}`;
     const uploadPath = 'assets/images/users';
+
+    if (!fs.existsSync(path.join(uploadPath))) {
+        fs.mkdirSync(uploadPath, { recursive: true });
+    }
+
     const targetPath = path.join(uploadPath, newFileName);
 
     try {
