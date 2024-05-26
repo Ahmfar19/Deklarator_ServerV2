@@ -160,6 +160,7 @@ router.post('/uploadMultipleFiles', uploadFilesController.uploadMultiFiles);
 
 ////////////////////// Guest files  ////////////////////////
 router.post('/guest/new', guestsController.addGuest)
+router.delete('/guest/delete/:company_id', guestsController.deleteGuest)
 router.get('/guests', guestsController.getGuests)
 router.post('/guest/login', guestsController.loginGuest)
 

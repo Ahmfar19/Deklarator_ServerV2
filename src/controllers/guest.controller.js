@@ -49,6 +49,22 @@ const addGuest = async (req, res) => {
     
 };
 
+const deleteGuest = async (req, res) => {
+    try {
+        const id = req.params.company_id;
+        const data = await Guest.deleteAccount(id);
+        if (data.affectedRows === 0) {
+            return res.json({
+                status: 406,
+                message: 'not account found to delete',
+            });
+        }
+        sendResponse(res, 202, 'Accepted', 'Successfully deleted the company guest account.', null, null);
+    } catch (err) {
+        sendResponse(res, 500, 'Internal Server Error', null, err.message || err, null);
+    }
+}
+
 const getGuests = async (req, res) => {
     try {
         const guests = await Guest.getAllAccounts();
@@ -94,5 +110,6 @@ const loginGuest = async (req, res) => {
 module.exports = {
     addGuest,
     loginGuest,
-    getGuests
+    getGuests,
+    deleteGuest
 };
