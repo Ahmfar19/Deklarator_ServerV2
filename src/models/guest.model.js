@@ -29,7 +29,7 @@ class Guest {
         const sql = `DELETE FROM guest WHERE company_id = ${id}`;
         await pool.execute(sql);
     }
-    
+
     static async getEmail(id) {
         const sql = `SELECT email, company_name FROM company WHERE company_id = "${id}"`;
         const result = await pool.execute(sql);

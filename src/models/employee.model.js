@@ -8,7 +8,7 @@ class Employee {
         this.personalnumber = options.personalnumber;
         this.extent = options.extent;
     }
-    // create
+
     async save() {
         const sql = `INSERT INTO employee (
             company_id,
@@ -23,17 +23,18 @@ class Employee {
             ${this.personalnumber},
             "${this.extent}"
         )`;
+
         const result = await pool.execute(sql);
         this.employee_id = result[0].insertId;
         return this.employee_id;
     }
-    // get single company
+
     static async getSingleById(id) {
         const sql = `SELECT * FROM employee WHERE employee_id = "${id}"`;
         const [rows] = await pool.execute(sql);
         return rows;
     }
-    // get all
+
     static async getAll() {
         const sql = `
             SELECT * FROM employee
@@ -41,7 +42,15 @@ class Employee {
         const [rows] = await pool.execute(sql);
         return rows;
     }
-    // update
+
+    static async getCompanyEmployees(id) {
+        const sql = `
+            SELECT * FROM employee WHERE company_id = ${id}
+        `;
+        const [rows] = await pool.execute(sql);
+        return rows;
+    }
+
     async updateById(id) {
         const sql = `UPDATE employee SET 
         company_id = ${this.company_id}, 
@@ -53,7 +62,7 @@ class Employee {
         const [rows] = await pool.execute(sql);
         return rows;
     }
-    // delete
+
     static async findByIdAndDelete(id) {
         const sql = `DELETE FROM employee WHERE employee_id = "${id}"`;
         const [rows] = await pool.execute(sql);

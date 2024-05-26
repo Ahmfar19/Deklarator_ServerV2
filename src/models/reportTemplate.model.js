@@ -34,24 +34,23 @@ class ReportTemplate {
     }
 
     static async createEmployeeReport(employee_id, reportItemsData) {
+        if (!Array.isArray(reportItemsData) || reportItemsData.length === 0) {
+            throw new Error('Invalid report items data');
+        }
+        // Create an array of promises for report item insertion
+        const insertionPromises = reportItemsData.map(async (item) => {
+            const sql =
+                'INSERT INTO employee_report (employee_id, report_item_id, quantity, sum, date) VALUES (?, ?, ?, ?, ?)';
+            const values = [employee_id, item.report_item_id, item.quantity, item.sum, item.date];
+            await pool.execute(sql, values);
+        });
 
-            if(!Array.isArray(reportItemsData) || reportItemsData.length === 0) {
-                throw new Error('Invalid report items data');
-            }
-            // Create an array of promises for report item insertion
-            const insertionPromises = reportItemsData.map(async (item) => {
-                const sql = 'INSERT INTO employee_report (employee_id, report_item_id, quantity, sum, date) VALUES (?, ?, ?, ?, ?)';
-                const values = [employee_id, item.report_item_id, item.quantity, item.sum, item.date];
-                await pool.execute(sql, values);
-            });
-    
-            // Wait for all report items to be inserted
-            await Promise.all(insertionPromises);
-    
-            // Return success status
-            return true;
+        // Wait for all report items to be inserted
+        await Promise.all(insertionPromises);
+
+        // Return success status
+        return true;
     }
-    
 }
 
 module.exports = ReportTemplate;

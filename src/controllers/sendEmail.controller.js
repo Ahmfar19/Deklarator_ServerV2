@@ -78,7 +78,7 @@ const sendCCEmail = async (to, ccEmail, subject, text) => {
         to: to,
         cc: ccEmail,
         subject: subject,
-        text: text
+        text: text,
     };
     return sendEmail(mailOptions);
 };
@@ -86,7 +86,7 @@ const sendCCEmail = async (to, ccEmail, subject, text) => {
 const sendEmail = async (mailOptions) => {
     return new Promise((resolve) => {
         // eslint-disable-next-line no-unused-vars
-        transporter.sendMail(mailOptions, function (error, info) {
+        transporter.sendMail(mailOptions, function(error, info) {
             if (error) {
                 // console.log('Error sending email', error);
                 resolve(false);
@@ -103,5 +103,5 @@ module.exports = {
     sendEmailAttachment,
     sendEmailHtml,
     sendEmailToGroup,
-    sendCCEmail
+    sendCCEmail,
 };

@@ -13,9 +13,10 @@ const addEmployee = async (req, res) => {
     }
 };
 
-const getEmployees = async (req, res) => { 
+const getEmployees = async (req, res) => {
+    const id = req.params.id;
     try {
-        const employees = await Employee.getAll();
+        const employees = await Employee.getCompanyEmployees(id);
         sendResponse(res, 200, 'Ok', 'Successfully retrieved all the employees', null, employees);
     } catch (err) {
         sendResponse(res, 500, 'Internal Server Error', null, err.message || err, null);
@@ -30,14 +31,14 @@ const getSingleEmployee = async (req, res) => {
     } catch (err) {
         sendResponse(res, 500, 'Internal Server Error', null, err.message || err, null);
     }
-}
+};
 
 const updateEmployee = async (req, res) => {
     try {
         const id = req.params.id;
 
         const employee = new Employee(req.body);
-        
+
         const data = await employee.updateById(id);
 
         if (data.affectedRows === 0) {
@@ -53,7 +54,7 @@ const updateEmployee = async (req, res) => {
     } catch (err) {
         sendResponse(res, 500, 'Internal Server Error', null, err.message || err, null);
     }
-}
+};
 
 const deleteEmployee = async (req, res) => {
     try {
@@ -69,11 +70,11 @@ const deleteEmployee = async (req, res) => {
     } catch (err) {
         sendResponse(res, 500, 'Internal Server Error', null, err.message || err, null);
     }
-}
+};
 module.exports = {
     addEmployee,
     getEmployees,
     getSingleEmployee,
     updateEmployee,
-    deleteEmployee
+    deleteEmployee,
 };

@@ -95,13 +95,12 @@ async function verifyToken(fingerprint, token) {
 
 const generatePassword = async (length = 12) => {
     const charset = GENERATE_PASSWORD;
-    let password = "";
+    let password = '';
     for (let i = 0; i < length; i++) {
-      password += charset.charAt(Math.floor(Math.random() * charset.length));
+        password += charset.charAt(Math.floor(Math.random() * charset.length));
     }
     return password;
-}
-
+};
 
 module.exports = {
     getCurrentDateTime,
@@ -114,5 +113,5 @@ module.exports = {
     isToday,
     getLastWeekDate,
     verifyToken,
-    generatePassword
+    generatePassword,
 };
