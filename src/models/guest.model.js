@@ -18,6 +18,12 @@ class Guest {
         this.gust_id = result[0].insertId;
         return this.gust_id;
     }
+
+    static async getAllAccounts() {
+        const sql = 'SELECT * FROM guest';
+        const [rows] = await pool.execute(sql);
+        return rows;
+    }
     
     static async getEmail(id) {
         const sql = `SELECT email, company_name FROM company WHERE company_id = "${id}"`;

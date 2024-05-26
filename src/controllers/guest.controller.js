@@ -49,6 +49,17 @@ const addGuest = async (req, res) => {
     
 };
 
+const getGuests = async (req, res) => {
+    try {
+        const guests = await Guest.getAllAccounts();
+
+        sendResponse(res, 200, 'Ok', 'Successfully retrieved all the guests.', null, guests);
+    } catch (err) {
+        sendResponse(res, 500, 'Internal Server Error', null, err.message || err, null);
+    }
+    
+};
+
 const loginGuest = async (req, res) => {
     try {
         const { email, password, fingerprint } = req.body;
@@ -82,5 +93,6 @@ const loginGuest = async (req, res) => {
 
 module.exports = {
     addGuest,
-    loginGuest
+    loginGuest,
+    getGuests
 };
