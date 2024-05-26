@@ -19,6 +19,10 @@ const messageTypeController = require('../controllers/message_type.controller');
 const TamplateController = require('../controllers/tamplate.controller');
 const checkListController = require('../controllers/checkList.controller');
 const uploadFilesController = require('../controllers/uploadFiles.controller');
+const guestsController = require('../controllers/guest.controller');
+const reportTemaplteController = require('../controllers/reportTemplate.controller')
+const employeeController = require('../controllers/employee.controller')
+
 
 const path = require('path');
 
@@ -156,6 +160,23 @@ router.delete('/delteFile/:company_id/', uploadFilesController.deleteFile);
 router.get('/getFile/:company_id/:filename', uploadFilesController.getFile);
 router.get('/getFiles/:company_id', uploadFilesController.getFiles);
 router.post('/uploadMultipleFiles', uploadFilesController.uploadMultiFiles);
+
+////////////////////// Guest Routes  ////////////////////////
+router.post('/guest/new', guestsController.addGuest)
+router.post('/guest/login', guestsController.loginGuest)
+
+
+////////////////////// employee Routes  ////////////////////////
+router.post('/employee/new', employeeController.addEmployee)
+router.get('/employess', employeeController.getEmployees)
+router.get('/employee/:id', employeeController.getSingleEmployee)
+router.put('/employee/edit/:id', employeeController.updateEmployee)
+router.delete('/employee/delete/:id', employeeController.deleteEmployee)
+
+////////////////////// reportTemplate Routes  ////////////////////////
+router.get('/reportTemplates', reportTemaplteController.getReportTemplate)
+router.post('/employeeReport/new/:employee_id', reportTemaplteController.addEmployeeReport)
+router.get('/reportTaplate/employee/:id', reportTemaplteController.getEmployeeReport);
 
 router.get('/checkAuth', (req, res) => {
     const access_token = req.cookies.accessToken;

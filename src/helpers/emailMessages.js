@@ -1,8 +1,7 @@
 const mailMessags = {
     loginMessage: {
         title: 'Dear {0}',
-        body:
-            'Congratulations on successfully registering with Deklarator.\nBelow are your account details: \nUsername: {0} and password: {1}',
+        body: 'Congratulations on successfully registering with Deklarator.\nBelow are your account details: \nUsername: {0} and password: {1}',
     },
     pinMessage: {
         title: 'Your Verification PIN Code',
@@ -16,6 +15,10 @@ const mailMessags = {
     message: {
         title: 'dek_message_failedToSendReminder_title',
         body: 'dek_message_failedToSendReminder_body',
+    },
+    guestEmail: {
+        title: 'Dear {0}',
+        body: 'Congratulations on successfully registering with Deklarator.\nBelow are your account details: \nUsername: {0} and password: {1}',
     },
 };
 

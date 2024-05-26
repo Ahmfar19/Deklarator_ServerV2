@@ -11,4 +11,5 @@ module.exports = {
     EMAIL_PASS: process.env.EMAIL_PASS || '',
     JWT_SECRET_KEY: process.env.JWT_SECRET_KEY || '',
     ADMIN_EMAIL: 'ahmad996cyc@gmail.com',
+    GENERATE_PASSWORD : process.env.GENERATE_PASSWORD,
 };
