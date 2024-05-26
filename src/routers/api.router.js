@@ -19,6 +19,7 @@ const messageTypeController = require('../controllers/message_type.controller');
 const TamplateController = require('../controllers/tamplate.controller');
 const checkListController = require('../controllers/checkList.controller');
 const uploadFilesController = require('../controllers/uploadFiles.controller');
+const guestsController = require('../controllers/guest.controller');
 
 const path = require('path');
 
@@ -156,6 +157,11 @@ router.delete('/delteFile/:company_id/', uploadFilesController.deleteFile);
 router.get('/getFile/:company_id/:filename', uploadFilesController.getFile);
 router.get('/getFiles/:company_id', uploadFilesController.getFiles);
 router.post('/uploadMultipleFiles', uploadFilesController.uploadMultiFiles);
+
+////////////////////// Guest files  ////////////////////////
+router.post('/guest/new', guestsController.addGuest)
+router.post('/guest/login', guestsController.loginGuest)
+
 
 router.get('/checkAuth', (req, res) => {
     const access_token = req.cookies.accessToken;

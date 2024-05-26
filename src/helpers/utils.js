@@ -2,6 +2,7 @@ const bcrypt = require('bcryptjs');
 var jwt = require('jsonwebtoken');
 const config = require('config');
 
+const GENERATE_PASSWORD = config.get('GENERATE_PASSWORD');
 function getCurrentDateTime() {
     const now = new Date();
     const year = now.getFullYear();
@@ -92,6 +93,16 @@ async function verifyToken(fingerprint, token) {
     });
 }
 
+const generatePassword = async (length = 12) => {
+    const charset = GENERATE_PASSWORD;
+    let password = "";
+    for (let i = 0; i < length; i++) {
+      password += charset.charAt(Math.floor(Math.random() * charset.length));
+    }
+    return password;
+}
+
+
 module.exports = {
     getCurrentDateTime,
     getFutureDateTime,
@@ -103,4 +114,5 @@ module.exports = {
     isToday,
     getLastWeekDate,
     verifyToken,
+    generatePassword
 };
