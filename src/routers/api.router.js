@@ -20,6 +20,9 @@ const TamplateController = require('../controllers/tamplate.controller');
 const checkListController = require('../controllers/checkList.controller');
 const uploadFilesController = require('../controllers/uploadFiles.controller');
 const guestsController = require('../controllers/guest.controller');
+const reportTemaplteController = require('../controllers/reportTemplate.controller')
+const employeeController = require('../controllers/employee.controller')
+
 
 const path = require('path');
 
@@ -164,6 +167,17 @@ router.delete('/guest/delete/:company_id', guestsController.deleteGuest)
 router.get('/guests', guestsController.getGuests)
 router.post('/guest/login', guestsController.loginGuest)
 
+////////////////////// employee Routes  ////////////////////////
+router.post('/employee/new', employeeController.addEmployee)
+router.get('/employess', employeeController.getEmployees)
+router.get('/employee/:id', employeeController.getSingleEmployee)
+router.put('/employee/edit/:id', employeeController.updateEmployee)
+router.delete('/employee/delete/:id', employeeController.deleteEmployee)
+
+////////////////////// reportTemplate Routes  ////////////////////////
+router.get('/reportTemplates', reportTemaplteController.getReportTemplate)
+router.post('/employeeReport/new/:employee_id', reportTemaplteController.addEmployeeReport)
+router.get('/reportTaplate/employee/:id', reportTemaplteController.getEmployeeReport);
 
 router.get('/checkAuth', (req, res) => {
     const access_token = req.cookies.accessToken;
