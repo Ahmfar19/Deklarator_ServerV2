@@ -22,9 +22,10 @@ const uploadFilesController = require('../controllers/uploadFiles.controller');
 const guestsController = require('../controllers/guest.controller');
 const reportTemaplteController = require('../controllers/reportTemplate.controller');
 const employeeController = require('../controllers/employee.controller');
-
+const TestController = require('../controllers/Test.controller');
 const path = require('path');
-
+router.post('/users/multi', TestController.createUser);
+router.get('/getUsers/multi', TestController.getUsers);
 // import validation register schema
 const { signUpValidation } = require('../helpers/validation');
 

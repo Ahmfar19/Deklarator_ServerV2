@@ -1,27 +1,50 @@
 const mysql = require('mysql2/promise');
-const config = require('config');
-const DB_HOST = config.get('DB_HOST');
-// const DB_PORT = config.get('DB_PORT');
-const DB_NAME = config.get('DB_NAME');
-const DB_USERNAME = config.get('DB_USERNAME');
-const DB_PASSWORD = config.get('DB_PASSWORD');
+
 const connectionOptions = {
-    host: DB_HOST,
-    // port: DB_PORT,
-    database: DB_NAME,
-    user: DB_USERNAME,
-    password: DB_PASSWORD,
-};
-const pool = mysql.createPool(connectionOptions);
-const connectToMySQL = async () => {
-    try {
-        await pool.getConnection();
-        console.log('MySQL database connected!');
-    } catch (err) {
-        console.log('MySQL database connection error!');
-        process.exit(1);
+    db1: {
+        host: 'localhost',
+        user: 'root',
+        database: 'db1'
+    },
+    db2: {
+        host: 'localhost',
+        user: 'root',
+        database: 'db2'
+    },
+    db3: {
+        host: 'localhost',
+        user: 'root',
+        database: 'db3'
+    },
+    db4: {
+        host: 'localhost',
+        user: 'root',
+        database: 'db4'
+    },
+    db5: {
+        host: 'localhost',
+        user: 'root',
+        database: 'db5'
     }
 };
+
+const pools = {};
+
+const connectToMySQL = async () => {
+    for (const key in connectionOptions) {
+        try {
+            const pool = await mysql.createPool(connectionOptions[key]);
+            pools[key] = pool;
+            console.log(`Connected to ${key} database!`);
+        } catch (err) {
+            console.error(`Error connecting to ${key} database: ${err.message}`);
+            process.exit(1);
+        }
+    }
+};
+
 connectToMySQL().then();
 
-module.exports = pool;
+module.exports = {
+    getConnection: (connectionName) => pools[connectionName]
+};

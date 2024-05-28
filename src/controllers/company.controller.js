@@ -1,5 +1,5 @@
 const Company = require('../models/company.model');
-const CheckList = require('../models/checkList.model');
+
 const { sendResponse } = require('../helpers/apiResponse');
 
 const getSingleCompany = async (req, res) => {
@@ -13,7 +13,8 @@ const getSingleCompany = async (req, res) => {
 };
 const getCompanys = async (req, res) => {
     try {
-        const companys = await Company.getAll();
+        const { connectionName } = req.query;
+        const companys = await Company.getAll(connectionName);
         sendResponse(res, 200, 'Ok', 'Successfully retrieved all the company', null, companys);
     } catch (err) {
         sendResponse(res, 500, 'Internal Server Error', null, err.message || err, null);
@@ -21,15 +22,11 @@ const getCompanys = async (req, res) => {
 };
 const addCompany = async (req, res) => {
     try {
-        const company = new Company(req.body);
-        const isValid = company.isValid();
-        if (!isValid) {
-            return res.status(400).send(
-                { statusCode: 400, statusMessage: 'Bad Request', message: null, data: null },
-            );
-        }
+        const { connectionName } = req.query;
+        const company = new Company(req.body , connectionName);
+        
         await company.save();
-        CheckList.createCompanyCheckList(company.company_id);
+
         sendResponse(res, 201, 'Created', 'Successfully created a company.', null, company);
     } catch (err) {
         sendResponse(res, 500, 'Internal Server Error', null, err.message || err, null);

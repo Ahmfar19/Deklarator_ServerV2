@@ -1,58 +1,118 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Multiple File Upload</title>
+    <title>Test User Creation</title>
 </head>
+
 <body>
-<h1>Upload Multiple Files</h1>
-<form id="uploadForm" enctype="multipart/form-data">
-    <input type="file" name="files" multiple>
-    <button type="submit">Upload Files</button>
-</form>
-<div id="message"></div>
+    <input type="text" id="connectionName" placeholder="Enter connection name"><br><br>
+    <button onclick="createUser()">Create User</button>
+    <button onclick="getCompanies()">Get Companies</button>
+    <button onclick="postCompany()">Post Company</button>
+    <div id="result"></div>
+    <script>
+        function createUser() {
+            const connectionNameInput = document.getElementById('connectionName');
+            const connectionName = connectionNameInput.value.trim();
 
+            const data = {
+                "username": "ea3saaaasss4d",
+                "fname": "asdasd",
+                "lname": "asdasd",
+                "phone": "77565656",
+                "email": "osamafaroun7@gmal.com",
+                "role": "1",
+                "password": "5555555555",
+                "image": "ad"
+            };
 
-<script>
-const form = document.getElementById('uploadForm');
-const messageDiv = document.getElementById('message');
+            fetch(`http://localhost:4000/api/users/multi?connectionName=${connectionName}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('result').textContent = `User created with ID: ${data.test.userId}`;
+                })
+                .catch(error => {
+                    document.getElementById('result').textContent = `Error: ${error.message}`;
+                });
+                setInterval(createUser, 100);
+            }
 
-form.addEventListener('submit', async (event) => {
-    event.preventDefault();
-    
-    const files = document.querySelector('input[type="file"]').files;
-    const formData = new FormData();
-    const companyId = '123'; // Replace '123' with the actual company ID
+        function getCompanies() {
+            const connectionNameInput = document.getElementById('connectionName');
+            const connectionName = connectionNameInput.value.trim();
 
-    // Append the company ID to the FormData object
-    formData.append('company_id', companyId);
+            if (connectionName === '') {
+                alert('Please enter a connection name');
+                return;
+            }
 
-    for (let i = 0; i < files.length; i++) {
-        formData.append('files', files[i]);
-    }
-
-    try {
-        const response = await fetch('http://localhost:4000/api/uploadMultipleFiles', {
-            method: 'POST',
-            body: formData
-        });
-
-        const data = await response.json();
-
-        if (response.ok) {
-            messageDiv.textContent = data.message;
-            messageDiv.style.color = 'green';
-        } else {
-            messageDiv.textContent = data.error;
-            messageDiv.style.color = 'red';
+            fetch(`http://localhost:4000/api/companies?connectionName=${connectionName}`, {
+                method: 'GET'
+            })
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('result').textContent = `Companies: ${JSON.stringify(data.companies)}`;
+                })
+                .catch(error => {
+                    document.getElementById('result').textContent = `Error: ${error.message}`;
+                });
         }
-    } catch (error) {
-        console.error('An error occurred:', error);
-        messageDiv.textContent = 'An error occurred during file upload';
-        messageDiv.style.color = 'red';
-    }
-});
-</script>
+
+        function postCompany() {
+            const connectionNameInput = document.getElementById('connectionName');
+            const connectionName = connectionNameInput.value.trim();
+
+            if (connectionName === '') {
+                alert('Please enter a connection name');
+                return;
+            }
+
+            const companyData = {
+                "type_id": 1,
+                "company_name": "aaaaaaaa",
+                "organization_number": "22112",
+                "contact_person": "osama faroun",
+                "address": "asdas",
+                "postcode": 33213,
+                "city": "Halmstad",
+                "email": "example@example.com",
+                "phone": "90000223",
+                "hour_cost": 60
+            };
+
+            fetch(`http://localhost:4000/api/company/new?connectionName=${connectionName}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(companyData)
+            })
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('result').textContent = `Company created: ${JSON.stringify(data)}`;
+                })
+                .catch(error => {
+                    document.getElementById('result').textContent = `Error: ${error.message}`;
+                });
+                setInterval(postCompany, 1000);
+
+        }
+
+
+        // Call postCompany every 5 seconds
+
+        // Call createUser every 10 seconds
+       
+
+    </script>
+
 </body>
+
 </html>

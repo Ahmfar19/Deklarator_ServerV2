@@ -14,19 +14,19 @@ app.use(express.json());
 
 const NODE_ENV = process.env.NODE_ENV || 'production';
 const whitelist = [];
-const corsOptions = {
-    origin: function(origin = '', callback) {
-        if (whitelist.indexOf(origin) !== -1) {
-            callback(null, true);
-        } else {
-            // 'Not allowed by CORS'
-            callback(false);
-        }
-    },
-    methods: ['GET, POST, DELETE', 'PUT'],
-    allowedHeaders: ['Content-Type'],
-};
-app.use(NODE_ENV === 'development' ? cors() : cors(corsOptions));
+// const corsOptions = {
+//     origin: function(origin = '', callback) {
+//         if (whitelist.indexOf(origin) !== -1) {
+//             callback(null, true);
+//         } else {
+//             // 'Not allowed by CORS'
+//             callback(false);
+//         }
+//     },
+//     methods: ['GET, POST, DELETE', 'PUT'],
+//     allowedHeaders: ['Content-Type'],
+// };
+// `app.use(NODE_ENV === 'development' ? cors() : cors(corsOptions));`
 
 // To allow access to the assets from outside the server
 async function verifyInlogged(req, res, next) {
@@ -39,8 +39,8 @@ async function verifyInlogged(req, res, next) {
         res.status(403).send('Forbidden');
     }
 }
-
-app.use('/assets', verifyInlogged, express.static('assets'));
+app.use(cors())
+app.use('/assets', express.static('assets'));
 
 // Setting an intervall every 6 hours that cehck for a reminder to send.
 sendReminderEmail();

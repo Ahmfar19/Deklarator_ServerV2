@@ -1,7 +1,8 @@
-const pool = require('../databases/mysql.db');
+const { getConnection } = require('../databases/mysql.db');
 
 class Company {
-    constructor(options) {
+    constructor(options, connectionName) {
+        this.connectionName = connectionName;
         this.type_id = options.type_id;
         this.company_name = options.company_name;
         this.organization_number = options.organization_number;
@@ -15,6 +16,8 @@ class Company {
     }
     // create
     async save() {
+        const pool = getConnection(this.connectionName);
+
         const sql = `INSERT INTO company (
             type_id,
             company_name,
@@ -44,24 +47,28 @@ class Company {
     }
     // get single company
     static async getCompany(id) {
+        const pool = getConnection(this.connectionName);
+
         const sql = `SELECT * FROM company WHERE company_id = "${id}"`;
         // eslint-disable-next-line no-unused-vars
         const [rows, fields] = await pool.execute(sql);
         return rows;
     }
     // get all
-    static async getAll() {
-        const sql = `
-            SELECT company.*, type_name 
-            FROM company
-            JOIN company_type ON company.type_id = company_type.type_id;
-        `;
-        // eslint-disable-next-line no-unused-vars
-        const [rows, fields] = await pool.execute(sql);
-        return rows;
+    static async getAll(connectionName) {
+        try {
+            const pool = getConnection(connectionName); // Get connection pool based on connectionName
+            const sql = 'SELECT * FROM company';
+            const [rows] = await pool.execute(sql);
+            return rows;
+        } catch (error) {
+            throw new Error(`Error fetching company: ${error.message}`);
+        }
     }
     // update
     async updateCompany(id) {
+        const pool = getConnection(this.connectionName);
+
         const sql = `UPDATE company SET 
         type_id = "${this.type_id}", 
         company_name = "${this.company_name}", 
@@ -79,6 +86,8 @@ class Company {
     }
     // delete
     static async findByIdAndDelete(id) {
+        const pool = getConnection(this.connectionName);
+
         const sql = `DELETE FROM company WHERE company_id = "${id}"`;
         const [rows] = await pool.execute(sql);
         return rows;
