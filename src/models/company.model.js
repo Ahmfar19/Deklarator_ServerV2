@@ -1,5 +1,4 @@
-const { getConnection } = require('../databases/mysql.db');
-
+const  MySQLConnectionManager  = require('../databases/connectionManagment');
 class Company {
     constructor(options, connectionName) {
         this.connectionName = connectionName;
@@ -14,10 +13,11 @@ class Company {
         this.phone = options.phone;
         this.hour_cost = options.hour_cost;
     }
-    // create
-    async save() {
-        const pool = getConnection(this.connectionName);
 
+    async save() {
+        
+     
+        
         const sql = `INSERT INTO company (
             type_id,
             company_name,
@@ -41,34 +41,26 @@ class Company {
             ${this.phone},
             ${this.hour_cost}
         )`;
-        const result = await pool.execute(sql);
-        this.company_id = result[0].insertId;
+        
+        const result = await MySQLConnectionManager.executeQuery(this.connectionName, sql);
+        
+        this.company_id = result.insertId;
         return this.company_id;
     }
-    // get single company
-    static async getCompany(id) {
-        const pool = getConnection(this.connectionName);
 
+    static async getCompany(id, connectionName) {
         const sql = `SELECT * FROM company WHERE company_id = "${id}"`;
-        // eslint-disable-next-line no-unused-vars
-        const [rows, fields] = await pool.execute(sql);
+        const [rows] = await MySQLConnectionManager.executeQuery(connectionName, sql);
         return rows;
     }
-    // get all
-    static async getAll(connectionName) {
-        try {
-            const pool = getConnection(connectionName); // Get connection pool based on connectionName
-            const sql = 'SELECT * FROM company';
-            const [rows] = await pool.execute(sql);
-            return rows;
-        } catch (error) {
-            throw new Error(`Error fetching company: ${error.message}`);
-        }
-    }
-    // update
-    async updateCompany(id) {
-        const pool = getConnection(this.connectionName);
 
+    static async getAll(connectionName) {
+        const sql = 'SELECT * FROM company';
+        const [rows] = await MySQLConnectionManager.executeQuery(connectionName, sql);
+        return rows;
+    }
+
+    async updateCompany(id) {
         const sql = `UPDATE company SET 
         type_id = "${this.type_id}", 
         company_name = "${this.company_name}", 
@@ -81,42 +73,16 @@ class Company {
         phone = ${this.phone},
         hour_cost = ${this.hour_cost}
         WHERE company_id = ${id}`;
-        const [rows] = await pool.execute(sql);
+        const [rows] = await MySQLConnectionManager.executeQuery(this.connectionName, sql);
         return rows;
     }
-    // delete
-    static async findByIdAndDelete(id) {
-        const pool = getConnection(this.connectionName);
 
+    static async findByIdAndDelete(id, connectionName) {
         const sql = `DELETE FROM company WHERE company_id = "${id}"`;
-        const [rows] = await pool.execute(sql);
+        const [rows] = await MySQLConnectionManager.executeQuery(connectionName, sql);
         return rows;
     }
 
-    isValid() {
-        let valid = true;
-        for (const key in this) {
-            const toValidate = [
-                'company_name',
-                'contact_person',
-                'email',
-                'hour_cost',
-            ];
-            if (toValidate.includes(key)) {
-                if (!this[key]) {
-                    valid = false;
-                    break;
-                } else if (typeof this[key] === 'string' && this[key]?.trim() === '') {
-                    valid = false;
-                    break;
-                } else if (this[key] === '') {
-                    valid = false;
-                    break;
-                }
-            }
-        }
-        return valid;
-    }
 }
 
 module.exports = Company;

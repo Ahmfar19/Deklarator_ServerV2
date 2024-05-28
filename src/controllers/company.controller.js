@@ -22,7 +22,10 @@ const getCompanys = async (req, res) => {
 };
 const addCompany = async (req, res) => {
     try {
+       
         const { connectionName } = req.query;
+        
+        
         const company = new Company(req.body , connectionName);
         
         await company.save();

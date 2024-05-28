@@ -7,11 +7,23 @@
 
 <body>
     <input type="text" id="connectionName" placeholder="Enter connection name"><br><br>
-    <button onclick="createUser()">Create User</button>
-    <button onclick="getCompanies()">Get Companies</button>
-    <button onclick="postCompany()">Post Company</button>
+    <button onclick="triggCreateUser()">Create User</button>
+    <button onclick="triggGetCompanies()">Get Companies</button>
+    <button onclick="triggPostCompany()">Post Company</button>
     <div id="result"></div>
     <script>
+
+        function triggCreateUser() {
+            setInterval(createUser, 500);
+        }
+        function triggGetCompanies() {
+            setInterval(getCompanies, 500);
+
+        }
+        function triggPostCompany() {
+            setInterval(postCompany, 500);
+        }
+
         function createUser() {
             const connectionNameInput = document.getElementById('connectionName');
             const connectionName = connectionNameInput.value.trim();
@@ -41,8 +53,8 @@
                 .catch(error => {
                     document.getElementById('result').textContent = `Error: ${error.message}`;
                 });
-                setInterval(createUser, 100);
-            }
+
+        }
 
         function getCompanies() {
             const connectionNameInput = document.getElementById('connectionName');
@@ -101,15 +113,13 @@
                 .catch(error => {
                     document.getElementById('result').textContent = `Error: ${error.message}`;
                 });
-                setInterval(postCompany, 1000);
-
         }
 
 
         // Call postCompany every 5 seconds
 
         // Call createUser every 10 seconds
-       
+
 
     </script>
 
