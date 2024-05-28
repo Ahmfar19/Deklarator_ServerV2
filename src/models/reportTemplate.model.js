@@ -51,6 +51,25 @@ class ReportTemplate {
         // Return success status
         return true;
     }
+
+    static async getAllReportItemsByCompanyId(companyId) {
+        const sql = `SELECT 
+        er.report_id,
+        er.employee_id,
+        er.report_item_id,
+        er.quantity,
+        er.sum,
+        e.personalnumber,
+        e.extent,
+        CONCAT(e.fname, ' ', e.lname) AS employee_name,
+        DATE_FORMAT(er.date, '%Y-%m-%d') AS report_date
+        FROM employee_report er
+        JOIN employee e ON er.employee_id = e.employee_id 
+        WHERE company_id = ${companyId}
+       `
+        const [rows] = await pool.execute(sql);
+        return rows;
+    }
 }
 
 module.exports = ReportTemplate;

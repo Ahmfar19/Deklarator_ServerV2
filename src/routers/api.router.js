@@ -177,7 +177,7 @@ router.delete('/employee/delete/:id', employeeController.deleteEmployee);
 router.get('/reportTemplates', reportTemaplteController.getReportTemplate);
 router.post('/employeeReport/new/:employee_id', reportTemaplteController.addEmployeeReport);
 router.get('/reportTaplate/employee/:id', reportTemaplteController.getEmployeeReport);
-
+router.get('/reports/employees/:companyId', reportTemaplteController.getReportsEmployeesByCompanyId)
 router.get('/checkAuth', (req, res) => {
     const access_token = req.cookies.accessToken;
     if (access_token) {
