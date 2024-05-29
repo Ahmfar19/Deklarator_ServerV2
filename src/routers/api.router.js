@@ -22,6 +22,7 @@ const uploadFilesController = require('../controllers/uploadFiles.controller');
 const guestsController = require('../controllers/guest.controller');
 const reportTemaplteController = require('../controllers/reportTemplate.controller');
 const employeeController = require('../controllers/employee.controller');
+const employeeReportController = require('../controllers/employeeReport.controller');
 
 const path = require('path');
 
@@ -178,6 +179,11 @@ router.get('/reportTemplates', reportTemaplteController.getReportTemplate);
 router.post('/employeeReport/new/:employee_id', reportTemaplteController.addEmployeeReport);
 router.get('/reportTaplate/employee/:id', reportTemaplteController.getEmployeeReport);
 router.get('/reports/employees/:companyId', reportTemaplteController.getReportsEmployeesByCompanyId)
+
+///////////////////////  employee_Report   ////////////////////////////
+router.put('/employeeReport/edit/:reportId', employeeReportController.updateReport)
+
+
 router.get('/checkAuth', (req, res) => {
     const access_token = req.cookies.accessToken;
     if (access_token) {
