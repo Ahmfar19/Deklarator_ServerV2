@@ -20,7 +20,7 @@ class Employee {
             ${this.company_id}, 
             "${this.fname}", 
             "${this.lname}", 
-            ${this.personalnumber},
+            "${this.personalnumber}",
             "${this.extent}"
         )`;
 
@@ -56,7 +56,7 @@ class Employee {
         company_id = ${this.company_id}, 
         fname = "${this.fname}", 
         lname = "${this.lname}", 
-        personalnumber = ${this.personalnumber},
+        personalnumber = "${this.personalnumber}",
         extent = "${this.extent}"
         WHERE employee_id = ${id}`;
         const [rows] = await pool.execute(sql);

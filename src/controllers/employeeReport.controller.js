@@ -4,28 +4,60 @@ const { sendResponse } = require('../helpers/apiResponse');
 
 const updateReport = async (req, res) => {
     try {
-        const { reportId } = req.params;
-
-        const report = new EmployeeReport(req.body);
-        const data = await report.updateByReportId(reportId);
-
-        if (data.affectedRows === 0) {
-            if (data.affectedRows === 0) {
-                return res.json({
-                    status: 406,
-                    message: 'not report found to update',
-                });
-            }
-        }
-
-        sendResponse(res, 202, 'Accepted', 'Successfully updated a report.', null, report);
+        const { employee_id } = req.params;
+        const  reportItemsData  = req.body;
+        
+         await EmployeeReport.updateByReportId(employee_id, reportItemsData)
+  
+         sendResponse(res, 202, 'Accepted', 'Successfully updated a report.', null, null);
    
     } catch (err) {
         sendResponse(res, 500, 'Internal Server Error', null, err.message || err, null);
     }
 }
 
+const getEmployeeReport = async (req, res) => {
+    try {
+        const id = req.params.id;
+        const employeeReports = await EmployeeReport.getByEmployeeId(id);
+        sendResponse(res, 200, 'Ok', 'Successfully retrieved all the employeeReports', null, employeeReports);
+    } catch (err) {
+        sendResponse(res, 500, 'Internal Server Error', null, err.message || err, null);
+    }
+};
+
+const addEmployeeReport = async (req, res) => {
+    try {
+        const { employee_id } = req.params;
+
+        const reportItemsData = req.body; // Assuming req.body contains the array of report items
+
+        const data = await EmployeeReport.createEmployeeReport(employee_id, reportItemsData);
+
+        if (data) {
+            return sendResponse(res, 202, 'Accepted', 'Employee reports created successfully.', null, data);
+        }
+    } catch (err) {
+        sendResponse(res, 500, 'Internal Server Error', null, err.message || err, null);
+    }
+};
+
+const getReportsEmployeesByCompanyId = async (req, res) => {
+    try {
+        const companyId  = req.params.companyId;
+        const reportsEmployessByCompanyId = await EmployeeReport.getAllReportItemsByCompanyId(companyId);
+      
+        sendResponse(res, 200, 'Ok', 'Successfully retrieved all the reportsEmployessByCompanyId', null, reportsEmployessByCompanyId);
+    } catch (err) {
+        sendResponse(res, 500, 'Internal Server Error', null, err.message || err, null);
+    }
+}
+
+
 
 module.exports = {
-    updateReport
+    updateReport,
+    getEmployeeReport,
+    addEmployeeReport,
+    getReportsEmployeesByCompanyId
 };
