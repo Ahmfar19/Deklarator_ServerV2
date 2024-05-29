@@ -10,23 +10,20 @@ class EmployeeReport {
     }
 
     static async updateByReportId(employee_id, reportItemsData) {
-
         if (!Array.isArray(reportItemsData) || reportItemsData.length === 0) {
             throw new Error('Invalid report items data');
         }
 
         const insertionPromises = reportItemsData.map(async (item) => {
-            const sql =
-                `UPDATE employee_report SET 
+            const sql = `UPDATE employee_report SET 
              report_item_id = ${item.report_item_id},
              quantity = ${item.quantity},
              sum = ${item.sum},
              date = "${item.date}"
              WHERE employee_id = ${employee_id}
              AND report_id = ${item.report_id}
-             `
+             `;
             await pool.execute(sql);
-
         });
 
         await Promise.all(insertionPromises);
@@ -88,7 +85,20 @@ class EmployeeReport {
         JOIN employee e ON er.employee_id = e.employee_id
         JOIN report_template rt ON er.report_item_id = rt.item_id
         WHERE company_id = ${companyId}
-       `
+       `;
+        const [rows] = await pool.execute(sql);
+        return rows;
+    }
+
+    static async deleteEmployeeReport(id) {
+        const [empId, year, month] = id.split('-');
+
+        console.error(empId, year, month);
+        const sql = `DELETE FROM employee_report 
+            WHERE employee_id = ${empId}
+            AND YEAR(date) = ${year} 
+            AND MONTH(date) = ${month}
+        `;
         const [rows] = await pool.execute(sql);
         return rows;
     }

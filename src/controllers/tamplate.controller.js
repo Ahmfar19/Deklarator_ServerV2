@@ -49,10 +49,10 @@ const deleteTemplate = async (req, res) => {
     } catch (err) {
         sendResponse(res, 500, 'Internal Server Error', null, err.message || err, null);
     }
-}
+};
 module.exports = {
     getTamplatesName,
     createTamplate,
     updateTamplate,
-    deleteTemplate
+    deleteTemplate,
 };

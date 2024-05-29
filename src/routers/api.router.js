@@ -148,8 +148,7 @@ router.delete('/messageType/delete/:id', messageTypeController.deleteMessageType
 router.get('/tamplates', TamplateController.getTamplatesName);
 router.post('/tamplate/new', TamplateController.createTamplate);
 router.put('/template/edit/:id', TamplateController.updateTamplate);
-router.delete('/template/delete/:id', TamplateController.deleteTemplate)
-
+router.delete('/template/delete/:id', TamplateController.deleteTemplate);
 
 /////////////// checkListItems Routes /////////////////
 router.get('/checkListItems', checkListController.getcheckListItems);
@@ -180,14 +179,12 @@ router.delete('/employee/delete/:id', employeeController.deleteEmployee);
 ////////////////////// reportTemplate Routes  ////////////////////////
 router.get('/reportTemplates', reportTemaplteController.getReportTemplate);
 
-
-
-
 ///////////////////////  employee_Report   ////////////////////////////
-router.put('/employeeReport/edit/:employee_id', employeeReportController.updateReport)
+router.put('/employeeReport/edit/:employee_id', employeeReportController.updateReport);
 router.get('/reportTaplate/employee/:id', employeeReportController.getEmployeeReport);
 router.post('/employeeReport/new/:employee_id', employeeReportController.addEmployeeReport);
-router.get('/reports/employees/:companyId', employeeReportController.getReportsEmployeesByCompanyId)
+router.get('/reports/employees/:companyId', employeeReportController.getReportsEmployeesByCompanyId);
+router.delete('/report/delete/:id', employeeReportController.deleteEmployeeReport);
 
 router.get('/checkAuth', (req, res) => {
     const access_token = req.cookies.accessToken;

@@ -1,20 +1,18 @@
 const EmployeeReport = require('../models/employeeReport.model');
 const { sendResponse } = require('../helpers/apiResponse');
 
-
 const updateReport = async (req, res) => {
     try {
         const { employee_id } = req.params;
-        const  reportItemsData  = req.body;
-        
-         await EmployeeReport.updateByReportId(employee_id, reportItemsData)
-  
-         sendResponse(res, 202, 'Accepted', 'Successfully updated a report.', null, null);
-   
+        const reportItemsData = req.body;
+
+        await EmployeeReport.updateByReportId(employee_id, reportItemsData);
+
+        sendResponse(res, 202, 'Accepted', 'Successfully updated a report.', null, null);
     } catch (err) {
         sendResponse(res, 500, 'Internal Server Error', null, err.message || err, null);
     }
-}
+};
 
 const getEmployeeReport = async (req, res) => {
     try {
@@ -44,20 +42,37 @@ const addEmployeeReport = async (req, res) => {
 
 const getReportsEmployeesByCompanyId = async (req, res) => {
     try {
-        const companyId  = req.params.companyId;
+        const companyId = req.params.companyId;
         const reportsEmployessByCompanyId = await EmployeeReport.getAllReportItemsByCompanyId(companyId);
-      
-        sendResponse(res, 200, 'Ok', 'Successfully retrieved all the reportsEmployessByCompanyId', null, reportsEmployessByCompanyId);
+
+        sendResponse(
+            res,
+            200,
+            'Ok',
+            'Successfully retrieved all the reportsEmployessByCompanyId',
+            null,
+            reportsEmployessByCompanyId,
+        );
     } catch (err) {
         sendResponse(res, 500, 'Internal Server Error', null, err.message || err, null);
     }
-}
+};
 
+const deleteEmployeeReport = async (req, res) => {
+    try {
+        const id = req.params.id;
+        await EmployeeReport.deleteEmployeeReport(id);
 
+        sendResponse(res, 200, 'Ok', 'Successfully deleted all the report for the specifid month', null, null);
+    } catch (err) {
+        sendResponse(res, 500, 'Internal Server Error', null, err.message || err, null);
+    }
+};
 
 module.exports = {
     updateReport,
     getEmployeeReport,
     addEmployeeReport,
-    getReportsEmployeesByCompanyId
+    getReportsEmployeesByCompanyId,
+    deleteEmployeeReport,
 };

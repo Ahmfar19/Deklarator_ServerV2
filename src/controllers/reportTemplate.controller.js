@@ -10,7 +10,6 @@ const getReportTemplate = async (req, res) => {
     }
 };
 
-
 module.exports = {
     getReportTemplate,
 };
