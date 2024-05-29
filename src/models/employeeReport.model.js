@@ -83,7 +83,7 @@ class EmployeeReport {
         rt.text,
         rt.item_id,
         CONCAT(e.fname, ' ', e.lname) AS employee_name,
-        DATE_FORMAT(er.date, '%Y-%m-%d') AS report_date
+        DATE_FORMAT(er.date, '%Y-%m-%d') AS date
         FROM employee_report er
         JOIN employee e ON er.employee_id = e.employee_id
         JOIN report_template rt ON er.report_item_id = rt.item_id
