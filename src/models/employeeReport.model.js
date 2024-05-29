@@ -58,19 +58,21 @@ class EmployeeReport {
             const sql =
                 'INSERT INTO employee_report (employee_id, report_item_id, quantity, sum, date) VALUES (?, ?, ?, ?, ?)';
             const values = [employee_id, item.report_item_id, item.quantity, item.sum, item.date];
-            await pool.execute(sql, values);
+            return await pool.execute(sql, values);
         });
 
         // Wait for all report items to be inserted
-        await Promise.all(insertionPromises);
+        const results = await Promise.all(insertionPromises);
+        const from = results[0][0].insertId;
+        const to = from + results.length - 1;
 
-        // Return success status
-        return true;
+        const insertedReports = await this.geRangeReports(from, to);
+        return insertedReports;
     }
 
     static async getAllReportItemsByCompanyId(companyId) {
         const sql = `SELECT 
-        er.report_id,
+        er.report_id, 
         er.employee_id,
         er.report_item_id,
         er.quantity,
@@ -93,12 +95,33 @@ class EmployeeReport {
     static async deleteEmployeeReport(id) {
         const [empId, year, month] = id.split('-');
 
-        console.error(empId, year, month);
         const sql = `DELETE FROM employee_report 
             WHERE employee_id = ${empId}
             AND YEAR(date) = ${year} 
             AND MONTH(date) = ${month}
         `;
+        const [rows] = await pool.execute(sql);
+        return rows;
+    }
+
+    static async geRangeReports(from, to) {
+        const sql = `SELECT 
+        er.report_id,
+        er.employee_id,
+        er.report_item_id,
+        er.quantity,
+        er.sum,
+        e.personalnumber,
+        e.extent,
+        rt.text,
+        rt.item_id,
+        CONCAT(e.fname, ' ', e.lname) AS employee_name,
+        DATE_FORMAT(er.date, '%Y-%m-%d') AS date
+        FROM employee_report er
+        JOIN employee e ON er.employee_id = e.employee_id
+        JOIN report_template rt ON er.report_item_id = rt.item_id
+        WHERE report_id >= ${from} AND report_id <= ${to};
+       `;
         const [rows] = await pool.execute(sql);
         return rows;
     }
