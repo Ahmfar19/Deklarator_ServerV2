@@ -61,10 +61,13 @@ class ReportTemplate {
         er.sum,
         e.personalnumber,
         e.extent,
+        rt.text,
+        rt.item_id,
         CONCAT(e.fname, ' ', e.lname) AS employee_name,
         DATE_FORMAT(er.date, '%Y-%m-%d') AS report_date
         FROM employee_report er
-        JOIN employee e ON er.employee_id = e.employee_id 
+        JOIN employee e ON er.employee_id = e.employee_id
+        JOIN report_template rt ON er.report_item_id = rt.item_id
         WHERE company_id = ${companyId}
        `
         const [rows] = await pool.execute(sql);
