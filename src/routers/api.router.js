@@ -170,6 +170,7 @@ router.get('/guests', guestsController.getGuests);
 router.post('/guest/login', guestsController.loginGuest);
 
 ////////////////////// employee Routes  ////////////////////////
+router.get('/employess', employeeController.getAllEmployees);
 router.post('/employee/new', employeeController.addEmployee);
 router.get('/employess/company/:id', employeeController.getEmployees);
 router.get('/employee/:id', employeeController.getSingleEmployee);
@@ -180,6 +181,7 @@ router.delete('/employee/delete/:id', employeeController.deleteEmployee);
 router.get('/reportTemplates', reportTemaplteController.getReportTemplate);
 
 ///////////////////////  employee_Report   ////////////////////////////
+router.get('/employeeReports', employeeReportController.getAllReportItems);
 router.put('/employeeReport/edit/:employee_id', employeeReportController.updateReport);
 router.get('/reportTaplate/employee/:id', employeeReportController.getEmployeeReport);
 router.post('/employeeReport/new/:employee_id', employeeReportController.addEmployeeReport);

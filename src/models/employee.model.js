@@ -51,6 +51,15 @@ class Employee {
         return rows;
     }
 
+    static async getAllEmployees() {
+        const sql = `
+            SELECT employee_id, company_id, CONCAT(fname, ' ', lname) AS employee_name 
+            FROM employee`;
+        console.error('sql', sql);
+        const [rows] = await pool.execute(sql);
+        return rows;
+    }
+
     async updateById(id) {
         const sql = `UPDATE employee SET 
         company_id = ${this.company_id}, 

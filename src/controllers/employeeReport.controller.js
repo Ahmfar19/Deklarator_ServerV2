@@ -58,6 +58,22 @@ const getReportsEmployeesByCompanyId = async (req, res) => {
     }
 };
 
+const getAllReportItems = async (req, res) => {
+    try {
+        const reportsEmployess = await EmployeeReport.getAllReportItems();
+        sendResponse(
+            res,
+            200,
+            'Ok',
+            'Successfully retrieved all the reportsEmployessByCompanyId',
+            null,
+            reportsEmployess,
+        );
+    } catch (err) {
+        sendResponse(res, 500, 'Internal Server Error', null, err.message || err, null);
+    }
+};
+
 const deleteEmployeeReport = async (req, res) => {
     try {
         const id = req.params.id;
@@ -75,4 +91,5 @@ module.exports = {
     addEmployeeReport,
     getReportsEmployeesByCompanyId,
     deleteEmployeeReport,
+    getAllReportItems,
 };

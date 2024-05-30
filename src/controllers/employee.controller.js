@@ -23,6 +23,16 @@ const getEmployees = async (req, res) => {
     }
 };
 
+const getAllEmployees = async (req, res) => {
+    try {
+        const employees = await Employee.getAllEmployees();
+        sendResponse(res, 200, 'Ok', 'Successfully retrieved all the employees', null, employees);
+    } catch (err) {
+        sendResponse(res, 500, 'Internal Server Error', null, err.message || err, null);
+    }
+};
+
+
 const getSingleEmployee = async (req, res) => {
     try {
         const id = req.params.id;
@@ -77,4 +87,5 @@ module.exports = {
     getSingleEmployee,
     updateEmployee,
     deleteEmployee,
+    getAllEmployees
 };
