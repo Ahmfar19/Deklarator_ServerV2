@@ -9,6 +9,7 @@ const { sendResponse } = require('../helpers/apiResponse');
 const mailMessags = require('../helpers/emailMessages');
 const config = require('config');
 
+
 const JWT_SECRET_KEY = config.get('JWT_SECRET_KEY');
 
 function searchImageByName(directoryPath, imageName) {
@@ -199,6 +200,24 @@ const deleteUser = async (req, res) => {
     const id = req.params.id;
     try {
         const data = await User.deleteUser(id);
+        const userId = id
+        const dirPath = path.resolve('assets/images/users');
+        const pattern = new RegExp(`^user_${userId}\\..*$`);
+        fs.readdir(dirPath, (err, files) => {
+            if (err) {
+                return;
+            }
+            files.forEach(file => {
+                if (pattern.test(file)) {
+                    const filePath = path.join(dirPath, file);
+                    try {
+                        fs.unlinkSync(filePath);
+                    } catch (unlinkErr) {
+                        // Crash in silent mode 
+                    }
+                }
+            });
+        });
         sendResponse(res, 200, 'Ok', 'Successfully deleted a user.', null, data);
     } catch (err) {
         sendResponse(res, 500, 'Internal Server Error', null, err.message || err, null);

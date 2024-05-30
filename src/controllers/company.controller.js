@@ -1,6 +1,8 @@
 const Company = require('../models/company.model');
 const CheckList = require('../models/checkList.model');
 const { sendResponse } = require('../helpers/apiResponse');
+const path = require('path');
+const fs = require('fs');
 
 const getSingleCompany = async (req, res) => {
     try {
@@ -61,11 +63,18 @@ const updateCompany = async (req, res) => {
 const deleteCompany = async (req, res) => {
     try {
         const id = req.params.id;
-        const data = await Company.findByIdAndDelete(id);
-        if (data.affectedRows === 0) {
-            throw new Error('No company found for deletion');
-        }
-        sendResponse(res, 202, 'Accepted', 'Successfully deleted a company.', null, null);
+         const data = await Company.findByIdAndDelete(id);
+         if (data.affectedRows === 0) {
+             throw new Error('No company found for deletion');
+         }
+        const filePath = path.join(__dirname, '../../assets/files', id);
+        
+        if (fs.existsSync(filePath)) {
+            console.log("aa");
+            fs.rmSync(filePath, { recursive: true });
+        } 
+    
+         sendResponse(res, 202, 'Accepted', 'Successfully deleted a company.', null, null);
     } catch (err) {
         sendResponse(res, 500, 'Internal Server Error', null, err.message || err, null);
     }

@@ -231,7 +231,12 @@ class Reminder {
     }
 
     static async getReminderByCompanyId(id) {
-        const sql = `SELECT * FROM reminder WHERE company_id = ${id}`;
+        const sql = `
+        SELECT reminder.*, company.company_name, DATE_FORMAT(reminder.remender_date, "%Y-%m-%d") AS remender_date
+        FROM reminder
+        JOIN company ON reminder.company_id = company.company_id
+        WHERE company.company_id = ${id};
+        `;
         const [rows] = await pool.execute(sql);
         return rows;
     }
