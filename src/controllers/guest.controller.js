@@ -10,6 +10,7 @@ const ADMIN_EMAIL = config.get('ADMIN_EMAIL');
 
 const createGuestAccount = async (company_id) => {
     const data = await Guest.getEmail(company_id);
+
     const password = await generatePassword();
     const hashedPassword = await hashPassword(password);
 
@@ -37,10 +38,12 @@ const addGuest = async (req, res) => {
         sendResponse(res, 500, 'Invalid argument', null, null);
         return;
     }
-
     try {
-        const promises = companyIds.map(company_id => createGuestAccount(company_id));
+        const promises = companyIds.map(async company_id =>
+            createGuestAccount(company_id)
+        );
         await Promise.all(promises);
+
 
         sendResponse(res, 200, 'Success', 'All guest accounts created successfully', null, null);
     } catch (err) {
@@ -79,7 +82,9 @@ const loginGuest = async (req, res) => {
         const { email, password, fingerprint } = req.body;
         const data = await Guest.checkGuest(email);
 
-        if (data.length) {
+        if (data.length > 1) {
+            return sendResponse(res, 409, 'Conflict', null, 'User already exists in the database', null);
+        } else if (data.length === 1) {
             const match = await comparePassword(password, data[0].password);
             if (match) {
                 const expiresIn = '1d';

@@ -46,6 +46,18 @@ class Guest {
         const [rows] = await pool.execute(sql);
         return rows;
     }
+
+    static async checkIfGuestExists(company_id) {
+        const sql = `
+        SELECT * FROM guest
+        JOIN company ON company.company_id = guest.company_id
+        WHERE guest.company_id = '${company_id}';
+    `;
+        const [rows] = await pool.execute(sql);
+        return rows;
+    }
+
+
 }
 
 module.exports = Guest;
