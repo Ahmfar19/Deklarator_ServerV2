@@ -70,9 +70,8 @@ const deleteCompany = async (req, res) => {
         const filePath = path.join(__dirname, '../../assets/files', id);
         
         if (fs.existsSync(filePath)) {
-            console.log("aa");
             fs.rmSync(filePath, { recursive: true });
-        } 
+        }
     
          sendResponse(res, 202, 'Accepted', 'Successfully deleted a company.', null, null);
     } catch (err) {
