@@ -27,7 +27,8 @@ class Guest {
 
     static async deleteAccount(id) {
         const sql = `DELETE FROM guest WHERE company_id = ${id}`;
-        await pool.execute(sql);
+        const [row] = await pool.execute(sql);
+        return row;
     }
 
     static async getEmail(id) {
