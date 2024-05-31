@@ -55,7 +55,6 @@ class Employee {
         const sql = `
             SELECT employee_id, company_id, CONCAT(fname, ' ', lname) AS employee_name 
             FROM employee`;
-        console.error('sql', sql);
         const [rows] = await pool.execute(sql);
         return rows;
     }
