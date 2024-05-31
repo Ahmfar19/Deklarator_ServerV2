@@ -39,11 +39,8 @@ const addGuest = async (req, res) => {
         return;
     }
     try {
-        const promises = companyIds.map(async company_id =>
-            createGuestAccount(company_id)
-        );
+        const promises = companyIds.map(async company_id => createGuestAccount(company_id));
         await Promise.all(promises);
-
 
         sendResponse(res, 200, 'Success', 'All guest accounts created successfully', null, null);
     } catch (err) {

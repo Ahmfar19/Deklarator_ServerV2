@@ -10,8 +10,8 @@ class Tamplate {
             tamplate_name,
             tamplate_body
         ) VALUES (
-            "${this.tamplate_name}",
-            "${this.tamplate_body}"
+            '${this.tamplate_name}',
+            '${this.tamplate_body}'
         )`;
         const result = await pool.execute(sql);
         this.tamplate_id = result[0].insertId;

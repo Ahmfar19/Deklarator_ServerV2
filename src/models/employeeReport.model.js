@@ -115,6 +115,30 @@ class EmployeeReport {
         return rows;
     }
 
+    static async getReportItemsByFilter(key, value) {
+        const sql = `SELECT 
+        er.report_id, 
+        er.employee_id,
+        er.report_item_id,
+        er.quantity,
+        er.sum,
+        e.personalnumber,
+        e.extent,
+        rt.text,
+        rt.item_id,
+        co.company_name,
+        CONCAT(e.fname, ' ', e.lname) AS employee_name,
+        DATE_FORMAT(er.date, '%Y-%m-%d') AS date
+        FROM employee_report er
+        JOIN employee e ON er.employee_id = e.employee_id
+        JOIN report_template rt ON er.report_item_id = rt.item_id
+        JOIN company co ON co.company_id = e.company_id
+        WHERE ${key} = '${value}';
+       `;
+        const [rows] = await pool.execute(sql);
+        return rows;
+    }
+
     static async deleteEmployeeReport(id) {
         const [empId, year, month] = id.split('-');
 

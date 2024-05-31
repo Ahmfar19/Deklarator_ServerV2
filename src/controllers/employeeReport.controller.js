@@ -74,6 +74,16 @@ const getAllReportItems = async (req, res) => {
     }
 };
 
+const getFilterdReports = async (req, res) => {
+    const { key, value } = req.query;
+    try {
+        const reportsEmployess = await EmployeeReport.getReportItemsByFilter(key, value);
+        sendResponse(res, 200, 'Ok', 'Successfully retrieved the remenders', null, reportsEmployess);
+    } catch (err) {
+        sendResponse(res, 500, 'Internal Server Error', null, err.message || err, null);
+    }
+};
+
 const deleteEmployeeReport = async (req, res) => {
     try {
         const id = req.params.id;
@@ -92,4 +102,5 @@ module.exports = {
     getReportsEmployeesByCompanyId,
     deleteEmployeeReport,
     getAllReportItems,
+    getFilterdReports,
 };

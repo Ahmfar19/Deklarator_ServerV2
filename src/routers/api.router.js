@@ -182,6 +182,7 @@ router.get('/reportTemplates', reportTemaplteController.getReportTemplate);
 
 ///////////////////////  employee_Report   ////////////////////////////
 router.get('/employeeReports', employeeReportController.getAllReportItems);
+router.get('/employeeReports/filter', employeeReportController.getFilterdReports);
 router.put('/employeeReport/edit/:employee_id', employeeReportController.updateReport);
 router.get('/reportTaplate/employee/:id', employeeReportController.getEmployeeReport);
 router.post('/employeeReport/new/:employee_id', employeeReportController.addEmployeeReport);

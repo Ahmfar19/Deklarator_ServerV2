@@ -56,8 +56,6 @@ class Guest {
         const [rows] = await pool.execute(sql);
         return rows;
     }
-
-
 }
 
 module.exports = Guest;

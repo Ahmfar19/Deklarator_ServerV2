@@ -32,7 +32,6 @@ const getAllEmployees = async (req, res) => {
     }
 };
 
-
 const getSingleEmployee = async (req, res) => {
     try {
         const id = req.params.id;
@@ -87,5 +86,5 @@ module.exports = {
     getSingleEmployee,
     updateEmployee,
     deleteEmployee,
-    getAllEmployees
+    getAllEmployees,
 };

@@ -63,17 +63,17 @@ const updateCompany = async (req, res) => {
 const deleteCompany = async (req, res) => {
     try {
         const id = req.params.id;
-         const data = await Company.findByIdAndDelete(id);
-         if (data.affectedRows === 0) {
-             throw new Error('No company found for deletion');
-         }
+        const data = await Company.findByIdAndDelete(id);
+        if (data.affectedRows === 0) {
+            throw new Error('No company found for deletion');
+        }
         const filePath = path.join(__dirname, '../../assets/files', id);
-        
+
         if (fs.existsSync(filePath)) {
             fs.rmSync(filePath, { recursive: true });
         }
-    
-         sendResponse(res, 202, 'Accepted', 'Successfully deleted a company.', null, null);
+
+        sendResponse(res, 202, 'Accepted', 'Successfully deleted a company.', null, null);
     } catch (err) {
         sendResponse(res, 500, 'Internal Server Error', null, err.message || err, null);
     }
