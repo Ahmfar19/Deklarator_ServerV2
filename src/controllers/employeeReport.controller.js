@@ -95,6 +95,17 @@ const deleteEmployeeReport = async (req, res) => {
     }
 };
 
+const deleteEmployeeItemReport = async (req, res) => {
+    try {
+        const values = req.body;
+        await EmployeeReport.deleteReportItems(values);
+
+        sendResponse(res, 200, 'Ok', 'Successfully deleted the specified entries', null, null);
+    } catch (err) {
+        sendResponse(res, 500, 'Internal Server Error', null, err.message || err, null);
+    }
+};
+
 module.exports = {
     updateReport,
     getEmployeeReport,
@@ -103,4 +114,5 @@ module.exports = {
     deleteEmployeeReport,
     getAllReportItems,
     getFilterdReports,
+    deleteEmployeeItemReport,
 };

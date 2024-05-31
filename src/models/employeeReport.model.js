@@ -172,6 +172,14 @@ class EmployeeReport {
         const [rows] = await pool.execute(sql);
         return rows;
     }
+
+    static async deleteReportItems(values) {
+        const deleteReportEntries = values.map(async (item) => {
+            const sql = `DELETE FROM employee_report WHERE report_id = ${item.report_id}`;
+            await pool.execute(sql);
+        });
+        await Promise.all(deleteReportEntries);
+    }
 }
 
 module.exports = EmployeeReport;

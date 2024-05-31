@@ -184,6 +184,7 @@ router.get('/reportTemplates', reportTemaplteController.getReportTemplate);
 router.get('/employeeReports', employeeReportController.getAllReportItems);
 router.get('/employeeReports/filter', employeeReportController.getFilterdReports);
 router.put('/employeeReport/edit/:employee_id', employeeReportController.updateReport);
+router.delete('/employeeReport/items/delete', employeeReportController.deleteEmployeeItemReport);
 router.get('/reportTaplate/employee/:id', employeeReportController.getEmployeeReport);
 router.post('/employeeReport/new/:employee_id', employeeReportController.addEmployeeReport);
 router.get('/reports/employees/:companyId', employeeReportController.getReportsEmployeesByCompanyId);
