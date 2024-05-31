@@ -10,6 +10,7 @@ class Task {
         this.type_id = options.type_id;
         this.task_order = options.task_order;
         this.company_id = options.company_id;
+        this.deadLine = options.deadLine;
     }
 
     async save() {
@@ -20,7 +21,8 @@ class Task {
             company_id,
             title,
             body,
-            task_order
+            deadLine,
+            task_order 
         ) VALUES (
             ${this.type_id},
             ${this.staff_created},
@@ -28,6 +30,7 @@ class Task {
             ${this.company_id},
             "${this.title}",
             "${this.body}",
+            "${this.deadLine}",
             ${this.task_order}
         )`;
 
@@ -55,7 +58,9 @@ class Task {
                 ${this.company_id[i]},
                 '${this.title}',
                 '${this.body}',
-                ${this.task_order[i]})
+                '${this.deadLine}',
+                ${this.task_order[i]}
+            )
             `;
 
             // Add comma if it's not the last value
@@ -71,6 +76,7 @@ class Task {
             company_id,
             title,
             body,
+            deadLine,
             task_order
         ) VALUES ${values}`;
 
@@ -132,10 +138,12 @@ class Task {
         if (this.body) {
             sql += ` body = "${this.body}",`;
         }
+        if (this.deadLine) {
+            sql += ` deadLine = '${this.deadLine}',`;
+        }
         if (this.task_order != undefined) {
             sql += ` task_order = ${this.task_order}`;
         }
-
         sql = removeLastComma(sql);
         sql += ` WHERE task_id = ${id}`;
         const [rows] = await pool.execute(sql);

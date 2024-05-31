@@ -20,7 +20,11 @@ const mailMessags = {
     guestEmail: {
         title: 'Dear {0}',
         body:
-            'Congratulations on successfully registering with Deklarator.\nBelow are your account details: \nUsername: {0} \npassword: {1} \n \n for login : https://system.deklarator.se/reporting',
+            'Congratulations on successfully registering with Deklarator.\nBelow are your account details:\n \nUsername: {0} \nPassword: {1}\n \nLogin Here: https://system.deklarator.se/reporting',
+    },
+    employee: {
+        title: 'dek_message_newReport',
+        body: 'dek_message_newIncomReport',
     },
 };
 

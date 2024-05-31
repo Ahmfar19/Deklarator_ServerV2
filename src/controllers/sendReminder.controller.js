@@ -37,6 +37,7 @@ const checkForReminder = async () => {
             if (tamplatesArray[templateId].length) {
                 const bccEmails = [];
                 const tamplateBody = tamplatesArray[templateId][0].tamplate_body;
+                const tamplateName = tamplatesArray[templateId][0].tamplate_name;
 
                 tamplatesArray[templateId].forEach(async (item) => {
                     bccEmails.push(item.company_email);
@@ -78,7 +79,7 @@ const checkForReminder = async () => {
                     const bodyString = JSON.stringify({
                         key: body,
                         params: {
-                            0: tamplateBody,
+                            0: tamplateName,
                         },
                     });
 
