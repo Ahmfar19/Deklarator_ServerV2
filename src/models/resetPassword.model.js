@@ -67,6 +67,15 @@ class ResetPassword {
         const [rows] = await pool.execute(sql, [PinCode, email]);
         return rows;
     }
+
+    static async checkIfGuestExists(email) {
+        const sql = `SELECT email FROM guest 
+        INNER JOIN company ON guest.company_id = company.company_id
+        WHERE email = ?
+        `;
+        const [rows] = await pool.execute(sql, [email]);
+        return rows;
+    }
 }
 
 module.exports = ResetPassword;

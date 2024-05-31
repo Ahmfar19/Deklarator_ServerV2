@@ -29,7 +29,13 @@ const path = require('path');
 // import validation register schema
 const { signUpValidation } = require('../helpers/validation');
 
-const upload = multer({ dest: path.join('../../assets/images/users') });
+const upload = multer({
+    dest: path.join('../../assets/images/users'),
+    limits: {
+        fileSize: 300 * 1024 * 1024, // Set the maximum file size limit in megabytes (MB)
+        fieldSize: 300 * 1024 * 1024, // Set the maximum field size limit in megabytes (MB)
+    },
+});
 
 /////////////////// register & login Routes //////////////////////
 // create user

@@ -4,7 +4,6 @@ const { sendResponse } = require('../helpers/apiResponse');
 const addEmployee = async (req, res) => {
     try {
         const employee = new Employee(req.body);
-
         await employee.save();
 
         sendResponse(res, 201, 'Created', 'Successfully created a employee.', null, employee);

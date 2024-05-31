@@ -1,4 +1,9 @@
 const EmployeeReport = require('../models/employeeReport.model');
+const MessageType = require('../models/message_type.model');
+const Message = require('../models/message.model');
+const User = require('../models/user.model');
+const mailMessags = require('../helpers/emailMessages');
+const { getNowDate_time } = require('../helpers/utils');
 const { sendResponse } = require('../helpers/apiResponse');
 
 const updateReport = async (req, res) => {
@@ -33,6 +38,29 @@ const addEmployeeReport = async (req, res) => {
         const data = await EmployeeReport.createEmployeeReport(employee_id, reportItemsData);
 
         if (data) {
+            const title = mailMessags.employee.title;
+            const body = mailMessags.employee.body;
+            const bodyString = JSON.stringify({
+                key: body,
+                params: {
+                    0: `${data[0].employee_name}`,
+                },
+            });
+            const admins = await User.getAdmins();
+            const messageName = await MessageType.getMessageTypeByName('primary');
+            const nowDateTime = getNowDate_time();
+
+            for (const admin of admins) {
+                const message = new Message({
+                    staff_id: admin.staff_id,
+                    message_typ_id: messageName[0].message_typ_id,
+                    title: title,
+                    body: bodyString,
+                    date_time: nowDateTime,
+                    seen: false,
+                });
+                await message.save();
+            }
             return sendResponse(res, 202, 'Accepted', 'Employee reports created successfully.', null, data);
         }
     } catch (err) {
