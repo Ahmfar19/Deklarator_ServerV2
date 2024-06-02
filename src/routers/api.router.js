@@ -30,7 +30,7 @@ const path = require('path');
 const { signUpValidation } = require('../helpers/validation');
 
 const upload = multer({
-    dest: path.join('../../assets/images/users'),
+    dest: path.join(__dirname, 'assets/images/users'),
     limits: {
         fileSize: 300 * 1024 * 1024, // Set the maximum file size limit in megabytes (MB)
         fieldSize: 300 * 1024 * 1024, // Set the maximum field size limit in megabytes (MB)

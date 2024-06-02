@@ -52,6 +52,7 @@ app.use('/api', apiRouter);
 
 // ***************** When uploading to the production server **************** //
 // app.use('/server/api', apiRouter);
+// app.use('/server/assets', verifyInlogged, express.static('assets'));
 
 // ***************** When testing the fronEnd by this server **************** //
 // const path = require('path');
