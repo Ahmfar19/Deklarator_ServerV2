@@ -84,6 +84,18 @@ class Company {
         return rows;
     }
 
+    static async checkIfCompanyExisted(email) {
+        const sql = `SELECT * FROM company WHERE email = ?`;
+        const [rows] = await pool.execute(sql, [email]);
+        return rows;
+    }
+
+    static async checkUpdateCompany(email, id) {
+        const sql = `SELECT * FROM company WHERE (email = ?) AND company_id != ?`;
+        const [rows] = await pool.execute(sql, [email, id]);
+        return rows;
+    }
+
     isValid() {
         let valid = true;
         for (const key in this) {

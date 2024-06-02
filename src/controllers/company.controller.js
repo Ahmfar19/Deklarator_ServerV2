@@ -23,6 +23,12 @@ const getCompanys = async (req, res) => {
 };
 const addCompany = async (req, res) => {
     try {
+        const checkCompany = await Company.checkIfCompanyExisted(req.body.email);
+
+        if (checkCompany.length) {
+            return sendResponse(res, 406, 'Not Acceptable', 'company email already existed.', null, null);
+        }
+
         const company = new Company(req.body);
         const isValid = company.isValid();
         if (!isValid) {
@@ -41,6 +47,11 @@ const updateCompany = async (req, res) => {
     try {
         const id = req.params.id;
 
+        const checkCompany = await Company.checkUpdateCompany(req.body.email, id);
+
+        if (checkCompany.length) {
+            return sendResponse(res, 406, 'Not Acceptable', 'company email already taken.', null, null);
+        }
         const company = new Company(req.body);
         const isValid = company.isValid();
 

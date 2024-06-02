@@ -83,7 +83,7 @@ const checkPinCode = async (req, res) => {
 };
 
 const resetPassword = async (req, res) => {
-    const { email, pinCode, new_password, verify_password } = req.body;
+    const { email, pinCode, new_password, verify_password, guest } = req.body;
 
     try {
         const resetPasswordInformation = await ResetPassword.getResetPassword(email, pinCode);
@@ -97,7 +97,11 @@ const resetPassword = async (req, res) => {
         }
         const hashedPassword = await hashPassword(new_password);
 
-        await ResetPassword.updatePassword(resetPasswordInformation[0].email, hashedPassword);
+        if (guest) {
+            await ResetPassword.updateGuestPassword(resetPasswordInformation[0].email, hashedPassword);
+        } else {
+            await ResetPassword.updatePassword(resetPasswordInformation[0].email, hashedPassword);
+        }
 
         await ResetPassword.deleteUserAfterUpdatePassword(resetPasswordInformation[0].email);
 

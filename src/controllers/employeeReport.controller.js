@@ -37,8 +37,6 @@ const addEmployeeReport = async (req, res) => {
 
         const data = await EmployeeReport.createEmployeeReport(employee_id, reportItemsData);
 
-
-
         if (data) {
             const title = mailMessags.employee.title;
             const body = mailMessags.employee.body;

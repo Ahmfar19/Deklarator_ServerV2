@@ -76,6 +76,14 @@ class ResetPassword {
         const [rows] = await pool.execute(sql, [email]);
         return rows;
     }
+
+    static async updateGuestPassword(email, newPassword) {
+        const sql = `UPDATE guest
+                     INNER JOIN company ON guest.company_id = company.company_id
+                     SET guest.password = ? 
+                     WHERE company.email = ?`;
+        await pool.execute(sql, [newPassword, email]);
+    }
 }
 
 module.exports = ResetPassword;
