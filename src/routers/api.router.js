@@ -23,6 +23,7 @@ const guestsController = require('../controllers/guest.controller');
 const reportTemaplteController = require('../controllers/reportTemplate.controller');
 const employeeController = require('../controllers/employee.controller');
 const employeeReportController = require('../controllers/employeeReport.controller');
+const reconciliationController = require('../controllers/reconciliation.controller');
 
 const path = require('path');
 
@@ -195,6 +196,13 @@ router.get('/reportTaplate/employee/:id', employeeReportController.getEmployeeRe
 router.post('/employeeReport/new/:employee_id', employeeReportController.addEmployeeReport);
 router.get('/reports/employees/:companyId', employeeReportController.getReportsEmployeesByCompanyId);
 router.delete('/report/delete/:id', employeeReportController.deleteEmployeeReport);
+
+router.get('/reconciliations', reconciliationController.getReconciliations);
+router.get('/reconciliations/group', reconciliationController.getReconciliationsGroup);
+router.get('/reconciliations/:year', reconciliationController.getYearReconciliations);
+router.delete('/reconciliations/delete/:year', reconciliationController.deleteYearReconciliations);
+router.post('/reconciliations/new/:year', reconciliationController.creteNewReconciliation);
+router.put('/reconciliations/edit/:reconciliation_id', reconciliationController.updateReconciliations);
 
 router.get('/checkAuth', (req, res) => {
     const access_token = req.cookies.accessToken;
