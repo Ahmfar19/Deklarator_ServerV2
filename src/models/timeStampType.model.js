@@ -1,6 +1,8 @@
-const pool = require('../databases/mysql.db');
+const { connectionManager } = require('../databases/connectionManagment');
+
 class TimeStampType {
-    constructor(options) {
+    constructor(options, connectionName) {
+        this.connectionName = connectionName;
         this.name_sv = options.name_sv;
     }
 
@@ -11,39 +13,35 @@ class TimeStampType {
         ) VALUES (
             "${this.name_sv}"
         )`;
-        const result = await pool.execute(sql);
-        this.type_id = result[0].insertId;
+        const result = await connectionManager.executeQuery(this.connectionName, sql);
+        this.type_id = result.insertId;
         return this.type_id;
     }
 
-    static async getAll() {
+    static async getAll(connectionName) {
         const sql = 'SELECT * FROM timestamp_type';
-        const [rows] = await pool.execute(sql);
-        return rows;
+        const result = await connectionManager.executeQuery(connectionName, sql);
+        return result;
     }
 
-    static async getSingle(id) {
+    static async getSingle(id, connectionName) {
         const sql = `SELECT * FROM timestamp_type WHERE type_id  = "${id}"`;
-        const [rows] = await pool.execute(sql);
-        return rows;
+        const result = await connectionManager.executeQuery(connectionName, sql);
+        return result;
     }
 
-    async update(id) {
+    async update(id, connectionName) {
         const sql = `UPDATE timestamp_type SET 
         name_sv = "${this.name_sv}"
         WHERE type_id = ${id}`;
-        await pool.execute(sql);
+        const result = await connectionManager.executeQuery(connectionName, sql);
+        return result;
     }
 
-    static async findByIdAndDelete(id) {
+    static async findByIdAndDelete(id, connectionName) {
         const sql = `DELETE FROM timestamp_type WHERE type_id = "${id}"`;
-        await pool.execute(sql);
-    }
-
-    static async checkIfTimeStampTypeExisted(id) {
-        const sql = `SELECT * FROM timestamp_type WHERE type_id = "${id}"`;
-        const [rows] = await pool.execute(sql);
-        return rows;
+        const result = await connectionManager.executeQuery(connectionName, sql);
+        return result;
     }
 }
 

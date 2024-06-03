@@ -4,7 +4,8 @@ const { sendResponse } = require('../helpers/apiResponse');
 // get All CaseTypes
 const getTimeStampTypes = async (req, res) => {
     try {
-        const timestamps_type = await TimeStampType.getAll();
+        const { connectionName } = req.query;
+        const timestamps_type = await TimeStampType.getAll(connectionName);
         sendResponse(res, 200, 'Ok', 'Successfully retrieved all the timestamps_type', null, timestamps_type);
     } catch (err) {
         sendResponse(res, 500, 'Internal Server Error', null, err.message || err, null);
@@ -14,8 +15,9 @@ const getTimeStampTypes = async (req, res) => {
 // get single CaseType
 const getSingleTimeStampType = async (req, res) => {
     try {
+        const { connectionName } = req.query;
         const id = req.params.id;
-        const timestamp_type = await TimeStampType.getSingle(id);
+        const timestamp_type = await TimeStampType.getSingle(id, connectionName);
         sendResponse(res, 200, 'Ok', 'Successfully retrieved  the timestamp_type', null, timestamp_type);
     } catch (err) {
         sendResponse(res, 500, 'Internal Server Error', null, err.message || err, null);
@@ -25,7 +27,8 @@ const getSingleTimeStampType = async (req, res) => {
 // Create CaseType
 const createtimeStampType = async (req, res) => {
     try {
-        const timeStamp_type = new TimeStampType(req.body);
+        const { connectionName } = req.query;
+        const timeStamp_type = new TimeStampType(req.body, connectionName);
         await timeStamp_type.save();
         sendResponse(res, 201, 'Created', 'Successfully created a timeStampType.', null, timeStamp_type);
     } catch (err) {
@@ -36,18 +39,18 @@ const createtimeStampType = async (req, res) => {
 // updateCase_Type
 const updateTimeStampType = async (req, res) => {
     try {
+        const { connectionName } = req.query;
         const id = req.params.id;
         const timeStamp_type = new TimeStampType(req.body);
-        const checkTimeStampType = await TimeStampType.checkIfTimeStampTypeExisted(id);
-        if (checkTimeStampType.length == 0) {
-            return res.status(404).send({
-                statusCode: 404,
-                statusMessage: 'Not Found',
-                message: 'No timeStamp_type found for update',
-                data: null,
+        const data = await timeStamp_type.update(id, connectionName);
+        console.log(data);
+        if (data.affectedRows === 0) {
+            return res.json({
+                status: 406,
+                message: 'not timmStamp_type found to update',
             });
         }
-        await timeStamp_type.update(id);
+
         sendResponse(res, 202, 'Accepted', 'Successfully updated a timeStamp_type.', null, timeStamp_type);
     } catch (err) {
         sendResponse(res, 500, 'Internal Server Error', null, err.message || err, null);
@@ -57,18 +60,16 @@ const updateTimeStampType = async (req, res) => {
 // delete CaseType
 const deleteTimeStampType = async (req, res) => {
     try {
+        const { connectionName } = req.query;
         const id = req.params.id;
-        const checkTimeStamp_Type = await TimeStampType.checkIfTimeStampTypeExisted(id);
-        if (checkTimeStamp_Type.length == 0) {
-            return res.status(404).send({
-                statusCode: 404,
-                statusMessage: 'Not Found',
-                message: 'No TimeStamp_Type found for delete',
-                data: null,
+        const data = await TimeStampType.findByIdAndDelete(id, connectionName);
+        if (data.affectedRows === 0) {
+            return res.json({
+                status: 406,
+                message: 'not timmStamp_type found to delete',
             });
         }
-        const data = await TimeStampType.findByIdAndDelete(id);
-        sendResponse(res, 202, 'Accepted', 'Successfully deleted a timeStampType.', null, data);
+        sendResponse(res, 202, 'Accepted', 'Successfully deleted a timeStampType.', null, null);
     } catch (err) {
         sendResponse(res, 500, 'Internal Server Error', null, err.message || err, null);
     }

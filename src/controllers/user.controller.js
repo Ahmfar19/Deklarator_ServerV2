@@ -34,11 +34,11 @@ function searchImageByName(directoryPath, imageName) {
     });
 }
 
-async function uploadImage(file, userID) {
+async function uploadImage(file, userID, connectionName) {
     const tempPath = file.path;
     const fileExtension = path.extname(file.originalname);
     const newFileName = `user_${userID}${fileExtension}`;
-    const uploadPath = 'assets/images/users';
+    const uploadPath = `assets/${connectionName}/images/users`;
 
     if (!fs.existsSync(path.join(uploadPath))) {
         fs.mkdirSync(uploadPath, { recursive: true });
@@ -62,8 +62,9 @@ async function uploadImage(file, userID) {
 
 const createUser = async (req, res) => {
     try {
+        const { connectionName } = req.query;
         const { username, fname, lname, phone, email, role, password } = req.body;
-        const checkUser = await User.checkIfUserExisted(email, username);
+        const checkUser = await User.checkIfUserExisted(email, username, connectionName);
 
         if (checkUser.length) {
             return res.status(406).send({
@@ -93,7 +94,7 @@ const createUser = async (req, res) => {
             email,
             role,
             password: hashedPassword,
-        });
+        }, connectionName);
 
         await user.createUser();
 
@@ -109,7 +110,8 @@ const createUser = async (req, res) => {
 
 const getUsers = async (req, res) => {
     try {
-        const users = await User.getAllUsers();
+        const { connectionName } = req.query;
+        const users = await User.getAllUsers(connectionName);
 
         sendResponse(res, 200, 'Ok', 'Successfully retrieved all the users.', null, users);
     } catch (err) {
@@ -119,8 +121,9 @@ const getUsers = async (req, res) => {
 
 const getSingleUser = async (req, res) => {
     try {
+        const { connectionName } = req.query;
         const id = req.params.id;
-        const singleUser = await User.getUserById(id);
+        const singleUser = await User.getUserById(id, connectionName);
 
         sendResponse(res, 200, 'Ok', 'Successfully retrieved the single user.', null, singleUser);
     } catch (err) {
@@ -130,10 +133,11 @@ const getSingleUser = async (req, res) => {
 
 const updateUser = async (req, res) => {
     try {
+        const { connectionName } = req.query;
         const { username, email } = req.body;
         const id = req.params.id;
 
-        const checkUser = await User.checkUserUpdate(username, email, id);
+        const checkUser = await User.checkUserUpdate(username, email, id, connectionName);
 
         if (checkUser.length) {
             return res.json({
@@ -151,12 +155,12 @@ const updateUser = async (req, res) => {
         const userData = req.body;
 
         if (req.file) {
-            const imageName = await uploadImage(req.file, id);
+            const imageName = await uploadImage(req.file, id, connectionName);
             userData.image = imageName;
         }
 
         const user = new User(userData);
-        await user.updateUser(id);
+        await user.updateUser(id, connectionName);
 
         sendResponse(res, 202, 'Accepted', 'Successfully updated a user.', null, null);
     } catch (err) {
@@ -165,6 +169,7 @@ const updateUser = async (req, res) => {
 };
 
 const updateUserPassword = async (req, res) => {
+    const { connectionName } = req.query;
     const id = req.params.id;
     const { password, new_password, verify_password } = req.body;
 
@@ -173,7 +178,7 @@ const updateUserPassword = async (req, res) => {
             throw new Error('Passwords do not match');
         }
 
-        const user = await User.getUserById(id);
+        const user = await User.getUserById(id, connectionName);
 
         if (!user.length) {
             throw new Error('The user does not exist');
@@ -187,7 +192,7 @@ const updateUserPassword = async (req, res) => {
 
         const newPaawordHash = await hashPassword(new_password);
 
-        await User.updatePassword(id, newPaawordHash);
+        await User.updatePassword(id, newPaawordHash, connectionName);
 
         sendResponse(res, 200, 'Ok', 'Successfully update the password', null, null);
     } catch (err) {
@@ -196,9 +201,13 @@ const updateUserPassword = async (req, res) => {
 };
 
 const deleteUser = async (req, res) => {
-    const id = req.params.id;
     try {
-        const data = await User.deleteUser(id);
+        const id = req.params.id;
+        const { connectionName } = req.query;
+        const data = await User.deleteUser(id, connectionName);
+        if (data.affectedRows === 0) {
+            return sendResponse(res, 406, 'Not Accepted', 'not user found to delete', null, null);
+        }
         const userId = id;
         const dirPath = path.resolve('assets/images/users');
         const pattern = new RegExp(`^user_${userId}\\..*$`);
@@ -217,17 +226,17 @@ const deleteUser = async (req, res) => {
                 }
             });
         });
-        sendResponse(res, 200, 'Ok', 'Successfully deleted a user.', null, data);
+        sendResponse(res, 200, 'Ok', 'Successfully deleted a user.', null, null);
     } catch (err) {
         sendResponse(res, 500, 'Internal Server Error', null, err.message || err, null);
     }
 };
 
 const login = async (req, res) => {
-    const { email_username, password, rememberMe, fingerprint } = req.body;
-
     try {
-        const data = await User.loginUser(email_username);
+        const { email_username, password, rememberMe, fingerprint } = req.body;
+        const { connectionName } = req.query;
+        const data = await User.loginUser(email_username, connectionName);
 
         if (data.length > 0) {
             const match = await comparePassword(password, data[0].password);
@@ -302,8 +311,9 @@ const verifyToken = async (req, res) => {
 
 const getUsersImage = async (req, res) => {
     // Extract the file name from the request parameters
+    const { connectionName }  = req.query
     const filename = req.params.filename;
-    const uploadPath = 'assets/images/users';
+    const uploadPath = `assets/${connectionName}/images/users`;
     const filePath = path.join(uploadPath, filename);
     if (fs.existsSync(filePath)) {
         const imageBuffer = fs.readFileSync(filePath);

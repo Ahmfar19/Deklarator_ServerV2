@@ -3,8 +3,10 @@ const { sendResponse } = require('../helpers/apiResponse');
 
 const getSingleTimer = async (req, res) => {
     try {
+        const { connectionName } = req.query;
         const id = req.params.id;
-        const singleTimer = await Timer.getTimer(id);
+        const singleTimer = await Timer.getTimer(id, connectionName);
+        console.log(singleTimer);
         sendResponse(res, 200, 'Ok', 'Successfully retrieved  the Timer', null, singleTimer);
     } catch (err) {
         sendResponse(res, 500, 'Internal Server Error', null, err.message || err, null);
@@ -13,7 +15,8 @@ const getSingleTimer = async (req, res) => {
 
 const getTimers = async (req, res) => {
     try {
-        const timers = await Timer.getAll();
+        const { connectionName } = req.query;
+        const timers = await Timer.getAll(connectionName);
         sendResponse(res, 200, 'Ok', 'Successfully retrieved all the Timers', null, timers);
     } catch (err) {
         sendResponse(res, 500, 'Internal Server Error', null, err.message || err, null);
@@ -22,7 +25,8 @@ const getTimers = async (req, res) => {
 
 const addTimer = async (req, res) => {
     try {
-        const timer = new Timer(req.body);
+        const { connectionName } = req.query;
+        const timer = new Timer(req.body, connectionName);
         await timer.save();
         sendResponse(res, 201, 'Created', 'Successfully created a timer.', null, timer);
     } catch (err) {
@@ -32,9 +36,10 @@ const addTimer = async (req, res) => {
 
 const update_Timer = async (req, res) => {
     try {
+        const { connectionName } = req.query;
         const id = req.params.id;
         const timer = new Timer(req.body);
-        const data = await timer.updateTimer(id);
+        const data = await timer.updateTimer(id, connectionName);
         if (data.affectedRows === 0) {
             throw new Error('Timer not found or unable to update');
         }
@@ -46,8 +51,9 @@ const update_Timer = async (req, res) => {
 
 const deleteTimer = async (req, res) => {
     try {
+        const { connectionName } = req.query;
         const id = req.params.id;
-        const data = await Timer.findByIdAndDelete(id);
+        const data = await Timer.findByIdAndDelete(id, connectionName);
         if (data.affectedRows === 0) {
             throw new Error('Timer not found or unable to delete');
         }
@@ -56,6 +62,7 @@ const deleteTimer = async (req, res) => {
         sendResponse(res, 500, 'Internal Server Error', null, err.message || err, null);
     }
 };
+
 module.exports = {
     getTimers,
     addTimer,

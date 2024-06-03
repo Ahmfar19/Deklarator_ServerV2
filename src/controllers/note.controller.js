@@ -3,7 +3,8 @@ const { sendResponse } = require('../helpers/apiResponse');
 
 const getAllNoties = async (req, res) => {
     try {
-        const noties = await Note.getAll();
+        const { connectionName } = req.query;
+        const noties = await Note.getAll(connectionName);
         sendResponse(res, 200, 'Ok', 'Successfully retrieved all the note', null, noties);
     } catch (err) {
         sendResponse(res, 500, 'Internal Server Error', null, err.message || err, null);
@@ -12,8 +13,9 @@ const getAllNoties = async (req, res) => {
 
 const getSingleNote = async (req, res) => {
     try {
+        const { connectionName } = req.query;
         const id = req.params.id;
-        const note = await Note.getNoteById(id);
+        const note = await Note.getNoteById(id, connectionName);
         sendResponse(res, 200, 'Ok', 'Successfully retrieved single note', null, note);
     } catch (err) {
         sendResponse(res, 500, 'Internal Server Error', null, err.message || err, null);
@@ -22,7 +24,8 @@ const getSingleNote = async (req, res) => {
 
 const addNote = async (req, res) => {
     try {
-        const note = new Note(req.body);
+        const { connectionName } = req.query;
+        const note = new Note(req.body, connectionName);
         await note.save();
         sendResponse(res, 201, 'Created', 'Successfully created a note.', null, note);
     } catch (err) {
@@ -32,10 +35,11 @@ const addNote = async (req, res) => {
 
 const updateNote = async (req, res) => {
     try {
+        const { connectionName } = req.query;
         const id = req.params.id;
         const note = new Note(req.body);
 
-        const data = await note.updateNote(id);
+        const data = await note.updateNote(id, connectionName);
         if (data.affectedRows === 0) {
             throw new Error('Note not found or unable to update');
         }
@@ -47,9 +51,10 @@ const updateNote = async (req, res) => {
 
 const deleteNote = async (req, res) => {
     try {
+        const { connectionName } = req.query;
         const id = req.params.id;
 
-        const data = await Note.findByIdAndDelete(id);
+        const data = await Note.findByIdAndDelete(id, connectionName);
 
         if (data.affectedRows === 0) {
             throw new Error('Note not found or unable to delete');
@@ -62,8 +67,9 @@ const deleteNote = async (req, res) => {
 
 const getNotesBy_CompanyId = async (req, res) => {
     try {
+        const { connectionName } = req.query;
         const id = req.params.id;
-        const noties = await Note.getNotesByCompanyId(id);
+        const noties = await Note.getNotesByCompanyId(id, connectionName);
         sendResponse(res, 200, 'Ok', `Successfully retrieved all the notiesByCompanyId ${id}`, null, noties);
     } catch (err) {
         sendResponse(res, 500, 'Internal Server Error', null, err.message || err, null);

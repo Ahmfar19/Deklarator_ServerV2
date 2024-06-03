@@ -3,7 +3,8 @@ const { sendResponse } = require('../helpers/apiResponse');
 
 const getAllPayments = async (req, res) => {
     try {
-        const payments = await Payment.getAll_Payments();
+        const { connectionName } = req.query;
+        const payments = await Payment.getAll_Payments(connectionName);
         sendResponse(res, 200, 'Ok', 'Successfully retrieved all the payment', null, payments);
     } catch (err) {
         sendResponse(res, 500, 'Internal Server Error', null, err.message || err, null);
@@ -12,8 +13,9 @@ const getAllPayments = async (req, res) => {
 
 const getSinglePayment = async (req, res) => {
     try {
+        const { connectionName } = req.query;
         const id = req.params.id;
-        const singlePayment = await Payment.getPaymentById(id);
+        const singlePayment = await Payment.getPaymentById(id, connectionName);
         sendResponse(res, 200, 'Ok', 'Successfully retrieved  the payment', null, singlePayment);
     } catch (err) {
         sendResponse(res, 500, 'Internal Server Error', null, err.message || err, null);
@@ -22,7 +24,8 @@ const getSinglePayment = async (req, res) => {
 
 const createPayment = async (req, res) => {
     try {
-        const payment = new Payment(req.body);
+        const { connectionName } = req.query;
+        const payment = new Payment(req.body, connectionName);
         await payment.save();
         sendResponse(res, 201, 'Created', 'Successfully created a payment.', null, payment);
     } catch (err) {
@@ -32,20 +35,16 @@ const createPayment = async (req, res) => {
 
 const updatePayment = async (req, res) => {
     try {
+        const { connectionName } = req.query;
         const id = req.params.id;
         const payment = new Payment(req.body);
-        const checkPayment = await Payment.checkIfPaymentExisted(id);
-
-        if (checkPayment.length == 0) {
-            return res.status(404).send({
-                statusCode: 404,
-                statusMessage: 'Not Found',
-                message: 'No payment found for update',
-                data: null,
+        const data = await payment.update_Payment(id, connectionName);
+        if (data.affectedRows === 0) {
+            return res.json({
+                status: 406,
+                message: 'not payment found to update',
             });
         }
-        await payment.update_Payment(id);
-
         sendResponse(res, 202, 'Accepted', 'Successfully updated a payment.', null, payment);
     } catch (err) {
         sendResponse(res, 500, 'Internal Server Error', null, err.message || err, null);
@@ -54,18 +53,16 @@ const updatePayment = async (req, res) => {
 
 const deletePayment = async (req, res) => {
     try {
+        const { connectionName } = req.query;
         const id = req.params.id;
-        const checkPayment = await Payment.checkIfPaymentExisted(id);
-        if (checkPayment.length == 0) {
-            return res.status(404).send({
-                statusCode: 404,
-                statusMessage: 'Not Found',
-                message: 'No payment found for delete',
-                data: null,
+        const data = await Payment.delete_payment(id, connectionName);
+        if (data.affectedRows === 0) {
+            return res.json({
+                status: 406,
+                message: 'not Payment found to delete',
             });
         }
-        const data = await Payment.delete_payment(id);
-        sendResponse(res, 202, 'Accepted', 'Successfully deleted a payment.', null, data);
+        sendResponse(res, 202, 'Accepted', 'Successfully deleted a payment.', null, null);
     } catch (err) {
         sendResponse(res, 500, 'Internal Server Error', null, err.message || err, null);
     }
@@ -73,13 +70,15 @@ const deletePayment = async (req, res) => {
 
 const getPaymentsBy_CompanyId = async (req, res) => {
     try {
+        const { connectionName } = req.query;
         const id = req.params.id;
-        const payments = await Payment.getPaymentsByCompanyId(id);
+        const payments = await Payment.getPaymentsByCompanyId(id, connectionName);
         sendResponse(res, 200, 'Ok', `Successfully retrieved all the PaymentsByCompanyId ${id}`, null, payments);
     } catch (error) {
         sendResponse(res, 500, 'Internal Server Error', null, error.message || error, null);
     }
 };
+
 module.exports = {
     getAllPayments,
     getSinglePayment,

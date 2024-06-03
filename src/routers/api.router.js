@@ -24,11 +24,14 @@ const reportTemaplteController = require('../controllers/reportTemplate.controll
 const employeeController = require('../controllers/employee.controller');
 const employeeReportController = require('../controllers/employeeReport.controller');
 const reconciliationController = require('../controllers/reconciliation.controller');
+const addConnectionController = require('../controllers/addConnection.controller');
 
 const path = require('path');
 
 // import validation register schema
 const { signUpValidation } = require('../helpers/validation');
+
+
 
 const upload = multer({
     dest: path.join(__dirname, 'assets/images/users'),
@@ -163,6 +166,7 @@ router.get('/checkListItems', checkListController.getcheckListItems);
 router.get('/checklist/company/:id', checkListController.getCompanyCheckList);
 router.put('/checklist/edit', checkListController.updateChecklist);
 router.post('/checklist/new/:id', checkListController.createCopmpanyCheckList);
+router.put('/checklist/edit/:id', checkListController.updateStatus);
 
 ////////////////////// upload files  ////////////////////////
 router.post('/uploadFile', uploadFilesController.uploadFile);
@@ -205,6 +209,8 @@ router.delete('/reconciliations/delete/:year', reconciliationController.deleteYe
 router.delete('/reconciliations/delete/entry/:id', reconciliationController.deleteReconciliations);
 router.post('/reconciliations/new', reconciliationController.creteNewReconciliation);
 router.put('/reconciliations/edit/:reconciliation_id', reconciliationController.updateReconciliations);
+
+router.post('/addConnection/new', addConnectionController.addConnection)
 
 router.get('/checkAuth', (req, res) => {
     const access_token = req.cookies.accessToken;

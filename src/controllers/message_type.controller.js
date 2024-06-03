@@ -3,7 +3,8 @@ const { sendResponse } = require('../helpers/apiResponse');
 
 const getMessageTypes = async (req, res) => {
     try {
-        const messageTypes = await MessageType.getAll();
+        const { connectionName } = req.query;
+        const messageTypes = await MessageType.getAll(connectionName);
         sendResponse(res, 200, 'Ok', 'Successfully retrieved all the messagetypes', null, messageTypes);
     } catch (err) {
         sendResponse(res, 500, 'Internal Server Error', null, err.message || err, null);
@@ -12,8 +13,9 @@ const getMessageTypes = async (req, res) => {
 
 const getSingleMessageType = async (req, res) => {
     try {
+        const { connectionName } = req.query;
         const id = req.params.id;
-        const singleMessageType = await MessageType.getMessageType(id);
+        const singleMessageType = await MessageType.getMessageType(id, connectionName);
         sendResponse(res, 200, 'Ok', 'Successfully retrieved  the messageType', null, singleMessageType);
     } catch (err) {
         sendResponse(res, 500, 'Internal Server Error', null, err.message || err, null);
@@ -22,7 +24,8 @@ const getSingleMessageType = async (req, res) => {
 
 const addMessageType = async (req, res) => {
     try {
-        const messageType = new MessageType(req.body);
+        const { connectionName } = req.query;
+        const messageType = new MessageType(req.body, connectionName);
         await messageType.save();
         sendResponse(res, 201, 'Created', 'Successfully created a messageType.', null, messageType);
     } catch (err) {
@@ -32,9 +35,10 @@ const addMessageType = async (req, res) => {
 
 const updateMessageType = async (req, res) => {
     try {
+        const { connectionName } = req.query;
         const id = req.params.id;
         const messageType = new MessageType(req.body);
-        const data = await messageType.update_MessageType(id);
+        const data = await messageType.update_MessageType(id, connectionName);
         if (data.affectedRows === 0) {
             return res.json({
                 status: 406,
@@ -49,8 +53,9 @@ const updateMessageType = async (req, res) => {
 
 const deleteMessageType = async (req, res) => {
     try {
+        const { connectionName } = req.query;
         const id = req.params.id;
-        const data = await MessageType.delete_MessageType(id);
+        const data = await MessageType.delete_MessageType(id, connectionName);
         if (data.affectedRows === 0) {
             return res.json({
                 status: 406,

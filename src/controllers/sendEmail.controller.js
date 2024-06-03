@@ -88,10 +88,10 @@ const sendEmail = async (mailOptions) => {
         // eslint-disable-next-line no-unused-vars
         transporter.sendMail(mailOptions, function(error, info) {
             if (error) {
-                // console.log('Error sending email', error);
+                //  console.log('Error sending email', error);
                 resolve(false);
             } else {
-                // console.log('Email sent: ' + info.response);
+                //  console.log('Email sent: ' + info.response);
                 resolve(true);
             }
         });
