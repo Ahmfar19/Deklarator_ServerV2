@@ -9,9 +9,10 @@ const { sendResponse } = require('../helpers/apiResponse');
 const updateReport = async (req, res) => {
     try {
         const { employee_id } = req.params;
+        const { connectionName } = req.query;
         const reportItemsData = req.body;
 
-        await EmployeeReport.updateByReportId(employee_id, reportItemsData);
+        await EmployeeReport.updateByReportId(employee_id, reportItemsData, connectionName);
 
         sendResponse(res, 202, 'Accepted', 'Successfully updated a report.', null, null);
     } catch (err) {
@@ -21,8 +22,9 @@ const updateReport = async (req, res) => {
 
 const getEmployeeReport = async (req, res) => {
     try {
+        const { connectionName } = req.query;
         const id = req.params.id;
-        const employeeReports = await EmployeeReport.getByEmployeeId(id);
+        const employeeReports = await EmployeeReport.getByEmployeeId(id, connectionName);
         sendResponse(res, 200, 'Ok', 'Successfully retrieved all the employeeReports', null, employeeReports);
     } catch (err) {
         sendResponse(res, 500, 'Internal Server Error', null, err.message || err, null);
@@ -32,10 +34,10 @@ const getEmployeeReport = async (req, res) => {
 const addEmployeeReport = async (req, res) => {
     try {
         const { employee_id } = req.params;
-
+        const { connectionName } = req.query;
         const reportItemsData = req.body; // Assuming req.body contains the array of report items
 
-        const data = await EmployeeReport.createEmployeeReport(employee_id, reportItemsData);
+        const data = await EmployeeReport.createEmployeeReport(employee_id, reportItemsData, connectionName);
 
         if (data) {
             const title = mailMessags.employee.title;
@@ -46,8 +48,8 @@ const addEmployeeReport = async (req, res) => {
                     0: `${data[0].employee_name}`,
                 },
             });
-            const admins = await User.getAdmins();
-            const messageName = await MessageType.getMessageTypeByName('primary');
+            const admins = await User.getAdmins(connectionName);
+            const messageName = await MessageType.getMessageTypeByName('primary', connectionName);
             const nowDateTime = getNowDate_time();
 
             for (const admin of admins) {
@@ -58,7 +60,7 @@ const addEmployeeReport = async (req, res) => {
                     body: bodyString,
                     date_time: nowDateTime,
                     seen: false,
-                });
+                }, connectionName);
                 await message.save();
             }
             return sendResponse(res, 202, 'Accepted', 'Employee reports created successfully.', null, data);
@@ -70,8 +72,12 @@ const addEmployeeReport = async (req, res) => {
 
 const getReportsEmployeesByCompanyId = async (req, res) => {
     try {
+        const { connectionName } = req.query;
         const companyId = req.params.companyId;
-        const reportsEmployessByCompanyId = await EmployeeReport.getAllReportItemsByCompanyId(companyId);
+        const reportsEmployessByCompanyId = await EmployeeReport.getAllReportItemsByCompanyId(
+            companyId,
+            connectionName,
+        );
 
         sendResponse(
             res,
@@ -88,12 +94,13 @@ const getReportsEmployeesByCompanyId = async (req, res) => {
 
 const getAllReportItems = async (req, res) => {
     try {
-        const reportsEmployess = await EmployeeReport.getAllReportItems();
+        const { connectionName } = req.query;
+        const reportsEmployess = await EmployeeReport.getAllReportItems(connectionName);
         sendResponse(
             res,
             200,
             'Ok',
-            'Successfully retrieved all the reportsEmployessByCompanyId',
+            'Successfully retrieved all the reportsEmployess',
             null,
             reportsEmployess,
         );
@@ -103,9 +110,9 @@ const getAllReportItems = async (req, res) => {
 };
 
 const getFilterdReports = async (req, res) => {
-    const { key, value } = req.query;
+    const { key, value, connectionName } = req.query;
     try {
-        const reportsEmployess = await EmployeeReport.getReportItemsByFilter(key, value);
+        const reportsEmployess = await EmployeeReport.getReportItemsByFilter(key, value, connectionName);
         sendResponse(res, 200, 'Ok', 'Successfully retrieved the remenders', null, reportsEmployess);
     } catch (err) {
         sendResponse(res, 500, 'Internal Server Error', null, err.message || err, null);
@@ -114,8 +121,10 @@ const getFilterdReports = async (req, res) => {
 
 const deleteEmployeeReport = async (req, res) => {
     try {
+        const { connectionName } = req.query;
         const id = req.params.id;
-        await EmployeeReport.deleteEmployeeReport(id);
+
+        await EmployeeReport.deleteEmployeeReport(id, connectionName);
 
         sendResponse(res, 200, 'Ok', 'Successfully deleted all the report for the specifid month', null, null);
     } catch (err) {
@@ -125,8 +134,9 @@ const deleteEmployeeReport = async (req, res) => {
 
 const deleteEmployeeItemReport = async (req, res) => {
     try {
+        const { connectionName } = req.query;
         const values = req.body;
-        await EmployeeReport.deleteReportItems(values);
+        await EmployeeReport.deleteReportItems(values, connectionName);
 
         sendResponse(res, 200, 'Ok', 'Successfully deleted the specified entries', null, null);
     } catch (err) {

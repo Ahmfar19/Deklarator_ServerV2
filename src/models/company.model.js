@@ -1,7 +1,7 @@
-const pool = require('../databases/mysql.db');
-
+const { connectionManager } = require('../databases/connectionManagment');
 class Company {
-    constructor(options) {
+    constructor(options, connectionName) {
+        this.connectionName = connectionName;
         this.type_id = options.type_id;
         this.company_name = options.company_name;
         this.organization_number = options.organization_number;
@@ -38,32 +38,30 @@ class Company {
             ${this.phone},
             ${this.hour_cost}
         )`;
-        const result = await pool.execute(sql);
-        this.company_id = result[0].insertId;
+        const result = await connectionManager.executeQuery(this.connectionName, sql);
+        this.company_id = result.insertId;
         return this.company_id;
     }
     // get single company
-    static async getCompany(id) {
+    static async getCompany(id, connectionName) {
         const sql = `SELECT * FROM company WHERE company_id = "${id}"`;
-        // eslint-disable-next-line no-unused-vars
-        const [rows, fields] = await pool.execute(sql);
-        return rows;
+        const result = await connectionManager.executeQuery(connectionName, sql);
+        return result;
     }
     // get all
-    static async getAll() {
+    static async getAll(connectionName) {
         const sql = `
             SELECT company.*, type_name 
             FROM company
             JOIN company_type ON company.type_id = company_type.type_id;
         `;
-        // eslint-disable-next-line no-unused-vars
-        const [rows, fields] = await pool.execute(sql);
-        return rows;
+        const result = await connectionManager.executeQuery(connectionName, sql);
+        return result;
     }
     // update
-    async updateCompany(id) {
+    async updateCompany(id, connectionName) {
         const sql = `UPDATE company SET 
-        type_id = "${this.type_id}", 
+        type_id = ${this.type_id}, 
         company_name = "${this.company_name}", 
         organization_number = "${this.organization_number}",
         contact_person = "${this.contact_person}", 
@@ -71,29 +69,29 @@ class Company {
         postcode = ${this.postcode}, 
         city = "${this.city}",
         email = "${this.email}", 
-        phone = ${this.phone},
+        phone = "${this.phone}",
         hour_cost = ${this.hour_cost}
         WHERE company_id = ${id}`;
-        const [rows] = await pool.execute(sql);
-        return rows;
+        const result = await connectionManager.executeQuery(connectionName, sql);
+        return result;
     }
     // delete
-    static async findByIdAndDelete(id) {
+    static async findByIdAndDelete(id, connectionName) {
         const sql = `DELETE FROM company WHERE company_id = "${id}"`;
-        const [rows] = await pool.execute(sql);
-        return rows;
+        const result = await connectionManager.executeQuery(connectionName, sql);
+        return result;
     }
 
-    static async checkIfCompanyExisted(email) {
+    static async checkIfCompanyExisted(email, connectionName) {
         const sql = `SELECT * FROM company WHERE email = ?`;
-        const [rows] = await pool.execute(sql, [email]);
-        return rows;
+        const result = await connectionManager.executeQuery(connectionName, sql, [email]);
+        return result;
     }
 
-    static async checkUpdateCompany(email, id) {
+    static async checkUpdateCompany(email, id, connectionName) {
         const sql = `SELECT * FROM company WHERE (email = ?) AND company_id != ?`;
-        const [rows] = await pool.execute(sql, [email, id]);
-        return rows;
+        const result = await connectionManager.executeQuery(connectionName, sql, [email, id]);
+        return result;
     }
 
     isValid() {

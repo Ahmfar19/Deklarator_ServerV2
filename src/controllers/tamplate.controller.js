@@ -3,7 +3,8 @@ const { sendResponse } = require('../helpers/apiResponse');
 
 const getTamplatesName = async (req, res) => {
     try {
-        const types = await Tamplate.getAll();
+        const { connectionName } = req.query;
+        const types = await Tamplate.getAll(connectionName);
         sendResponse(res, 200, 'Ok', 'Successfully retrieved all the tampleteTypes', null, types);
     } catch (err) {
         sendResponse(res, 500, 'Internal Server Error', null, err.message || err, null);
@@ -12,7 +13,8 @@ const getTamplatesName = async (req, res) => {
 
 const createTamplate = async (req, res) => {
     try {
-        const tamplateBody = new Tamplate(req.body);
+        const { connectionName } = req.query;
+        const tamplateBody = new Tamplate(req.body, connectionName);
         await tamplateBody.save();
 
         sendResponse(res, 201, 'Created', 'Successfully created a tamplateBody.', null, tamplateBody);
@@ -23,9 +25,10 @@ const createTamplate = async (req, res) => {
 
 const updateTamplate = async (req, res) => {
     try {
+        const { connectionName } = req.query;
         const id = req.params.id;
         const tamplateBody = new Tamplate(req.body);
-        const data = await tamplateBody.update_tamplate(id);
+        const data = await tamplateBody.update_tamplate(id, connectionName);
         if (data.affectedRows === 0) {
             return res.json({
                 status: 406,
@@ -40,8 +43,9 @@ const updateTamplate = async (req, res) => {
 
 const deleteTemplate = async (req, res) => {
     try {
+        const { connectionName } = req.query;
         const id = req.params.id;
-        const data = await Tamplate.findByIdAndDelete(id);
+        const data = await Tamplate.findByIdAndDelete(id, connectionName);
         if (data.affectedRows === 0) {
             throw new Error('template not found or unable to delete');
         }
@@ -50,6 +54,7 @@ const deleteTemplate = async (req, res) => {
         sendResponse(res, 500, 'Internal Server Error', null, err.message || err, null);
     }
 };
+
 module.exports = {
     getTamplatesName,
     createTamplate,

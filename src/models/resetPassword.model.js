@@ -1,7 +1,8 @@
-const pool = require('../databases/mysql.db');
+const { connectionManager } = require('../databases/connectionManagment');
 
 class ResetPassword {
-    constructor(options) {
+    constructor(options, connectionName) {
+        this.connectionName = connectionName;
         this.email = options.email;
         this.pinCode = options.pinCode;
         this.expiresAt = options.expiresAt;
@@ -17,40 +18,40 @@ class ResetPassword {
             ${this.pinCode},
             "${this.expiresAt}" 
         )`;
-        await pool.execute(sql);
+        await connectionManager.executeQuery(this.connectionName, sql);
     }
 
-    static async getResetPassword(email, pinCode) {
+    static async getResetPassword(email, pinCode, connectionName) {
         const sql = `SELECT * FROM reset_password WHERE email = "${email}" AND pinCode = "${pinCode}"`;
-        const [rows] = await pool.execute(sql);
-        return rows;
+        const result = await connectionManager.executeQuery(connectionName, sql);
+        return result;
     }
 
-    static async updatePassword(email, newPassword) {
+    static async updatePassword(email, newPassword, connectionName) {
         const sql = `UPDATE staff SET 
           password = ?
           WHERE email = ?`;
-        await pool.execute(sql, [newPassword, email]);
+        await connectionManager.executeQuery(connectionName, sql, [newPassword, email]);
     }
 
-    static async deleteUserAfterUpdatePassword(email) {
+    static async deleteUserAfterUpdatePassword(email, connectionName) {
         const sql = `DELETE FROM reset_password WHERE email = "${email}"`;
-        await pool.execute(sql);
+        await connectionManager.executeQuery(connectionName, sql);
     }
 
-    static async checkIfUserExisted(email) {
+    static async checkIfUserExisted(email, connectionName) {
         const sql = `SELECT * FROM staff WHERE email = ? `;
-        const [rows] = await pool.execute(sql, [email]);
-        return rows;
+        const result = await connectionManager.executeQuery(connectionName, sql, [email]);
+        return result;
     }
 
-    static async checkIfExistedInResetTable(email) {
+    static async checkIfExistedInResetTable(email, connectionName) {
         const sql = `SELECT * FROM reset_password WHERE email = ? `;
-        const [rows] = await pool.execute(sql, [email]);
-        return rows;
+        const result = await connectionManager.executeQuery(connectionName, sql, [email]);
+        return result;
     }
 
-    async updateResetPasswordInformation(userEmail) {
+    async updateResetPasswordInformation(userEmail, connectionName) {
         const sql = `UPDATE reset_password 
                      SET email = ?, 
                          pinCode = ?, 
@@ -58,31 +59,30 @@ class ResetPassword {
                      WHERE email = ?`;
 
         const values = [this.email, this.pinCode, this.expiresAt, userEmail];
-
-        await pool.execute(sql, values);
+        await connectionManager.executeQuery(connectionName, sql, values);
     }
 
-    static async checkPinIfExisted(PinCode, email) {
+    static async checkPinIfExisted(PinCode, email, connectionName) {
         const sql = `SELECT * FROM reset_password WHERE pinCode = ? AND email = ?`;
-        const [rows] = await pool.execute(sql, [PinCode, email]);
-        return rows;
+        const result = await connectionManager.executeQuery(connectionName, sql, [PinCode, email]);
+        return result;
     }
 
-    static async checkIfGuestExists(email) {
+    static async checkIfGuestExists(email, connectionName) {
         const sql = `SELECT email FROM guest 
         INNER JOIN company ON guest.company_id = company.company_id
         WHERE email = ?
         `;
-        const [rows] = await pool.execute(sql, [email]);
-        return rows;
+        const result = await connectionManager.executeQuery(connectionName, sql, [email]);
+        return result;
     }
 
-    static async updateGuestPassword(email, newPassword) {
+    static async updateGuestPassword(email, newPassword, connectionName) {
         const sql = `UPDATE guest
                      INNER JOIN company ON guest.company_id = company.company_id
                      SET guest.password = ? 
                      WHERE company.email = ?`;
-        await pool.execute(sql, [newPassword, email]);
+        await connectionManager.executeQuery(connectionName, sql, [newPassword, email]);
     }
 }
 

@@ -7,8 +7,9 @@ const iconv = require('iconv-lite');
 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
+        const { connectionName } = req.query
         const folderName = req.body.company_id;
-        const uploadPath = getUploadPath(folderName);
+        const uploadPath = getUploadPath(folderName, connectionName);
 
         if (!fs.existsSync(uploadPath)) {
             fs.mkdir(uploadPath, { recursive: true }, (err) => {
@@ -23,16 +24,18 @@ const storage = multer.diskStorage({
         }
     },
     filename: (req, file, cb) => {
+        const { connectionName } = req.query
         const folderName = req.body.company_id;
-        const uploadPath = getUploadPath(folderName);
+        const uploadPath = getUploadPath(folderName, connectionName);
         let originalName = file.originalname;
 
         // Decode the file name using iconv-lite
         originalName = iconv.decode(Buffer.from(originalName, 'latin1'), 'utf8');
         const directoryPath = path.join(uploadPath, originalName);
-
+       
         if (fs.existsSync(directoryPath)) {
             const uniqueFilename = getUniqueFilename(file);
+    
             cb(null, uniqueFilename);
         } else {
             cb(null, originalName);
@@ -44,23 +47,25 @@ const uploadFiles = multer({ storage: storage });
 const deleteFile = async (req, res) => {
     try {
         const { company_id } = req.params;
-        const filename = req.body.filename;
-        const filePath = path.join(__dirname, '../../assets/files', company_id, filename);
-
-        if (fs.existsSync(filePath)) {
-            fs.unlink(filePath, (err) => {
-                if (err) {
-                    return sendResponse(res, 500, 'Internal Server Error', null, 'Error deleting file', null);
-                }
-                return sendResponse(res, 200, 'Ok', 'File deleted successfully', null, null);
-            });
-        } else {
-            return res.status(404).json({ error: 'File not found' });
-        }
+        const { connectionName } = req.query;
+        const { filename } = req.body;
+        
+        const filePath = path.join(__dirname, `../../assets/${connectionName}/files`, company_id, filename);
+       
+         if (fs.existsSync(filePath)) {
+             fs.unlink(filePath, (err) => {
+                 if (err) {
+                     return sendResponse(res, 500, 'Internal Server Error', null, 'Error deleting file', err);
+                 }
+                 return sendResponse(res, 200, 'Ok', 'File deleted successfully', null, null);
+             });
+         } else {
+             return sendResponse(res, 404, 'Not Found', null, 'File not found', null);
+         }
     } catch (error) {
-        sendResponse(res, 500, 'Internal Server Error', null, error.message || error, null);
+        sendResponse(res, 500, 'Internal Server Error', null, error.message || error, error);
     }
-};
+}
 
 const folderCounters = {};
 
@@ -71,8 +76,8 @@ function getUniqueFilename(file, folderName) {
     return file.originalname.replace(/\.[^/.]+$/, '') + '-' + uniqueSuffix + path.extname(file.originalname);
 }
 
-function getUploadPath(folderName) {
-    return path.join(__dirname, '../../assets/files', folderName);
+function getUploadPath(folderName, connectionName) {
+    return path.join(__dirname, `../../assets/${connectionName}/files/`, folderName);
 }
 
 const uploadFile = (req, res) => {
@@ -103,8 +108,9 @@ const uploadFile = (req, res) => {
 const getFile = async (req, res) => {
     try {
         const { filename, company_id } = req.params;
-        const filePath = path.join(__dirname, '../../assets/files', company_id, filename);
-
+        const { connectionName } = req.query
+        const filePath = path.join(__dirname, `../../assets/${connectionName}/files`, company_id, filename);
+        console.log(filePath);
         if (fs.existsSync(filePath)) {
             res.download(filePath, (err) => {
                 if (err) {
@@ -122,8 +128,9 @@ const getFile = async (req, res) => {
 const getFiles = async (req, res) => {
     try {
         const { company_id } = req.params;
-        const directoryPath = path.join(__dirname, '../../assets/files', company_id);
-
+        const { connectionName } = req.query
+        const directoryPath = path.join(__dirname, `../../assets/${connectionName}/files`, company_id);
+       
         // Read all files in the directory
         const files = fs.readdirSync(directoryPath);
 
@@ -177,7 +184,8 @@ const uploadMultiFiles = async (req, res) => {
 
 const previewFile = async (req, res) => {
     const { company_id, filename } = req.params;
-    const filePath = path.join(__dirname, '../../assets/files', company_id, filename);
+    const { connectionName } = req.query
+    const filePath = path.join(__dirname, `../../assets/${connectionName}/files`, company_id, filename);
     const ext = path.extname(filePath).toLowerCase();
     if (ext === '.txt') {
         res.setHeader('Content-Type', 'text/plain');

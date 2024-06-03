@@ -1,8 +1,9 @@
-const pool = require('../databases/mysql.db');
+const { connectionManager } = require('../databases/connectionManagment');
 const { removeLastComma } = require('../helpers/utils');
 
 class Task {
-    constructor(options) {
+    constructor(options, connectionName) {
+        this.connectionName = connectionName;
         this.staff_created = options.staff_created;
         this.staff_assigned = options.staff_assigned;
         this.title = options.title;
@@ -34,12 +35,12 @@ class Task {
             ${this.task_order}
         )`;
 
-        const result = await pool.execute(sql);
-        this.task_id = result[0].insertId;
+        const result = await connectionManager.executeQuery(this.connectionName, sql);
+        this.task_id = result.insertId;
         return this.task_id;
     }
 
-    async saveMulti() {
+    async saveMulti(connectionName) {
         // Validate that companyIds is an array
         if (!Array.isArray(this.company_id) || this.company_id.length === 0) {
             throw new Error('companyIds should be a non-empty array');
@@ -80,27 +81,29 @@ class Task {
             task_order
         ) VALUES ${values}`;
 
-        const [result] = await pool.execute(sql);
+        const result = await connectionManager.executeQuery(connectionName, sql);
+
         const insertedTaskIds = [];
         for (let i = 0; i < result.affectedRows; i++) {
             insertedTaskIds.push(result.insertId + i);
         }
+
         return insertedTaskIds;
     }
 
-    static async getTask(id) {
+    static async getTask(id, connectionName) {
         const sql = `SELECT * FROM task WHERE task_id = "${id}"`;
-        const [rows] = await pool.execute(sql);
-        return rows;
+        const result = await connectionManager.executeQuery(connectionName, sql);
+        return result;
     }
 
-    static async getTypes() {
+    static async getTypes(connectionName) {
         const sql = 'SELECT * FROM task_type';
-        const [rows] = await pool.execute(sql);
-        return rows;
+        const result = await connectionManager.executeQuery(connectionName, sql);
+        return result;
     }
 
-    static async getAll() {
+    static async getAll(connectionName) {
         const sql = `
         SELECT 
         task.*, 
@@ -116,11 +119,11 @@ class Task {
         JOIN 
             company ON task.company_id = company.company_id;
         `;
-        const [rows] = await pool.execute(sql);
-        return rows;
+        const result = await connectionManager.executeQuery(connectionName, sql);
+        return result;
     }
 
-    async updateTask(id) {
+    async updateTask(id, connectionName) {
         let sql = 'UPDATE task SET';
 
         if (this.type_id) {
@@ -146,14 +149,15 @@ class Task {
         }
         sql = removeLastComma(sql);
         sql += ` WHERE task_id = ${id}`;
-        const [rows] = await pool.execute(sql);
-        return rows;
+
+        const result = await connectionManager.executeQuery(connectionName, sql);
+        return result;
     }
 
-    static async delete_Task(id) {
+    static async delete_Task(id, connectionName) {
         const sql = `DELETE FROM task WHERE task_id = "${id}"`;
-        const [rows] = await pool.execute(sql);
-        return rows;
+        const result = await connectionManager.executeQuery(connectionName, sql);
+        return result;
     }
 }
 
