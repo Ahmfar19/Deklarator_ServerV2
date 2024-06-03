@@ -1,8 +1,6 @@
 const Company = require('../models/company.model');
-const CheckList = require('../models/checkList.model');
+
 const { sendResponse } = require('../helpers/apiResponse');
-const path = require('path');
-const fs = require('fs');
 
 const getSingleCompany = async (req, res) => {
     try {
@@ -15,7 +13,9 @@ const getSingleCompany = async (req, res) => {
 };
 const getCompanys = async (req, res) => {
     try {
-        const companys = await Company.getAll();
+        const { connectionName } = req.query;
+        const companys = await Company.getAll(connectionName);
+     
         sendResponse(res, 200, 'Ok', 'Successfully retrieved all the company', null, companys);
     } catch (err) {
         sendResponse(res, 500, 'Internal Server Error', null, err.message || err, null);
@@ -23,21 +23,14 @@ const getCompanys = async (req, res) => {
 };
 const addCompany = async (req, res) => {
     try {
-        const checkCompany = await Company.checkIfCompanyExisted(req.body.email);
-
-        if (checkCompany.length) {
-            return sendResponse(res, 406, 'Not Acceptable', 'company email already existed.', null, null);
-        }
-
-        const company = new Company(req.body);
-        const isValid = company.isValid();
-        if (!isValid) {
-            return res.status(400).send(
-                { statusCode: 400, statusMessage: 'Bad Request', message: null, data: null },
-            );
-        }
+       
+        const { connectionName } = req.query;
+        
+        
+        const company = new Company(req.body , connectionName);
+        
         await company.save();
-        CheckList.createCompanyCheckList(company.company_id);
+
         sendResponse(res, 201, 'Created', 'Successfully created a company.', null, company);
     } catch (err) {
         sendResponse(res, 500, 'Internal Server Error', null, err.message || err, null);
@@ -47,11 +40,6 @@ const updateCompany = async (req, res) => {
     try {
         const id = req.params.id;
 
-        const checkCompany = await Company.checkUpdateCompany(req.body.email, id);
-
-        if (checkCompany.length) {
-            return sendResponse(res, 406, 'Not Acceptable', 'company email already taken.', null, null);
-        }
         const company = new Company(req.body);
         const isValid = company.isValid();
 
@@ -78,12 +66,6 @@ const deleteCompany = async (req, res) => {
         if (data.affectedRows === 0) {
             throw new Error('No company found for deletion');
         }
-        const filePath = path.join(__dirname, '../../assets/files', id);
-
-        if (fs.existsSync(filePath)) {
-            fs.rmSync(filePath, { recursive: true });
-        }
-
         sendResponse(res, 202, 'Accepted', 'Successfully deleted a company.', null, null);
     } catch (err) {
         sendResponse(res, 500, 'Internal Server Error', null, err.message || err, null);

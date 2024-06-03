@@ -5,7 +5,7 @@ const cors = require('cors');
 const { sendReminderEmail } = require('./controllers/sendReminder.controller.js');
 const { deleteOldMessages } = require('./controllers/message.controller.js');
 const { verifyToken } = require('./helpers/utils.js');
-require('./databases/mysql.db');
+require('./databases/connectionManagment');
 
 const app = express();
 
