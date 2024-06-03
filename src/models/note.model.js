@@ -1,7 +1,8 @@
-const pool = require('../databases/mysql.db');
+const { connectionManager } = require('../databases/connectionManagment');
 
 class Note {
-    constructor(options) {
+    constructor(options, connectionName) {
+        this.connectionName = connectionName;
         this.staff_id = options.staff_id;
         this.company_id = options.company_id;
         this.note_title = options.note_title;
@@ -23,49 +24,45 @@ class Note {
            " ${this.note_text}",
             "${this.note_date}"          
         )`;
-        const result = await pool.execute(sql);
-        this.note_id = result[0].insertId;
+        const result = await connectionManager.executeQuery(this.connectionName, sql);
+        this.note_id = result.insertId;
         return this.note_id;
     }
     // get single company
-    static async getNoteById(id) {
-        const sql = `SELECT * FROM note WHERE note_id = "${id}"`;
-        const [rows] = await pool.execute(sql);
-        return rows;
+    static async getNoteById(id, connectionName) {
+        const sql =
+            `SELECT note_id, staff_id, company_id, note_title, note_text, DATE_FORMAT(note_date, '%Y-%m-%d') AS note_date FROM note WHERE note_id = '${id}'`;
+        const result = await connectionManager.executeQuery(connectionName, sql);
+        return result;
     }
     // get all
-    static async getAll() {
-        const sql = 'SELECT * FROM note';
-        const [rows] = await pool.execute(sql);
-        return rows;
+    static async getAll(connectionName) {
+        const sql =
+            "SELECT note_id, staff_id, company_id, note_title, note_text, DATE_FORMAT(note_date, '%Y-%m-%d') AS note_date FROM note";
+        const result = await connectionManager.executeQuery(connectionName, sql);
+        return result;
     }
     // update
-    async updateNote(id) {
+    async updateNote(id, connectionName) {
         const sql = `UPDATE note SET 
         note_title = "${this.note_title}", 
         note_text = "${this.note_text}", 
         note_date = "${this.note_date}"
         WHERE note_id = ${id}`;
-        const [rows] = await pool.execute(sql);
-        return rows;
+        const result = await connectionManager.executeQuery(connectionName, sql);
+        return result;
     }
     // delete
-    static async findByIdAndDelete(id) {
+    static async findByIdAndDelete(id, connectionName) {
         const sql = `DELETE FROM note WHERE note_id = "${id}"`;
-        const [rows] = await pool.execute(sql);
-        return rows;
+        const result = await connectionManager.executeQuery(connectionName, sql);
+        return result;
     }
 
-    // static async checkIfNoteExisted(id) {
-    //     const sql = `SELECT * FROM note WHERE note_id = "${id}"`;
-    //     const [rows] = await pool.execute(sql);
-    //     return rows;
-    // }
-
-    static async getNotesByCompanyId(id) {
+    static async getNotesByCompanyId(id, connectionName) {
         const sql = `SELECT *, DATE_FORMAT(note_date, "%Y-%m-%d") AS note_date FROM note WHERE company_id = "${id}"`;
-        const [rows] = await pool.execute(sql);
-        return rows;
+        const result = await connectionManager.executeQuery(connectionName, sql);
+        return result;
     }
 }
 

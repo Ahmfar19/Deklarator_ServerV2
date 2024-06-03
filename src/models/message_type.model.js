@@ -1,7 +1,8 @@
-const pool = require('../databases/mysql.db');
+const { connectionManager } = require('../databases/connectionManagment');
 
 class MessageType {
-    constructor(options) {
+    constructor(options, connectionName) {
+        this.connectionName = connectionName;
         this.variant = options.variant;
     }
     // create
@@ -11,41 +12,41 @@ class MessageType {
         ) VALUES (
             "${this.variant}"
         )`;
-        const result = await pool.execute(sql);
-        this.message_typ_id = result[0].insertId;
+        const result = await connectionManager.executeQuery(this.connectionName, sql);
+        this.message_typ_id = result.insertId;
         return this.message_typ_id;
     }
     // get single MessageType
-    static async getMessageType(id) {
+    static async getMessageType(id, connectionName) {
         const sql = `SELECT * FROM message_type WHERE message_typ_id = "${id}"`;
-        const [rows] = await pool.execute(sql);
-        return rows;
+        const result = await connectionManager.executeQuery(connectionName, sql);
+        return result;
     }
     // get all
-    static async getAll() {
+    static async getAll(connectionName) {
         const sql = 'SELECT * FROM message_type';
-        const [rows] = await pool.execute(sql);
-        return rows;
+        const result = await connectionManager.executeQuery(connectionName, sql);
+        return result;
     }
     // update
-    async update_MessageType(id) {
+    async update_MessageType(id, connectionName) {
         const sql = `UPDATE message_type SET 
         variant = "${this.variant}"
         WHERE message_typ_id = ${id}`;
-        const [rows] = await pool.execute(sql);
-        return rows;
+        const result = await connectionManager.executeQuery(connectionName, sql);
+        return result;
     }
 
-    static async delete_MessageType(id) {
+    static async delete_MessageType(id, connectionName) {
         const sql = `DELETE FROM message_type WHERE message_typ_id = "${id}"`;
-        const [rows] = await pool.execute(sql);
-        return rows;
+        const result = await connectionManager.executeQuery(connectionName, sql);
+        return result;
     }
 
-    static async getMessageTypeByName(variant) {
+    static async getMessageTypeByName(variant, connectionName) {
         const sql = 'SELECT * FROM message_type WHERE variant = ?';
-        const [rows] = await pool.execute(sql, [variant]);
-        return rows;
+        const result = await connectionManager.executeQuery(connectionName, sql, [variant]);
+        return result;
     }
 }
 

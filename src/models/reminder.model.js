@@ -1,7 +1,8 @@
-const pool = require('../databases/mysql.db');
+const { connectionManager } = require('../databases/connectionManagment');
 
 class Reminder {
-    constructor(options) {
+    constructor(options, connectionName) {
+        this.connectionName = connectionName;
         this.company_id = options.company_id;
         this.staff_id = options.staff_id;
         this.tamplate_id = options.tamplate_id;
@@ -23,12 +24,12 @@ class Reminder {
             "${this.remender_date}", 
             ${this.recurrent}
         )`;
-        const result = await pool.execute(sql);
-        this.remender_id = result[0].insertId;
+        const result = await connectionManager.executeQuery(this.connectionName, sql);
+        this.remender_id = result.insertId;
         return this.remender_id;
     }
 
-    async saveMulti() {
+    async saveMulti(connectionName) {
         // Validate that companyIds is an array
         if (!Array.isArray(this.company_id) || this.company_id.length === 0) {
             throw new Error('companyIds should be a non-empty array');
@@ -58,55 +59,61 @@ class Reminder {
             recurrent
         ) VALUES ${values}`;
 
-        const [result] = await pool.execute(sql);
-        const data = await this.geRangeReminder(result.insertId, result.insertId + result.affectedRows - 1);
+        const result = await connectionManager.executeQuery(connectionName, sql);
+
+        const data = await this.geRangeReminder(
+            result.insertId,
+            result.insertId + result.affectedRows - 1,
+            connectionName,
+        );
+
         return data;
     }
 
-    static async getReminder(id) {
+    static async getReminder(id, connectionName) {
         const sql = `SELECT * FROM reminder WHERE remender_id = "${id}"`;
-        const [rows] = await pool.execute(sql);
-        return rows;
+        const result = await connectionManager.executeQuery(connectionName, sql);
+        return result;
     }
 
-    static async getReminderByFilter(key, value) {
+    static async getReminderByFilter(key, value, connectionName) {
         const sql = `
         SELECT reminder.*, company.company_name, DATE_FORMAT(reminder.remender_date, "%Y-%m-%d") AS remender_date
         FROM reminder
         JOIN company ON reminder.company_id = company.company_id
         WHERE ${key} = '${value}';
     `;
-        const [rows] = await pool.execute(sql);
-        return rows;
+        const result = await connectionManager.executeQuery(connectionName, sql);
+        return result;
     }
 
-    static async getAll() {
+    static async getAll(connectionName) {
         const sql = `
         SELECT reminder.*, company.company_name, DATE_FORMAT(reminder.remender_date, "%Y-%m-%d") AS remender_date
         FROM reminder
         JOIN company ON reminder.company_id = company.company_id;`;
-        const [rows] = await pool.execute(sql);
-        return rows;
+        const result = await connectionManager.executeQuery(connectionName, sql);
+        return result;
     }
 
-    async updateReminder(id) {
+    async updateReminder(id, connectionName) {
         const sql = `UPDATE reminder SET 
         company_id = ${this.company_id},
         remender_date = "${this.remender_date}",
         tamplate_id = "${this.tamplate_id}",
         recurrent = ${this.recurrent}
         WHERE remender_id = ${id}`;
-        const [rows] = await pool.execute(sql);
-        return rows;
+        const result = await connectionManager.executeQuery(connectionName, sql);
+        return result;
     }
 
-    static async deleteReminder(id) {
+    static async deleteReminder(id, connectionName) {
         const sql = `DELETE FROM reminder WHERE remender_id = "${id}"`;
-        const [rows] = await pool.execute(sql);
-        return rows;
+        const result = await connectionManager.executeQuery(connectionName, sql);
+        return result;
     }
 
-    static async getReminders() {
+    static async getReminders(connectionName) {
         const currentDate = new Date();
         const isoDate = currentDate.toISOString(); // Convert to ISO format
         const [year, month, day] = isoDate.split('T')[0].split('-'); // Extract year, month, and day from ISO format
@@ -125,13 +132,12 @@ class Reminder {
         INNER JOIN tamplate AS t ON reminder.tamplate_id = t.tamplate_id
         WHERE YEAR(remender_date) = ${year} AND MONTH(remender_date) = ${month} AND DAY(remender_date) = ${day}`;
 
-        const [rows] = await pool.execute(sql);
-
-        return rows;
+        const result = await connectionManager.executeQuery(connectionName, sql);
+        return result;
     }
 
     // 1
-    static async updateReminderEveryMonth(id) {
+    static async updateReminderEveryMonth(id, connectionName) {
         // Get the current date
         const currentDate = new Date();
         // Add one month to the current date
@@ -144,13 +150,12 @@ class Reminder {
           SET remender_date = ?
           WHERE remender_id = ?
         `;
-
-        const [rows] = await pool.execute(sql, [formattedRemenderDate, id]);
-        return rows;
+        const result = await connectionManager.executeQuery(connectionName, sql, [formattedRemenderDate, id]);
+        return result;
     }
 
     // 2
-    static async updateReminderEveryWeek(id) {
+    static async updateReminderEveryWeek(id, connectionName) {
         const currentDate = new Date();
 
         // Add 7 days (1 week) to the current date
@@ -165,12 +170,12 @@ class Reminder {
         WHERE remender_id = ?
       `;
 
-        const [rows] = await pool.execute(sql, [formattedReminderDate, id]);
-        return rows;
+        const result = await connectionManager.executeQuery(connectionName, sql, [formattedReminderDate, id]);
+        return result;
     }
 
     // 3
-    static async updateReminderEveryTwoWeek(id) {
+    static async updateReminderEveryTwoWeek(id, connectionName) {
         const currentDate = new Date();
 
         // Add 14 days (2 weeks) to the current date
@@ -184,12 +189,12 @@ class Reminder {
         WHERE remender_id = ?
       `;
 
-        const [rows] = await pool.execute(sql, [formattedReminderDate, id]);
-        return rows;
+        const result = await connectionManager.executeQuery(connectionName, sql, [formattedReminderDate, id]);
+        return result;
     }
 
     // 4
-    static async updateReminderEveryThreeWeek(id) {
+    static async updateReminderEveryThreeWeek(id, connectionName) {
         const currentDate = new Date();
 
         // Add 14 days (2 weeks) to the current date
@@ -203,12 +208,12 @@ class Reminder {
         WHERE remender_id = ?
       `;
 
-        const [rows] = await pool.execute(sql, [formattedReminderDate, id]);
-        return rows;
+        const result = await connectionManager.executeQuery(connectionName, sql, [formattedReminderDate, id]);
+        return result;
     }
 
     // 5
-    static async updataReminderEveryFirstDayInWeek(id) {
+    static async updataReminderEveryFirstDayInWeek(id, connectionName) {
         // Get the current date
         const currentDate = new Date();
 
@@ -227,30 +232,31 @@ class Reminder {
         WHERE remender_id = ?
       `;
 
-        const [rows] = await pool.execute(sql, [formattedFirstDayOfNextWeek, id]);
-        return rows;
+        const result = await connectionManager.executeQuery(connectionName, sql, [formattedFirstDayOfNextWeek, id]);
+        return result;
     }
 
-    static async getReminderByCompanyId(id) {
+    static async getReminderByCompanyId(id, connectionName) {
         const sql = `
         SELECT reminder.*, company.company_name, DATE_FORMAT(reminder.remender_date, "%Y-%m-%d") AS remender_date
         FROM reminder
         JOIN company ON reminder.company_id = company.company_id
         WHERE company.company_id = ${id};
         `;
-        const [rows] = await pool.execute(sql);
-        return rows;
+        const result = await connectionManager.executeQuery(connectionName, sql);
+        return result;
     }
 
-    async geRangeReminder(from, to) {
+    async geRangeReminder(from, to, connectionName) {
         const sql = `
             SELECT reminder.*, company.company_name, DATE_FORMAT(reminder.remender_date, "%Y-%m-%d") AS remender_date
             FROM reminder
             JOIN company ON reminder.company_id = company.company_id
             WHERE remender_id >= ${from} AND remender_id <= ${to};
         `;
-        const [rows] = await pool.execute(sql);
-        return rows;
+        const result = await connectionManager.executeQuery(connectionName, sql);
+
+        return result;
     }
 }
 

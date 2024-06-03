@@ -1,7 +1,8 @@
-const pool = require('../databases/mysql.db');
+const { connectionManager } = require('../databases/connectionManagment');
 
 class Message {
-    constructor(options) {
+    constructor(options, connectionName) {
+        this.connectionName = connectionName;
         this.staff_id = options.staff_id;
         this.message_typ_id = options.message_typ_id;
         this.title = options.title;
@@ -26,52 +27,55 @@ class Message {
             "${this.date_time}",
              ${this.seen}
         )`;
-        const result = await pool.execute(sql);
-        this.message_id = result[0].insertId;
+        const result = await connectionManager.executeQuery(this.connectionName, sql);
+        this.message_id = result.insertId;
         return this.message_id;
     }
     // get single company
-    static async getMessage(id) {
-        const sql = `SELECT * FROM message WHERE message_id = "${id}"`;
-        const [rows] = await pool.execute(sql);
-        return rows;
+    static async getMessage(id, connectionName) {
+        const sql = `SELECT *
+        , DATE_FORMAT(date_time, '%Y-%m-%d') AS date_time
+        FROM message WHERE message_id = "${id}"`;
+        const result = await connectionManager.executeQuery(connectionName, sql);
+        return result;
     }
     // get all
-    static async getAll() {
+    static async getAll(connectionName) {
         const sql = `
-            SELECT message.*, message_type.variant
+            SELECT message.*, message_type.variant,
+            DATE_FORMAT(date_time, '%Y-%m-%d') AS date_time
             FROM message
             JOIN message_type ON message.message_typ_id = message_type.message_typ_id
             ORDER BY message.message_id DESC;
         `;
-        const [rows] = await pool.execute(sql);
-        return rows;
+        const result = await connectionManager.executeQuery(connectionName, sql);
+        return result;
     }
     // update
-    async update_Message(id) {
+    async update_Message(id, connectionName) {
         const sql = `UPDATE message SET 
         seen = ${this.seen}
         WHERE message_id = ${id}`;
-        const [rows] = await pool.execute(sql);
-        return rows;
+        const result = await connectionManager.executeQuery(connectionName, sql);
+        return result;
     }
 
-    static async delete_Message(id) {
+    static async delete_Message(id, connectionName) {
         const sql = `DELETE FROM message WHERE message_id = "${id}"`;
-        const [rows] = await pool.execute(sql);
-        return rows;
+        const result = await connectionManager.executeQuery(connectionName, sql);
+        return result;
     }
 
-    static async deleteMessageBeforWeek(date) {
+    static async deleteMessageBeforWeek(date, connectionName) {
         const sql = `DELETE FROM message WHERE date_time <= ?`;
-        const [rows] = await pool.execute(sql, [date]);
-        return rows;
+        const result = await connectionManager.executeQuery(connectionName, sql, [date]);
+        return result;
     }
 
-    static async updateSeenBeforeId(beforeID) {
+    static async updateSeenBeforeId(beforeID, connectionName) {
         const sql = `UPDATE message SET seen=1 WHERE message_id >= ${beforeID}`;
-        const [rows] = await pool.execute(sql);
-        return rows;
+        const result = await connectionManager.executeQuery(connectionName, sql);
+        return result;
     }
 }
 

@@ -8,8 +8,8 @@ const JWT_SECRET_KEY = config.get('JWT_SECRET_KEY');
 var jwt = require('jsonwebtoken');
 const ADMIN_EMAIL = config.get('ADMIN_EMAIL');
 
-const createGuestAccount = async (company_id) => {
-    const data = await Guest.getEmail(company_id);
+const createGuestAccount = async (company_id, connectionName) => {
+    const data = await Guest.getEmail(company_id, connectionName);
 
     const password = await generatePassword();
     const hashedPassword = await hashPassword(password);
@@ -21,7 +21,7 @@ const createGuestAccount = async (company_id) => {
     const guest = new Guest({
         company_id: company_id,
         password: hashedPassword,
-    });
+    }, connectionName);
 
     await guest.save();
 
@@ -33,13 +33,13 @@ const createGuestAccount = async (company_id) => {
 
 const addGuest = async (req, res) => {
     const { companyIds } = req.body;
-
+    const { connectionName } = req.query;
     if (!Array.isArray(companyIds) && !companyIds.length) {
         sendResponse(res, 500, 'Invalid argument', null, null);
         return;
     }
     try {
-        const promises = companyIds.map(async company_id => createGuestAccount(company_id));
+        const promises = companyIds.map(async company_id => createGuestAccount(company_id, connectionName));
         await Promise.all(promises);
 
         sendResponse(res, 200, 'Success', 'All guest accounts created successfully', null, null);
@@ -50,8 +50,9 @@ const addGuest = async (req, res) => {
 
 const deleteGuest = async (req, res) => {
     try {
+        const { connectionName } = req.query;
         const id = req.params.company_id;
-        const data = await Guest.deleteAccount(id);
+        const data = await Guest.deleteAccount(id, connectionName);
         if (data.affectedRows === 0) {
             return res.json({
                 status: 406,
@@ -66,8 +67,8 @@ const deleteGuest = async (req, res) => {
 
 const getGuests = async (req, res) => {
     try {
-        const guests = await Guest.getAllAccounts();
-
+        const { connectionName } = req.query;
+        const guests = await Guest.getAllAccounts(connectionName);
         sendResponse(res, 200, 'Ok', 'Successfully retrieved all the guests.', null, guests);
     } catch (err) {
         sendResponse(res, 500, 'Internal Server Error', null, err.message || err, null);
@@ -77,7 +78,8 @@ const getGuests = async (req, res) => {
 const loginGuest = async (req, res) => {
     try {
         const { email, password, fingerprint } = req.body;
-        const data = await Guest.checkGuest(email);
+        const { connectionName } = req.query;
+        const data = await Guest.checkGuest(email, connectionName);
 
         if (data.length > 1) {
             return sendResponse(res, 409, 'Conflict', null, 'User already exists in the database', null);

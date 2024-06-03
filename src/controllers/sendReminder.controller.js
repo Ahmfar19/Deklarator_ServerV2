@@ -8,19 +8,19 @@ const { getNowDate_time } = require('../helpers/utils');
 const path = require('path');
 const fs = require('fs');
 const mailMessags = require('../helpers/emailMessages');
-const config = require('config');
-const ADMIN_EMAIL = config.get('ADMIN_EMAIL');
+const { connectionManager } = require('../databases/connectionManagment');
 
-const checkForReminder = async () => {
+const checkForReminder = async (connectionName, adminEamil) => {
     try {
-        const data = await Reminder.getReminders();
+
+        const data = await Reminder.getReminders(connectionName);
 
         if (!data.length) return;
 
-        const tamplates = await Tamplate.getAll();
+        const tamplates = await Tamplate.getAll(connectionName);
 
-        const admins = await User.getAdmins();
-        const messageName = await MessageType.getMessageTypeByName('danger');
+        const admins = await User.getAdmins(connectionName);
+        const messageName = await MessageType.getMessageTypeByName('danger', connectionName);
 
         const { title } = mailMessags.reminder;
 
@@ -44,31 +44,31 @@ const checkForReminder = async () => {
 
                     switch (item.recurrent) {
                         case 1:
-                            await Reminder.updateReminderEveryMonth(item.remender_id);
+                            await Reminder.updateReminderEveryMonth(item.remender_id, connectionName);
                             break;
                         case 2:
-                            await Reminder.updateReminderEveryWeek(item.remender_id);
+                            await Reminder.updateReminderEveryWeek(item.remender_id, connectionName);
                             break;
                         case 3:
-                            await Reminder.updateReminderEveryTwoWeek(item.remender_id);
+                            await Reminder.updateReminderEveryTwoWeek(item.remender_id, connectionName);
                             break;
                         case 4:
-                            await Reminder.updateReminderEveryThreeWeek(item.remender_id);
+                            await Reminder.updateReminderEveryThreeWeek(item.remender_id, connectionName);
                             break;
                         case 5:
-                            await Reminder.updataReminderEveryFirstDayInWeek(item.remender_id);
+                            await Reminder.updataReminderEveryFirstDayInWeek(item.remender_id, connectionName);
                             break;
                         default:
-                            await Reminder.deleteReminder(item.remender_id);
+                            await Reminder.deleteReminder(item.remender_id, connectionName);
                     }
                 });
 
-                const htmlTemplatePath = path.resolve(`assets/tampletes/index.html`);
+                const htmlTemplatePath = path.resolve(`assets/${connectionName}/tampletes/index.html`);
                 let htmlTemplate = fs.readFileSync(htmlTemplatePath, 'utf-8');
 
                 htmlTemplate = htmlTemplate.replace('{{tamplateBody}}', tamplateBody);
 
-                const emailSent = await sendEmailToGroup(ADMIN_EMAIL, bccEmails, title, htmlTemplate);
+                const emailSent = await sendEmailToGroup(adminEamil, bccEmails, title, htmlTemplate);
 
                 if (!emailSent) {
                     const title = mailMessags.message.title;
@@ -91,7 +91,7 @@ const checkForReminder = async () => {
                             body: bodyString,
                             date_time: nowDateTime,
                             seen: false,
-                        });
+                        }, connectionName);
 
                         await message.save();
                     }
@@ -99,7 +99,7 @@ const checkForReminder = async () => {
             }
         });
     } catch (error) {
-        //  console.log(error.message);
+        //   console.log(error.message);
     }
 };
 
@@ -160,8 +160,12 @@ const checkForSingleReminder = async () => {
 
 const sendReminderEmail = () => {
     const intervalInMilliseconds = 6 * 60 * 60 * 1000;
-    setInterval(function() {
-        checkForReminder();
+    setInterval(async function () {
+        const connections = await connectionManager.getConnections();
+        for (let key in connections) {
+            console.log(connections);
+            checkForReminder(key, connections[key].AdminEmail);
+        }
     }, intervalInMilliseconds);
 };
 

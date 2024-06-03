@@ -23,11 +23,13 @@ const guestsController = require('../controllers/guest.controller');
 const reportTemaplteController = require('../controllers/reportTemplate.controller');
 const employeeController = require('../controllers/employee.controller');
 const employeeReportController = require('../controllers/employeeReport.controller');
+const addConnectionController = require('../controllers/addConnection.controller');
 
 const path = require('path');
 
 // import validation register schema
 const { signUpValidation } = require('../helpers/validation');
+
 
 const upload = multer({
     dest: path.join(__dirname, 'assets/images/users'),
@@ -161,6 +163,7 @@ router.get('/checkListItems', checkListController.getcheckListItems);
 router.get('/checklist/company/:id', checkListController.getCompanyCheckList);
 router.put('/checklist/edit', checkListController.updateChecklist);
 router.post('/checklist/new/:id', checkListController.createCopmpanyCheckList);
+router.put('/checklist/edit/:id', checkListController.updateStatus);
 
 ////////////////////// upload files  ////////////////////////
 router.post('/uploadFile', uploadFilesController.uploadFile);
@@ -195,6 +198,8 @@ router.get('/reportTaplate/employee/:id', employeeReportController.getEmployeeRe
 router.post('/employeeReport/new/:employee_id', employeeReportController.addEmployeeReport);
 router.get('/reports/employees/:companyId', employeeReportController.getReportsEmployeesByCompanyId);
 router.delete('/report/delete/:id', employeeReportController.deleteEmployeeReport);
+
+router.post('/addConnection/new', addConnectionController.addConnection)
 
 router.get('/checkAuth', (req, res) => {
     const access_token = req.cookies.accessToken;

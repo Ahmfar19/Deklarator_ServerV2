@@ -1,7 +1,8 @@
-const pool = require('../databases/mysql.db');
+const { connectionManager } = require('../databases/connectionManagment');
 
 class User {
-    constructor(options) {
+    constructor(options, connectionName) {
+        this.connectionName = connectionName;
         this.username = options.username;
         this.fname = options.fname;
         this.lname = options.lname;
@@ -32,74 +33,73 @@ class User {
             "${this.password}",
             "${this.image}"
         )`;
-        const result = await pool.execute(sql);
-        this.staff_id = result[0].insertId;
+        const result = await connectionManager.executeQuery(this.connectionName, sql);
+        this.staff_id = result.insertId;
         return this.staff_id;
     }
 
-    static async getAllUsers() {
+    static async getAllUsers(connectionName) {
         const sql = 'SELECT * FROM staff';
-        // eslint-disable-next-line no-unused-vars
-        const [rows, fields] = await pool.execute(sql);
-        return rows;
+        const result = await connectionManager.executeQuery(connectionName, sql);
+        return result;
     }
 
-    static async getUserById(id) {
+    static async getUserById(id, connectionName) {
         const sql = `SELECT * FROM staff WHERE staff_id = "${id}"`;
-        // eslint-disable-next-line no-unused-vars
-        const [rows, fields] = await pool.execute(sql);
-        return rows;
+        const result = await connectionManager.executeQuery(connectionName, sql);
+        return result;
     }
 
-    async updateUser(id) {
+    async updateUser(id, connectionName) {
         const sql = `UPDATE staff SET 
-        username = "${this.username}", 
-        fname = "${this.fname}",
-        lname = "${this.lname}", 
-        phone = "${this.phone}",
-        email = "${this.email}", 
-        role = "${this.role}",
-        image = "${this.image}"
-        WHERE staff_id = ${id}`;
-        await pool.execute(sql);
+          username = "${this.username}", 
+          fname = "${this.fname}",
+          lname = "${this.lname}", 
+          phone = "${this.phone}",
+          email = "${this.email}", 
+          role = "${this.role}",
+          image = "${this.image}"
+          WHERE staff_id = ${id}`;
+        await connectionManager.executeQuery(connectionName, sql);
     }
 
-    static async updatePassword(id, newPassword) {
+    static async updatePassword(id, newPassword, connectionName) {
         const sql = `UPDATE staff SET 
-        password = "${newPassword}"
-        WHERE staff_id = ${id}`;
-        await pool.execute(sql);
+         password = "${newPassword}"
+         WHERE staff_id = ${id}`;
+        await connectionManager.executeQuery(connectionName, sql);
     }
 
-    static async deleteUser(id) {
+    static async deleteUser(id, connectionName) {
         const sql = `DELETE FROM staff WHERE staff_id = "${id}"`;
-        await pool.execute(sql);
+        const result = await connectionManager.executeQuery(connectionName, sql);
+        return result;
     }
 
-    static async loginUser(email_username) {
+    static async loginUser(email_username, connectionName) {
         const sql = `SELECT * FROM staff WHERE email ="${email_username}" OR username="${email_username}"`;
-        const [rows] = await pool.execute(sql);
-        return rows;
+        const result = await connectionManager.executeQuery(connectionName, sql);
+        return result;
     }
 
-    static async checkIfUserExisted(email, username) {
+    static async checkIfUserExisted(email, username, connectionName) {
         const sql = `SELECT * FROM staff WHERE email = ? OR username = ?`;
-        const [rows] = await pool.execute(sql, [email, username]);
-        return rows;
+        const result = await connectionManager.executeQuery(connectionName, sql, [email, username]);
+        return result;
     }
 
-    static async checkUserUpdate(username, email, id) {
+    static async checkUserUpdate(username, email, id, connectionName) {
         const sql = `SELECT * FROM staff WHERE 
-        (username = '${username}' OR email = '${email}') 
-        AND staff_id != ${id}`;
-        const [rows] = await pool.execute(sql);
-        return rows;
+         (username = '${username}' OR email = '${email}') 
+         AND staff_id != ${id}`;
+        const result = await connectionManager.executeQuery(connectionName, sql);
+        return result;
     }
 
-    static async getAdmins() {
+    static async getAdmins(connectionName) {
         const sql = 'SELECT * FROM staff WHERE role =1';
-        const [rows] = await pool.execute(sql);
-        return rows;
+        const result = await connectionManager.executeQuery(connectionName, sql);
+        return result;
     }
 }
 

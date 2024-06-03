@@ -1,7 +1,8 @@
-const pool = require('../databases/mysql.db');
+const { connectionManager } = require('../databases/connectionManagment');
 
 class Timer {
-    constructor(options) {
+    constructor(options, connectionName) {
+        this.connectionName = connectionName;
         this.staff_id = options.staff_id;
         this.counted_time = options.counted_time;
     }
@@ -15,35 +16,35 @@ class Timer {
             "${this.counted_time}"
         )`;
 
-        const result = await pool.execute(sql);
-        this.timer_id = result[0].insertId;
+        const result = await connectionManager.executeQuery(this.connectionName, sql);
+        this.timer_id = result.insertId;
         return this.timer_id;
     }
     // get single timer
-    static async getTimer(id) {
+    static async getTimer(id, connectionName) {
         const sql = `SELECT * FROM timer WHERE staff_id="${id}"`;
-        const [rows] = await pool.execute(sql);
-        return rows;
+        const result = await connectionManager.executeQuery(connectionName, sql);
+        return result;
     }
     // get all
-    static async getAll() {
+    static async getAll(connectionName) {
         const sql = 'SELECT * FROM timer';
-        const [rows] = await pool.execute(sql);
-        return rows;
+        const result = await connectionManager.executeQuery(connectionName, sql);
+        return result;
     }
     // update
-    async updateTimer(id) {
+    async updateTimer(id, connectionName) {
         const sql = `UPDATE timer SET 
         counted_time = "${this.counted_time}" 
         WHERE timer_id = ${id}`;
-        const [rows] = await pool.execute(sql);
-        return rows;
+        const result = await connectionManager.executeQuery(connectionName, sql);
+        return result;
     }
     // delete
-    static async findByIdAndDelete(id) {
+    static async findByIdAndDelete(id, connectionName) {
         const sql = `DELETE FROM timer WHERE staff_id="${id}"`;
-        const [rows] = await pool.execute(sql);
-        return rows;
+        const result = await connectionManager.executeQuery(connectionName, sql);
+        return result;
     }
 }
 

@@ -1,7 +1,8 @@
-const pool = require('../databases/mysql.db');
+const { connectionManager } = require('../databases/connectionManagment');
 
 class Guest {
-    constructor(options) {
+    constructor(options, connectionName) {
+        this.connectionName = connectionName;
         this.company_id = options.company_id;
         this.password = options.password;
     }
@@ -14,47 +15,47 @@ class Guest {
             ${this.company_id}, 
             "${this.password}"
         )`;
-        const result = await pool.execute(sql);
-        this.gust_id = result[0].insertId;
+        const result = await connectionManager.executeQuery(this.connectionName, sql);
+        this.gust_id = result.insertId;
         return this.gust_id;
     }
 
-    static async getAllAccounts() {
+    static async getAllAccounts(connectionName) {
         const sql = 'SELECT * FROM guest';
-        const [rows] = await pool.execute(sql);
-        return rows;
+        const result = await connectionManager.executeQuery(connectionName, sql);
+        return result;
     }
 
-    static async deleteAccount(id) {
+    static async deleteAccount(id, connectionName) {
         const sql = `DELETE FROM guest WHERE company_id = ${id}`;
-        const [row] = await pool.execute(sql);
-        return row;
+        const result = await connectionManager.executeQuery(connectionName, sql);
+        return result;
     }
 
-    static async getEmail(id) {
+    static async getEmail(id, connectionName) {
         const sql = `SELECT email, company_name FROM company WHERE company_id = "${id}"`;
-        const result = await pool.execute(sql);
-        return result[0];
+        const result = await connectionManager.executeQuery(connectionName, sql);
+        return result;
     }
 
-    static async checkGuest(email) {
+    static async checkGuest(email, connectionName) {
         const sql = `
         SELECT guest.company_id, guest.password, gust_id FROM guest
         JOIN company ON company.company_id = guest.company_id
         WHERE email = '${email}';
     `;
-        const [rows] = await pool.execute(sql);
-        return rows;
+        const result = await connectionManager.executeQuery(connectionName, sql);
+        return result;
     }
 
-    static async checkIfGuestExists(company_id) {
+    static async checkIfGuestExists(company_id, connectionName) {
         const sql = `
         SELECT * FROM guest
         JOIN company ON company.company_id = guest.company_id
         WHERE guest.company_id = '${company_id}';
     `;
-        const [rows] = await pool.execute(sql);
-        return rows;
+        const result = await connectionManager.executeQuery(connectionName, sql);
+        return result;
     }
 }
 

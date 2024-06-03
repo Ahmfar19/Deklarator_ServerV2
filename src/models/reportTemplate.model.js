@@ -1,7 +1,8 @@
-const pool = require('../databases/mysql.db');
+const { connectionManager } = require('../databases/connectionManagment');
 
 class ReportTemplate {
-    constructor(options) {
+    constructor(options, connectionName) {
+        this.connectionName = connectionName;
         this.text = options.text;
     }
     // create
@@ -11,16 +12,16 @@ class ReportTemplate {
         ) VALUES (
             "${this.text}"
         )`;
-        const result = await pool.execute(sql);
-        this.item_id = result[0].insertId;
+        const result = await connectionManager.executeQuery(this.connectionName, sql);
+        this.item_id = result.insertId;
         return this.item_id;
     }
 
-    static async getAll() {
+    static async getAll(connectionName) {
         const sql = `
         SELECT * FROM report_template`;
-        const [rows] = await pool.execute(sql);
-        return rows;
+        const result = await connectionManager.executeQuery(connectionName, sql);
+        return result;
     }
 }
 
