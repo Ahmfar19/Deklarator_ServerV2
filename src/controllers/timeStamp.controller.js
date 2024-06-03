@@ -4,7 +4,8 @@ const { sendResponse } = require('../helpers/apiResponse');
 // get All CaseTypes
 const getTimeStamps = async (req, res) => {
     try {
-        const timestamps = await TimeStamp.getAll();
+        const { connectionName } = req.query;
+        const timestamps = await TimeStamp.getAll(connectionName);
         sendResponse(res, 200, 'Ok', 'Successfully retrieved all the timestamps', null, timestamps);
     } catch (err) {
         sendResponse(res, 500, 'Internal Server Error', null, err.message || err, null);
@@ -14,8 +15,9 @@ const getTimeStamps = async (req, res) => {
 // get single CaseType
 const getSingleTimeStamp = async (req, res) => {
     try {
+        const { connectionName } = req.query;
         const id = req.params.id;
-        const timestamp = await TimeStamp.getSingle(id);
+        const timestamp = await TimeStamp.getSingle(id, connectionName);
         sendResponse(res, 200, 'Ok', 'Successfully retrieved  the timestamp', null, timestamp);
     } catch (err) {
         sendResponse(res, 500, 'Internal Server Error', null, err.message || err, null);
@@ -25,7 +27,8 @@ const getSingleTimeStamp = async (req, res) => {
 // Create CaseType
 const createTimeStamp = async (req, res) => {
     try {
-        const timeStamp = new TimeStamp(req.body);
+        const { connectionName } = req.query;
+        const timeStamp = new TimeStamp(req.body, connectionName);
         await timeStamp.save();
         sendResponse(res, 201, 'Created', 'Successfully created a timeStamp.', null, timeStamp);
     } catch (err) {
@@ -36,10 +39,12 @@ const createTimeStamp = async (req, res) => {
 // updateCase_Type
 const updateTimeStamp = async (req, res) => {
     try {
+        const { connectionName } = req.query;
         const id = req.params.id;
         const timeStamp = new TimeStamp(req.body);
 
-        const data = await timeStamp.update(id);
+        const data = await timeStamp.update(id, connectionName);
+
         if (data.affectedRows === 0) {
             throw new Error('TimeStamp not found or unable to update');
         }
@@ -52,9 +57,10 @@ const updateTimeStamp = async (req, res) => {
 // delete CaseType
 const deleteTimeStamp = async (req, res) => {
     try {
+        const { connectionName } = req.query;
         const id = req.params.id;
 
-        const data = await TimeStamp.findByIdAndDelete(id);
+        const data = await TimeStamp.findByIdAndDelete(id, connectionName);
         if (data.affectedRows === 0) {
             throw new Error('TimeStamp not found or unable to delete');
         }
@@ -67,7 +73,8 @@ const deleteTimeStamp = async (req, res) => {
 // getTimeStamp relationShip Join company staff type
 const getTimeStamp_OverView = async (req, res) => {
     try {
-        const timeStampsOverView = await TimeStamp.getTimeStampOverView();
+        const { connectionName } = req.query;
+        const timeStampsOverView = await TimeStamp.getTimeStampOverView(connectionName);
         sendResponse(res, 200, 'Ok', 'Successfully retrieved all the timestamps', null, timeStampsOverView);
     } catch (err) {
         sendResponse(res, 500, 'Internal Server Error', null, err.message || err, null);
@@ -76,10 +83,11 @@ const getTimeStamp_OverView = async (req, res) => {
 
 // Filter TimeStamps by year&month
 const getTimeStampsFilterBy_Year_Month = async (req, res) => {
-    const year = req.params.year;
-    const month = req.params.month;
     try {
-        const timeStampDate = await TimeStamp.getFilterByYearMonth(year, month);
+        const { connectionName } = req.query;
+        const year = req.params.year;
+        const month = req.params.month;
+        const timeStampDate = await TimeStamp.getFilterByYearMonth(year, month, connectionName);
         sendResponse(res, 200, 'Ok', 'Successfully retrieved all the timestamps', null, timeStampDate);
     } catch (err) {
         sendResponse(res, 500, 'Internal Server Error', null, err.message || err, null);
@@ -89,7 +97,8 @@ const getTimeStampsFilterBy_Year_Month = async (req, res) => {
 // filter TimeStamps by userId(Staff_id)
 const getTimeStampsFilterBy_User = async (req, res) => {
     try {
-        const timeStampByUser = await TimeStamp.getTimeStampsByStaff_id(req.params.id);
+        const { connectionName } = req.query;
+        const timeStampByUser = await TimeStamp.getTimeStampsByStaff_id(req.params.id, connectionName);
         sendResponse(res, 200, 'Ok', 'Successfully retrieved all the timestampsByUserId', null, timeStampByUser);
     } catch (err) {
         sendResponse(res, 500, 'Internal Server Error', null, err.message || err, null);
@@ -99,7 +108,8 @@ const getTimeStampsFilterBy_User = async (req, res) => {
 // get pagination only 10 timeStamps
 const getLastLimit = async (req, res) => {
     try {
-        const timeStamps = await TimeStamp.getLatestTimeStamps(req.params.number);
+        const { connectionName } = req.query;
+        const timeStamps = await TimeStamp.getLatestTimeStamps(req.params.number, connectionName);
         sendResponse(res, 200, 'Ok', 'Successfully retrieved all the timestampsLatest', null, timeStamps);
     } catch (err) {
         sendResponse(res, 500, 'Internal Server Error', null, err.message || err, null);
@@ -109,7 +119,8 @@ const getLastLimit = async (req, res) => {
 // get pagination only last TwoMonth
 const getLastMonths = async (req, res) => {
     try {
-        const timeStamps = await TimeStamp.getTimeStampsLastNMonths(req.params.months);
+        const { connectionName } = req.query;
+        const timeStamps = await TimeStamp.getTimeStampsLastNMonths(req.params.months, connectionName);
         sendResponse(res, 200, 'Ok', 'Successfully retrieved all the timestampsLastTwoMonths', null, timeStamps);
     } catch (err) {
         sendResponse(res, 500, 'Internal Server Error', null, err.message || err, null);
@@ -117,9 +128,19 @@ const getLastMonths = async (req, res) => {
 };
 
 const getFilterByUserCompanyType = async (req, res) => {
-    const { staff_id, company_id, type_id, from_yearMonth, to_yearMonth, from_date, to_date, stamp_id } = req.query;
-
     try {
+        const {
+            staff_id,
+            company_id,
+            type_id,
+            from_yearMonth,
+            to_yearMonth,
+            from_date,
+            to_date,
+            stamp_id,
+            connectionName,
+        } = req.query;
+
         const filter = await TimeStamp.getFilterBy_User_Company_type(
             staff_id,
             company_id,
@@ -129,7 +150,9 @@ const getFilterByUserCompanyType = async (req, res) => {
             from_date,
             to_date,
             stamp_id,
+            connectionName,
         );
+
         sendResponse(res, 200, 'Ok', 'Successfully retrieved all the timestampsFilter', null, filter);
     } catch (err) {
         sendResponse(res, 500, 'Internal Server Error', null, err.message || err, null);

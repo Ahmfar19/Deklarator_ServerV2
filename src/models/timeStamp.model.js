@@ -1,6 +1,7 @@
-const pool = require('../databases/mysql.db');
+const { connectionManager } = require('../databases/connectionManagment');
 class TimeStamp {
-    constructor(options) {
+    constructor(options, connectionName) {
+        this.connectionName = connectionName;
         this.type_id = options.type_id;
         this.staff_id = options.staff_id;
         this.company_id = options.company_id;
@@ -24,70 +25,76 @@ class TimeStamp {
             "${this.stamp_date}", 
             "${this.time}"
         )`;
-        const result = await pool.execute(sql);
-        this.stamp_id = result[0].insertId;
+        const result = await connectionManager.executeQuery(this.connectionName, sql);
+        this.stamp_id = result.insertId;
         return this.stamp_id;
     }
     // get all
-    static async getAll() {
+    static async getAll(connectionName) {
         const sql = 'SELECT *, DATE_FORMAT(stamp_date, "%Y-%m-%d") AS stamp_date FROM time_stamp';
-        const [rows] = await pool.execute(sql);
-        return rows;
+        const result = await connectionManager.executeQuery(connectionName, sql);
+        return result;
     }
     // get single caseType
-    static async getSingle(id) {
+    static async getSingle(id, connectionName) {
         const sql =
             `SELECT *, DATE_FORMAT(stamp_date, "%Y-%m-%d") AS stamp_date FROM time_stamp WHERE stamp_id  = "${id}"`;
-        const [rows] = await pool.execute(sql);
-        return rows;
+        const result = await connectionManager.executeQuery(connectionName, sql);
+        return result;
     }
     // update
-    async update(id) {
+    async update(id, connectionName) {
         const sql = `UPDATE time_stamp SET 
         type_id = "${this.type_id}",
         company_id = "${this.company_id}",
         stamp_date = "${this.stamp_date}", 
         time = "${this.time}"
         WHERE stamp_id = ${id}`;
-        const [rows] = await pool.execute(sql);
-        return rows;
+        const result = await connectionManager.executeQuery(connectionName, sql);
+        return result;
     }
     // delete
-    static async findByIdAndDelete(id) {
+    static async findByIdAndDelete(id, connectionName) {
         const sql = `DELETE FROM time_stamp WHERE stamp_id = "${id}"`;
-        const [rows] = await pool.execute(sql);
-        return rows;
+        const result = await connectionManager.executeQuery(connectionName, sql);
+        return result;
     }
 
     // get relationShip fields with timeStamp
-    static async getTimeStampOverView() {
-        const sql = `SELECT * FROM time_stamp JOIN 
-            company ON time_stamp.company_id = company.company_id 
-            JOIN staff ON time_stamp.staff_id = staff.staff_id 
-            JOIN timestamp_type ON time_stamp.type_id = timestamp_type.type_id
+    static async getTimeStampOverView(connectionName) {
+        const sql = `SELECT 
+        staff.*,
+        company.*,
+        time_stamp.*,
+        timestamp_type.*,
+        DATE_FORMAT(stamp_date, '%Y-%m-%d') AS stamp_date
+        FROM time_stamp JOIN 
+        company ON time_stamp.company_id = company.company_id 
+        JOIN staff ON time_stamp.staff_id = staff.staff_id 
+        JOIN timestamp_type ON time_stamp.type_id = timestamp_type.type_id
         `;
-        const [rows] = await pool.execute(sql);
-        return rows;
+        const result = await connectionManager.executeQuery(connectionName, sql);
+        return result;
     }
 
     // getFilter With Year-Month
-    static async getFilterByYearMonth(year, month) {
+    static async getFilterByYearMonth(year, month, connectionName) {
         const sql =
-            'SELECT * FROM time_stamp WHERE MONTH(time_stamp.stamp_date) = ? AND YEAR(time_stamp.stamp_date) = ?';
+            'SELECT *, DATE_FORMAT(stamp_date, "%Y-%m-%d") AS stamp_date FROM time_stamp WHERE MONTH(time_stamp.stamp_date) = ? AND YEAR(time_stamp.stamp_date) = ?';
         const params = [month, year];
-        const [rows] = await pool.execute(sql, params);
-        return rows;
+        const result = await connectionManager.executeQuery(connectionName, sql, params);
+        return result;
     }
 
     // Filter timeStampsBy userId(Staff_id)
-    static async getTimeStampsByStaff_id(staff_id) {
+    static async getTimeStampsByStaff_id(staff_id, connectionName) {
         const sql = `SELECT * FROM time_stamp WHERE staff_id = ${staff_id}`;
-        const [rows] = await pool.execute(sql);
-        return rows;
+        const result = await connectionManager.executeQuery(connectionName, sql);
+        return result;
     }
 
     // get Last x of timeStamp
-    static async getLatestTimeStamps(number) {
+    static async getLatestTimeStamps(number, connectionName) {
         const sql = `SELECT 
         ts.stamp_id, 
         ts.time, 
@@ -100,12 +107,12 @@ class TimeStamp {
         INNER JOIN timestamp_type AS tt ON ts.type_id = tt.type_id ORDER BY ts.stamp_id 
         DESC LIMIT ${number}`;
 
-        const [rows] = await pool.execute(sql);
-        return rows;
+        const result = await connectionManager.executeQuery(connectionName, sql);
+        return result;
     }
 
     // get last x months from timeStamps
-    static async getTimeStampsLastNMonths(months) {
+    static async getTimeStampsLastNMonths(months, connectionName) {
         const sql = `SELECT 
             ts.stamp_id, 
             ts.time, DATE_FORMAT(ts.stamp_date, "%Y-%m-%d") AS stamp_date, 
@@ -114,8 +121,8 @@ class TimeStamp {
             FROM time_stamp AS ts INNER JOIN company AS c ON ts.company_id = c.company_id INNER JOIN staff AS s ON ts.staff_id = s.staff_id INNER JOIN timestamp_type AS tt ON ts.type_id = tt.type_id 
             WHERE stamp_date >= NOW() - INTERVAL ${months} MONTH;`;
 
-        const [rows] = await pool.execute(sql);
-        return rows;
+        const result = await connectionManager.executeQuery(connectionName, sql);
+        return result;
     }
 
     static async getFilterBy_User_Company_type(
@@ -127,6 +134,7 @@ class TimeStamp {
         from_date,
         to_date,
         stamp_id,
+        connectionName,
     ) {
         let sql = `SELECT 
            ts.stamp_id, 
@@ -146,6 +154,7 @@ class TimeStamp {
 
         if (user_id) {
             sql = sql + ` AND s.staff_id = ${user_id}`;
+
             hasFilter = true;
         }
 
@@ -193,8 +202,9 @@ class TimeStamp {
             return [];
         }
 
-        const [rows] = await pool.execute(sql);
-        return rows;
+        const result = await connectionManager.executeQuery(connectionName, sql);
+
+        return result;
     }
 }
 

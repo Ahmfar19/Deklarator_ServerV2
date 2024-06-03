@@ -1,7 +1,8 @@
-const pool = require('../databases/mysql.db');
+const { connectionManager } = require('../databases/connectionManagment');
 
 class Employee {
-    constructor(options) {
+    constructor(options, connectionName) {
+        this.connectionName = connectionName;
         this.company_id = options.company_id;
         this.fname = options.fname;
         this.lname = options.lname;
@@ -24,42 +25,34 @@ class Employee {
             "${this.extent}"
         )`;
 
-        const result = await pool.execute(sql);
-        this.employee_id = result[0].insertId;
+        const result = await connectionManager.executeQuery(this.connectionName, sql);
+        this.employee_id = result.insertId;
         return this.employee_id;
     }
 
-    static async getSingleById(id) {
+    static async getSingleById(id, connectionName) {
         const sql = `SELECT * FROM employee WHERE employee_id = "${id}"`;
-        const [rows] = await pool.execute(sql);
-        return rows;
+        const result = await connectionManager.executeQuery(connectionName, sql);
+        return result;
     }
 
-    static async getAll() {
-        const sql = `
-            SELECT * FROM employee
-        `;
-        const [rows] = await pool.execute(sql);
-        return rows;
-    }
-
-    static async getCompanyEmployees(id) {
+    static async getCompanyEmployees(id, connectionName) {
         const sql = `
             SELECT * FROM employee WHERE company_id = ${id}
         `;
-        const [rows] = await pool.execute(sql);
-        return rows;
+        const result = await connectionManager.executeQuery(connectionName, sql);
+        return result;
     }
 
-    static async getAllEmployees() {
+    static async getAllEmployees(connectionName) {
         const sql = `
             SELECT employee_id, company_id, CONCAT(fname, ' ', lname) AS employee_name 
             FROM employee`;
-        const [rows] = await pool.execute(sql);
-        return rows;
+        const result = await connectionManager.executeQuery(connectionName, sql);
+        return result;
     }
 
-    async updateById(id) {
+    async updateById(id, connectionName) {
         const sql = `UPDATE employee SET 
         company_id = ${this.company_id}, 
         fname = "${this.fname}", 
@@ -67,14 +60,14 @@ class Employee {
         personalnumber = "${this.personalnumber}",
         extent = "${this.extent}"
         WHERE employee_id = ${id}`;
-        const [rows] = await pool.execute(sql);
-        return rows;
+        const result = await connectionManager.executeQuery(connectionName, sql);
+        return result;
     }
 
-    static async findByIdAndDelete(id) {
+    static async findByIdAndDelete(id, connectionName) {
         const sql = `DELETE FROM employee WHERE employee_id = "${id}"`;
-        const [rows] = await pool.execute(sql);
-        return rows;
+        const result = await connectionManager.executeQuery(connectionName, sql);
+        return result;
     }
 }
 

@@ -1,7 +1,8 @@
-const pool = require('../databases/mysql.db');
+const { connectionManager } = require('../databases/connectionManagment');
 
 class CompanyType {
-    constructor(options) {
+    constructor(options, connectionName) {
+        this.connectionName = connectionName;
         this.type_name = options.type_name;
     }
     // create
@@ -11,15 +12,15 @@ class CompanyType {
         ) VALUES (
             "${this.type_name}"
         )`;
-        const result = await pool.execute(sql);
-        this.type_id = result[0].insertId;
+        const result = await connectionManager.executeQuery(this.connectionName, sql);
+        this.type_id = result.insertId;
         return this.type_id;
     }
     // get all
-    static async getAll() {
+    static async getAll(connectionName) {
         const sql = 'SELECT * FROM company_type';
-        const [rows] = await pool.execute(sql);
-        return rows;
+        const result = await connectionManager.executeQuery(connectionName, sql);
+        return result;
     }
 }
 

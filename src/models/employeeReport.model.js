@@ -1,7 +1,8 @@
-const pool = require('../databases/mysql.db');
+const { connectionManager } = require('../databases/connectionManagment');
 
 class EmployeeReport {
-    constructor(options) {
+    constructor(options, connectionName) {
+        this.connectionName = connectionName;
         this.employee_id = options.employee_id;
         this.report_item_id = options.report_item_id;
         this.quantity = options.quantity;
@@ -9,7 +10,7 @@ class EmployeeReport {
         this.date = options.date;
     }
 
-    static async updateByReportId(employee_id, reportItemsData) {
+    static async updateByReportId(employee_id, reportItemsData, connectionName) {
         if (!Array.isArray(reportItemsData) || reportItemsData.length === 0) {
             throw new Error('Invalid report items data');
         }
@@ -23,7 +24,7 @@ class EmployeeReport {
              WHERE employee_id = ${employee_id}
              AND report_id = ${item.report_id}
              `;
-            await pool.execute(sql);
+            await connectionManager.executeQuery(connectionName, sql);
         });
 
         await Promise.all(insertionPromises);
@@ -32,7 +33,7 @@ class EmployeeReport {
         return true;
     }
 
-    static async getByEmployeeId(id) {
+    static async getByEmployeeId(id, connectionName) {
         const sql = `
             SELECT 
             report_id,
@@ -45,11 +46,11 @@ class EmployeeReport {
             JOIN report_template ON report_template.item_id = employee_report.report_item_id
             WHERE employee_id = ${id}
         `;
-        const [rows] = await pool.execute(sql);
-        return rows;
+        const result = await connectionManager.executeQuery(connectionName, sql);
+        return result;
     }
 
-    static async createEmployeeReport(employee_id, reportItemsData) {
+    static async createEmployeeReport(employee_id, reportItemsData, connectionName) {
         if (!Array.isArray(reportItemsData) || reportItemsData.length === 0) {
             throw new Error('Invalid report items data');
         }
@@ -58,19 +59,21 @@ class EmployeeReport {
             const sql =
                 'INSERT INTO employee_report (employee_id, report_item_id, quantity, sum, date) VALUES (?, ?, ?, ?, ?)';
             const values = [employee_id, item.report_item_id, item.quantity, item.sum, item.date];
-            return await pool.execute(sql, values);
+            return await connectionManager.executeQuery(connectionName, sql, values);
         });
 
         // Wait for all report items to be inserted
         const results = await Promise.all(insertionPromises);
-        const from = results[0][0].insertId;
+
+        const from = results[0].insertId;
         const to = from + results.length - 1;
 
-        const insertedReports = await this.geRangeReports(from, to);
+        const insertedReports = await this.geRangeReports(from, to, connectionName);
+
         return insertedReports;
     }
 
-    static async getAllReportItemsByCompanyId(companyId) {
+    static async getAllReportItemsByCompanyId(companyId, connectionName) {
         const sql = `SELECT 
         er.report_id, 
         er.employee_id,
@@ -88,11 +91,11 @@ class EmployeeReport {
         JOIN report_template rt ON er.report_item_id = rt.item_id
         WHERE company_id = ${companyId}
        `;
-        const [rows] = await pool.execute(sql);
-        return rows;
+        const result = await connectionManager.executeQuery(connectionName, sql);
+        return result;
     }
 
-    static async getAllReportItems() {
+    static async getAllReportItems(connectionName) {
         const sql = `SELECT 
         er.report_id, 
         er.employee_id,
@@ -111,11 +114,11 @@ class EmployeeReport {
         JOIN report_template rt ON er.report_item_id = rt.item_id
         JOIN company co ON co.company_id = e.company_id
        `;
-        const [rows] = await pool.execute(sql);
-        return rows;
+        const result = await connectionManager.executeQuery(connectionName, sql);
+        return result;
     }
 
-    static async getReportItemsByFilter(key, value) {
+    static async getReportItemsByFilter(key, value, connectionName) {
         const sql = `SELECT 
         er.report_id, 
         er.employee_id,
@@ -135,11 +138,11 @@ class EmployeeReport {
         JOIN company co ON co.company_id = e.company_id
         WHERE ${key} = '${value}';
        `;
-        const [rows] = await pool.execute(sql);
-        return rows;
+        const result = await connectionManager.executeQuery(connectionName, sql);
+        return result;
     }
 
-    static async deleteEmployeeReport(id) {
+    static async deleteEmployeeReport(id, connectionName) {
         const [empId, year, month] = id.split('-');
 
         const sql = `DELETE FROM employee_report 
@@ -147,11 +150,11 @@ class EmployeeReport {
             AND YEAR(date) = ${year} 
             AND MONTH(date) = ${month}
         `;
-        const [rows] = await pool.execute(sql);
-        return rows;
+        const result = await connectionManager.executeQuery(connectionName, sql);
+        return result;
     }
 
-    static async geRangeReports(from, to) {
+    static async geRangeReports(from, to, connectionName) {
         const sql = `SELECT 
         er.report_id,
         er.employee_id,
@@ -169,14 +172,15 @@ class EmployeeReport {
         JOIN report_template rt ON er.report_item_id = rt.item_id
         WHERE report_id >= ${from} AND report_id <= ${to};
        `;
-        const [rows] = await pool.execute(sql);
-        return rows;
+        const result = await connectionManager.executeQuery(connectionName, sql);
+        return result;
     }
 
-    static async deleteReportItems(values) {
+    static async deleteReportItems(values, connectionName) {
         const deleteReportEntries = values.map(async (item) => {
             const sql = `DELETE FROM employee_report WHERE report_id = ${item.report_id}`;
-            await pool.execute(sql);
+
+            await connectionManager.executeQuery(connectionName, sql);
         });
         await Promise.all(deleteReportEntries);
     }

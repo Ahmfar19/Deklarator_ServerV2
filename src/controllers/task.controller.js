@@ -3,7 +3,8 @@ const { sendResponse } = require('../helpers/apiResponse');
 
 const getTasks = async (req, res) => {
     try {
-        const tasks = await Task.getAll();
+        const { connectionName } = req.query;
+        const tasks = await Task.getAll(connectionName);
         sendResponse(res, 200, 'Ok', 'Successfully retrieved all the tasks', null, tasks);
     } catch (err) {
         sendResponse(res, 500, 'Internal Server Error', null, err.message || err, null);
@@ -12,8 +13,9 @@ const getTasks = async (req, res) => {
 
 const getSingleTask = async (req, res) => {
     try {
+        const { connectionName } = req.query;
         const id = req.params.id;
-        const singleTask = await Task.getTask(id);
+        const singleTask = await Task.getTask(id, connectionName);
         sendResponse(res, 200, 'Ok', 'Successfully retrieved the task', null, singleTask);
     } catch (err) {
         sendResponse(res, 500, 'Internal Server Error', null, err.message || err, null);
@@ -22,7 +24,8 @@ const getSingleTask = async (req, res) => {
 
 const addTask = async (req, res) => {
     try {
-        const task = new Task(req.body);
+        const { connectionName } = req.query;
+        const task = new Task(req.body, connectionName);
         const task_id = await task.save();
         sendResponse(res, 201, 'Created', 'Successfully created a message.', null, { task_id: task_id });
     } catch (err) {
@@ -32,8 +35,10 @@ const addTask = async (req, res) => {
 
 const addMultiTask = async (req, res) => {
     try {
+        const { connectionName } = req.query;
         const task = new Task(req.body);
-        const insertedTaskIds = await task.saveMulti();
+        const insertedTaskIds = await task.saveMulti(connectionName);
+
         sendResponse(res, 201, 'Created', 'Successfully created a message.', null, { task_ids: insertedTaskIds });
     } catch (err) {
         sendResponse(res, 500, 'Internal Server Error', null, err.message || err, null);
@@ -42,9 +47,10 @@ const addMultiTask = async (req, res) => {
 
 const updateTask = async (req, res) => {
     try {
+        const { connectionName } = req.query;
         const id = req.params.id;
         const task = new Task(req.body);
-        const data = await task.updateTask(id);
+        const data = await task.updateTask(id, connectionName);
         if (data.affectedRows === 0) {
             return res.json({
                 status: 406,
@@ -59,8 +65,9 @@ const updateTask = async (req, res) => {
 
 const deleteTask = async (req, res) => {
     try {
+        const { connectionName } = req.query;
         const id = req.params.id;
-        const data = await Task.delete_Task(id);
+        const data = await Task.delete_Task(id, connectionName);
         if (data.affectedRows === 0) {
             return res.json({
                 status: 406,
@@ -75,7 +82,8 @@ const deleteTask = async (req, res) => {
 
 const getTasksTypes = async (req, res) => {
     try {
-        const types = await Task.getTypes();
+        const { connectionName } = req.query;
+        const types = await Task.getTypes(connectionName);
         sendResponse(res, 200, 'Ok', 'Successfully retrieved all the types', null, types);
     } catch (err) {
         sendResponse(res, 500, 'Internal Server Error', null, err.message || err, null);
