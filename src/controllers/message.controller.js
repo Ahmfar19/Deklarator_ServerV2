@@ -21,6 +21,16 @@ const getSingleMessage = async (req, res) => {
     }
 };
 
+const getStaffMessages = async (req, res) => {
+    try {
+        const staff_id = req.params.staff_id;
+        const staffMessages = await Message.getStaffMessages(staff_id);
+        sendResponse(res, 200, 'Ok', 'Successfully retrieved the staff messages', null, staffMessages);
+    } catch (err) {
+        sendResponse(res, 500, 'Internal Server Error', null, err.message || err, null);
+    }
+};
+
 const addMessage = async (req, res) => {
     try {
         const message = new Message(req.body);
@@ -75,8 +85,9 @@ const deleteBeforWeek = async () => {
 
 const updateSeenBeforeId = async (req, res) => {
     const id = req.params.id;
+    const staffId = req.params.staff_id;
     try {
-        await Message.updateSeenBeforeId(id);
+        await Message.updateSeenBeforeId(id, staffId);
         sendResponse(res, 200, 'Accepted', 'Successfully update the messages seen.', null, null);
     } catch (error) {
         return;
@@ -91,6 +102,7 @@ const deleteOldMessages = () => {
 };
 module.exports = {
     getMessages,
+    getStaffMessages,
     getSingleMessage,
     addMessage,
     updateMessage,

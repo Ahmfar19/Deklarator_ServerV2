@@ -36,6 +36,18 @@ class Message {
         const [rows] = await pool.execute(sql);
         return rows;
     }
+
+    static async getStaffMessages(staff_id) {
+        const sql = `SELECT message.*, message_type.variant
+            FROM message 
+            JOIN message_type ON message.message_typ_id = message_type.message_typ_id
+            WHERE staff_id = ${staff_id}
+            ORDER BY message.message_id DESC;
+        `;
+        const [rows] = await pool.execute(sql);
+        return rows;
+    }
+
     // get all
     static async getAll() {
         const sql = `
@@ -68,8 +80,8 @@ class Message {
         return rows;
     }
 
-    static async updateSeenBeforeId(beforeID) {
-        const sql = `UPDATE message SET seen=1 WHERE message_id >= ${beforeID}`;
+    static async updateSeenBeforeId(beforeID, staff_id) {
+        const sql = `UPDATE message SET seen=1 WHERE message_id <= ${beforeID} AND staff_id = ${staff_id}`;
         const [rows] = await pool.execute(sql);
         return rows;
     }

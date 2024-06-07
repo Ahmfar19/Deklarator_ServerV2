@@ -119,10 +119,11 @@ router.get('/payments/companyId/:id', paymentController.getPaymentsBy_CompanyId)
 
 /////////////// Messages Routes /////////////////
 router.get('/messages', messagesController.getMessages);
+router.get('/messages/:staff_id', messagesController.getStaffMessages);
 router.get('/message/:id', messagesController.getSingleMessage);
 router.post('/message/new', messagesController.addMessage);
 router.put('/message/edit/:id', messagesController.updateMessage);
-router.put('/message/upateseen/:id', messagesController.updateSeenBeforeId);
+router.put('/message/:staff_id/upateseen/:id', messagesController.updateSeenBeforeId);
 router.delete('/message/delete/:id', messagesController.deleteMessage);
 
 /////////////// Tasks Routes /////////////////
