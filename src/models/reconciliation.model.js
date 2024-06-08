@@ -33,6 +33,17 @@ class Case {
         }
     }
 
+    static async createMultiReconciliation(data) {
+        if (!Array.isArray(data.companyIds) || data.companyIds.length === 0) {
+            throw new Error('companyIds should be a non-empty array');
+        }
+        const companies = data.companyIds;
+        const year = data.reconciliation_date;
+        const defaultData = JSON.stringify([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
+        const promises = companies.map(async company_id => this.save(company_id, year, defaultData));
+        await Promise.all(promises);
+    }
+
     static async getAll(year) {
         const sql = `
             SELECT reconciliation.*, company.company_name
@@ -54,6 +65,11 @@ class Case {
         const sql = `DELETE FROM reconciliation WHERE reconciliation_date = "${year}"`;
         const [rows] = await pool.execute(sql);
         return rows;
+    }
+
+    static async deleteReconciliation(id) {
+        const sql = `DELETE FROM reconciliation WHERE reconciliation_id  = "${id}"`;
+        await pool.execute(sql);
     }
 
     static async updateDataById(id, data) {

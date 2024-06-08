@@ -202,7 +202,8 @@ router.get('/reconciliations', reconciliationController.getReconciliations);
 router.get('/reconciliations/group', reconciliationController.getReconciliationsGroup);
 router.get('/reconciliations/:year', reconciliationController.getYearReconciliations);
 router.delete('/reconciliations/delete/:year', reconciliationController.deleteYearReconciliations);
-router.post('/reconciliations/new/:year', reconciliationController.creteNewReconciliation);
+router.delete('/reconciliations/delete/entry/:id', reconciliationController.deleteReconciliations);
+router.post('/reconciliations/new', reconciliationController.creteNewReconciliation);
 router.put('/reconciliations/edit/:reconciliation_id', reconciliationController.updateReconciliations);
 
 router.get('/checkAuth', (req, res) => {
