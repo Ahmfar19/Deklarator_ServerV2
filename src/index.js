@@ -9,7 +9,8 @@ const PORT = config.get('PORT');
 const app = require('./app');
 
 const pingWebsite = () => {
-    const url = 'https://system.deklarator.se';
+    // const url = 'https://system.deklarator.se';
+    const url = 'https://system.administreramer.se/';
     https.get(url, () => {
     }).on('error', () => {
         return;
