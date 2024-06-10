@@ -41,7 +41,7 @@ async function verifyInlogged(req, res, next) {
     }
 }
 
-app.use('/assets', verifyInlogged, express.static('assets'));
+app.use('/server/api/assets', verifyInlogged, express.static('assets'));
 
 // Setting an intervall every 6 hours that cehck for a reminder to send.
 sendReminderEmail();
@@ -52,24 +52,16 @@ deleteOldMessages();
 app.use('/server/api/', apiRouter);
 
 
-// ***************** When uploading to the production server **************** //
-// app.use('/server/assets', verifyInlogged, express.static('assets'));
-
-
 // ***************** When testing the fronEnd by this server **************** //
-// const path = require('path');
-// app.use(express.static(path.join(__dirname, '../dist')));
-
-// app.get('/*', (req, res, next) => {
-//     if (req.path.startsWith('/assets')) {
-//         return next();
-//     }
-//     res.sendFile(path.join(__dirname, '../dist/index.html'));
-// });
-
-// app.use('/assets', verifyInlogged, express.static('assets'));
-
-// ***************** END **************** //
+const path = require('path');
+app.use(express.static(path.join(__dirname, '../dist')));
+app.get('/*', (req, res, next) => {
+    if (req.path.startsWith('/assets')) {
+        return next();
+    }
+    res.sendFile(path.join(__dirname, '../dist/index.html'));
+});
+// ***************** END fronEnd testing **************** //
 
 module.exports = app;
 
