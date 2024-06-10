@@ -243,7 +243,8 @@ const login = async (req, res) => {
 
             if (match) {
                 const expiresIn = rememberMe ? '30d' : '1d';
-                const finger_print = fingerprint + String(data[0].staff_id);
+                const customerId = `@@${req.customerId}`;
+                const finger_print = fingerprint + String(data[0].staff_id) + customerId;
                 const token = jwt.sign({ id: finger_print }, JWT_SECRET_KEY, { expiresIn });
 
                 res.json({
@@ -278,7 +279,7 @@ const verifyToken = async (req, res) => {
                             message: 'invalid token',
                         });
                     } else {
-                        const checkUserDevice = fingerprint + user_id;
+                        const checkUserDevice = fingerprint + user_id + '@@' + req.customerId;
                         if (checkUserDevice === decoded.id) {
                             return res.json({
                                 statusCode: 200,
