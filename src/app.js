@@ -47,8 +47,13 @@ sendReminderEmail();
 // Setting an intervall every 7 days to delete messages
 deleteOldMessages();
 
+app.use((req, res, next) => { 
+    // console.error('req', req.originalUrl.split('/')[3]) 
+    req.customerId = req.originalUrl.split('/')[3] 
+    next(); 
+})
 // app.get('/', (req, res) => res.send('It, works!'));
-app.use('/server/api/', apiRouter);
+app.use('/server/api/:customerId', apiRouter);
 
 
 // ***************** When testing the fronEnd by this server **************** //

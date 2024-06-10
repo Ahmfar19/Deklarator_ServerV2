@@ -1,8 +1,9 @@
-const pool = require('../databases/mysql.db');
+const { connectionManager } = require('../databases/connectionManagment');
 const Company = require('./company.model');
 
 class Case {
-    constructor(options) {
+    constructor(options, connectionName) {
+        this.connectionName = connectionName;
         this.reconciliation_id = options.reconciliation_id;
         this.company_id = options.company_id;
         this.reconciliation_date = options.reconciliation_date;
@@ -19,7 +20,7 @@ class Case {
             '${date}', 
             '${defaultData}'
         )`;
-        await pool.execute(sql);
+        await connectionManager.executeQuery(this.connectionName, sql);
     }
 
     static async createReconciliation(year) {
@@ -44,37 +45,39 @@ class Case {
         await Promise.all(promises);
     }
 
-    static async getAll(year) {
+    static async getAll(year, connectionName) {
         const sql = `
             SELECT reconciliation.*, company.company_name
             FROM reconciliation
             JOIN company ON company.company_id = reconciliation.company_id
             WHERE reconciliation_date = ${year}`;
 
-        const [rows] = await pool.execute(sql);
-        return rows;
+            const result = await connectionManager.executeQuery(connectionName, sql);
+            return result;
     }
 
-    static async getGroups() {
+    static async getGroups(connectionName) {
         const sql = 'SELECT reconciliation_date FROM reconciliation GROUP BY reconciliation_date';
-        const [rows] = await pool.execute(sql);
-        return rows;
+        const result = await connectionManager.executeQuery(connectionName, sql);
+        return result;
     }
 
-    static async deleteByYear(year) {
+    static async deleteByYear(year, connectionName) {
         const sql = `DELETE FROM reconciliation WHERE reconciliation_date = "${year}"`;
-        const [rows] = await pool.execute(sql);
-        return rows;
+        const result = await connectionManager.executeQuery(connectionName, sql);
+        return result;
     }
 
-    static async deleteReconciliation(id) {
+    static async deleteReconciliation(id, connectionName) {
         const sql = `DELETE FROM reconciliation WHERE reconciliation_id  = "${id}"`;
-        await pool.execute(sql);
+        const result = await connectionManager.executeQuery(connectionName, sql);
+        return result;
     }
 
-    static async updateDataById(id, data) {
+    static async updateDataById(id, data, connectionName) {
         const sql = `UPDATE reconciliation SET reconciliation_data = '${data}' WHERE reconciliation_id = ${id}`;
-        await pool.execute(sql);
+        const result = await connectionManager.executeQuery(connectionName, sql);
+        return result;
     }
 }
 

@@ -3,7 +3,7 @@ const { sendResponse } = require('../helpers/apiResponse');
 
 const getCompanyType = async (req, res) => {
     try {
-        const { connectionName } = req.query;
+        const connectionName = req.customerId;
         const companyTypes = await CompanyType.getAll(connectionName);
         sendResponse(res, 200, 'Ok', 'Successfully retrieved all the companyTypes', null, companyTypes);
     } catch (err) {
@@ -13,7 +13,7 @@ const getCompanyType = async (req, res) => {
 
 const addCompanyType = async (req, res) => {
     try {
-        const { connectionName } = req.query;
+        const connectionName = req.customerId;
         const companyType = new CompanyType(req.body, connectionName);
         await companyType.save();
         sendResponse(res, 201, 'Created', 'Successfully created a companyType.', null, companyType);

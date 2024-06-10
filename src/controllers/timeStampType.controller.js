@@ -4,7 +4,7 @@ const { sendResponse } = require('../helpers/apiResponse');
 // get All CaseTypes
 const getTimeStampTypes = async (req, res) => {
     try {
-        const { connectionName } = req.query;
+        const connectionName = req.customerId;
         const timestamps_type = await TimeStampType.getAll(connectionName);
         sendResponse(res, 200, 'Ok', 'Successfully retrieved all the timestamps_type', null, timestamps_type);
     } catch (err) {
@@ -15,7 +15,7 @@ const getTimeStampTypes = async (req, res) => {
 // get single CaseType
 const getSingleTimeStampType = async (req, res) => {
     try {
-        const { connectionName } = req.query;
+        const connectionName = req.customerId;
         const id = req.params.id;
         const timestamp_type = await TimeStampType.getSingle(id, connectionName);
         sendResponse(res, 200, 'Ok', 'Successfully retrieved  the timestamp_type', null, timestamp_type);
@@ -27,7 +27,7 @@ const getSingleTimeStampType = async (req, res) => {
 // Create CaseType
 const createtimeStampType = async (req, res) => {
     try {
-        const { connectionName } = req.query;
+        const connectionName = req.customerId;
         const timeStamp_type = new TimeStampType(req.body, connectionName);
         await timeStamp_type.save();
         sendResponse(res, 201, 'Created', 'Successfully created a timeStampType.', null, timeStamp_type);
@@ -39,7 +39,7 @@ const createtimeStampType = async (req, res) => {
 // updateCase_Type
 const updateTimeStampType = async (req, res) => {
     try {
-        const { connectionName } = req.query;
+        const connectionName = req.customerId;
         const id = req.params.id;
         const timeStamp_type = new TimeStampType(req.body);
         const data = await timeStamp_type.update(id, connectionName);
@@ -60,7 +60,7 @@ const updateTimeStampType = async (req, res) => {
 // delete CaseType
 const deleteTimeStampType = async (req, res) => {
     try {
-        const { connectionName } = req.query;
+        const connectionName = req.customerId;
         const id = req.params.id;
         const data = await TimeStampType.findByIdAndDelete(id, connectionName);
         if (data.affectedRows === 0) {

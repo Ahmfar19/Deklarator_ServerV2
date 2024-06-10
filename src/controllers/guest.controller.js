@@ -33,7 +33,7 @@ const createGuestAccount = async (company_id, connectionName) => {
 
 const addGuest = async (req, res) => {
     const { companyIds } = req.body;
-    const { connectionName } = req.query;
+    const connectionName = req.customerId;
     if (!Array.isArray(companyIds) && !companyIds.length) {
         sendResponse(res, 500, 'Invalid argument', null, null);
         return;
@@ -50,7 +50,7 @@ const addGuest = async (req, res) => {
 
 const deleteGuest = async (req, res) => {
     try {
-        const { connectionName } = req.query;
+        const connectionName = req.customerId;
         const id = req.params.company_id;
         const data = await Guest.deleteAccount(id, connectionName);
         if (data.affectedRows === 0) {
@@ -67,7 +67,7 @@ const deleteGuest = async (req, res) => {
 
 const getGuests = async (req, res) => {
     try {
-        const { connectionName } = req.query;
+        const connectionName = req.customerId;
         const guests = await Guest.getAllAccounts(connectionName);
         sendResponse(res, 200, 'Ok', 'Successfully retrieved all the guests.', null, guests);
     } catch (err) {
@@ -78,7 +78,7 @@ const getGuests = async (req, res) => {
 const loginGuest = async (req, res) => {
     try {
         const { email, password, fingerprint } = req.body;
-        const { connectionName } = req.query;
+        const connectionName = req.customerId;
         const data = await Guest.checkGuest(email, connectionName);
 
         if (data.length > 1) {

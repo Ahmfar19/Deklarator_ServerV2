@@ -3,7 +3,7 @@ const { sendResponse } = require('../helpers/apiResponse');
 
 const getSingleTimer = async (req, res) => {
     try {
-        const { connectionName } = req.query;
+        const connectionName = req.customerId;
         const id = req.params.id;
         const singleTimer = await Timer.getTimer(id, connectionName);
         console.log(singleTimer);
@@ -15,7 +15,7 @@ const getSingleTimer = async (req, res) => {
 
 const getTimers = async (req, res) => {
     try {
-        const { connectionName } = req.query;
+        const connectionName = req.customerId;
         const timers = await Timer.getAll(connectionName);
         sendResponse(res, 200, 'Ok', 'Successfully retrieved all the Timers', null, timers);
     } catch (err) {
@@ -25,7 +25,7 @@ const getTimers = async (req, res) => {
 
 const addTimer = async (req, res) => {
     try {
-        const { connectionName } = req.query;
+        const connectionName = req.customerId;
         const timer = new Timer(req.body, connectionName);
         await timer.save();
         sendResponse(res, 201, 'Created', 'Successfully created a timer.', null, timer);
@@ -36,7 +36,7 @@ const addTimer = async (req, res) => {
 
 const update_Timer = async (req, res) => {
     try {
-        const { connectionName } = req.query;
+        const connectionName = req.customerId;
         const id = req.params.id;
         const timer = new Timer(req.body);
         const data = await timer.updateTimer(id, connectionName);
@@ -51,7 +51,7 @@ const update_Timer = async (req, res) => {
 
 const deleteTimer = async (req, res) => {
     try {
-        const { connectionName } = req.query;
+        const connectionName = req.customerId;
         const id = req.params.id;
         const data = await Timer.findByIdAndDelete(id, connectionName);
         if (data.affectedRows === 0) {

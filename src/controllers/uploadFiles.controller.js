@@ -7,7 +7,7 @@ const iconv = require('iconv-lite');
 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        const { connectionName } = req.query
+        const connectionName = req.customerId;
         const folderName = req.body.company_id;
         const uploadPath = getUploadPath(folderName, connectionName);
 
@@ -24,7 +24,7 @@ const storage = multer.diskStorage({
         }
     },
     filename: (req, file, cb) => {
-        const { connectionName } = req.query
+        const connectionName = req.customerId;
         const folderName = req.body.company_id;
         const uploadPath = getUploadPath(folderName, connectionName);
         let originalName = file.originalname;
@@ -47,7 +47,7 @@ const uploadFiles = multer({ storage: storage });
 const deleteFile = async (req, res) => {
     try {
         const { company_id } = req.params;
-        const { connectionName } = req.query;
+        const connectionName = req.customerId;;
         const { filename } = req.body;
         
         const filePath = path.join(__dirname, `../../assets/${connectionName}/files`, company_id, filename);
@@ -108,7 +108,7 @@ const uploadFile = (req, res) => {
 const getFile = async (req, res) => {
     try {
         const { filename, company_id } = req.params;
-        const { connectionName } = req.query
+        const connectionName = req.customerId;
         const filePath = path.join(__dirname, `../../assets/${connectionName}/files`, company_id, filename);
         console.log(filePath);
         if (fs.existsSync(filePath)) {
@@ -128,7 +128,7 @@ const getFile = async (req, res) => {
 const getFiles = async (req, res) => {
     try {
         const { company_id } = req.params;
-        const { connectionName } = req.query
+        const connectionName = req.customerId;
         const directoryPath = path.join(__dirname, `../../assets/${connectionName}/files`, company_id);
        
         // Read all files in the directory
@@ -184,7 +184,7 @@ const uploadMultiFiles = async (req, res) => {
 
 const previewFile = async (req, res) => {
     const { company_id, filename } = req.params;
-    const { connectionName } = req.query
+    const connectionName = req.customerId;
     const filePath = path.join(__dirname, `../../assets/${connectionName}/files`, company_id, filename);
     const ext = path.extname(filePath).toLowerCase();
     if (ext === '.txt') {

@@ -3,7 +3,7 @@ const { sendResponse } = require('../helpers/apiResponse');
 
 const getMessageTypes = async (req, res) => {
     try {
-        const { connectionName } = req.query;
+        const connectionName = req.customerId;
         const messageTypes = await MessageType.getAll(connectionName);
         sendResponse(res, 200, 'Ok', 'Successfully retrieved all the messagetypes', null, messageTypes);
     } catch (err) {
@@ -13,7 +13,7 @@ const getMessageTypes = async (req, res) => {
 
 const getSingleMessageType = async (req, res) => {
     try {
-        const { connectionName } = req.query;
+        const connectionName = req.customerId;
         const id = req.params.id;
         const singleMessageType = await MessageType.getMessageType(id, connectionName);
         sendResponse(res, 200, 'Ok', 'Successfully retrieved  the messageType', null, singleMessageType);
@@ -24,7 +24,7 @@ const getSingleMessageType = async (req, res) => {
 
 const addMessageType = async (req, res) => {
     try {
-        const { connectionName } = req.query;
+        const connectionName = req.customerId;
         const messageType = new MessageType(req.body, connectionName);
         await messageType.save();
         sendResponse(res, 201, 'Created', 'Successfully created a messageType.', null, messageType);
@@ -35,7 +35,7 @@ const addMessageType = async (req, res) => {
 
 const updateMessageType = async (req, res) => {
     try {
-        const { connectionName } = req.query;
+        const connectionName = req.customerId;
         const id = req.params.id;
         const messageType = new MessageType(req.body);
         const data = await messageType.update_MessageType(id, connectionName);
@@ -53,7 +53,7 @@ const updateMessageType = async (req, res) => {
 
 const deleteMessageType = async (req, res) => {
     try {
-        const { connectionName } = req.query;
+        const connectionName = req.customerId;
         const id = req.params.id;
         const data = await MessageType.delete_MessageType(id, connectionName);
         if (data.affectedRows === 0) {

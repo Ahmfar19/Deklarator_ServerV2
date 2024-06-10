@@ -3,7 +3,7 @@ const { sendResponse } = require('../helpers/apiResponse');
 
 const addEmployee = async (req, res) => {
     try {
-        const { connectionName } = req.query;
+        const connectionName = req.customerId;
         const employee = new Employee(req.body, connectionName);
         await employee.save();
 
@@ -15,7 +15,7 @@ const addEmployee = async (req, res) => {
 
 const getEmployees = async (req, res) => {
     try {
-        const { connectionName } = req.query;
+        const connectionName = req.customerId;
         const id = req.params.id;
         const employees = await Employee.getCompanyEmployees(id, connectionName);
         sendResponse(res, 200, 'Ok', 'Successfully retrieved all the employees', null, employees);
@@ -26,7 +26,7 @@ const getEmployees = async (req, res) => {
 
 const getAllEmployees = async (req, res) => {
     try {
-        const { connectionName } = req.query;
+        const connectionName = req.customerId;
         const employees = await Employee.getAllEmployees(connectionName);
         sendResponse(res, 200, 'Ok', 'Successfully retrieved all the employees', null, employees);
     } catch (err) {
@@ -36,7 +36,7 @@ const getAllEmployees = async (req, res) => {
 
 const getSingleEmployee = async (req, res) => {
     try {
-        const { connectionName } = req.query;
+        const connectionName = req.customerId;
         const id = req.params.id;
         const singleEmployee = await Employee.getSingleById(id, connectionName);
         sendResponse(res, 200, 'Ok', 'Successfully retrieved  the Employee', null, singleEmployee);
@@ -47,7 +47,7 @@ const getSingleEmployee = async (req, res) => {
 
 const updateEmployee = async (req, res) => {
     try {
-        const { connectionName } = req.query;
+        const connectionName = req.customerId;
         const id = req.params.id;
 
         const employee = new Employee(req.body);
@@ -71,7 +71,7 @@ const updateEmployee = async (req, res) => {
 
 const deleteEmployee = async (req, res) => {
     try {
-        const { connectionName } = req.query;
+        const connectionName = req.customerId;
         const id = req.params.id;
         const data = await Employee.findByIdAndDelete(id, connectionName);
         if (data.affectedRows === 0) {

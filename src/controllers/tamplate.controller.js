@@ -3,7 +3,7 @@ const { sendResponse } = require('../helpers/apiResponse');
 
 const getTamplatesName = async (req, res) => {
     try {
-        const { connectionName } = req.query;
+        const connectionName = req.customerId;
         const types = await Tamplate.getAll(connectionName);
         sendResponse(res, 200, 'Ok', 'Successfully retrieved all the tampleteTypes', null, types);
     } catch (err) {
@@ -13,7 +13,7 @@ const getTamplatesName = async (req, res) => {
 
 const createTamplate = async (req, res) => {
     try {
-        const { connectionName } = req.query;
+        const connectionName = req.customerId;
         const tamplateBody = new Tamplate(req.body, connectionName);
         await tamplateBody.save();
 
@@ -25,7 +25,7 @@ const createTamplate = async (req, res) => {
 
 const updateTamplate = async (req, res) => {
     try {
-        const { connectionName } = req.query;
+        const connectionName = req.customerId;
         const id = req.params.id;
         const tamplateBody = new Tamplate(req.body);
         const data = await tamplateBody.update_tamplate(id, connectionName);
@@ -43,7 +43,7 @@ const updateTamplate = async (req, res) => {
 
 const deleteTemplate = async (req, res) => {
     try {
-        const { connectionName } = req.query;
+        const connectionName = req.customerId;
         const id = req.params.id;
         const data = await Tamplate.findByIdAndDelete(id, connectionName);
         if (data.affectedRows === 0) {

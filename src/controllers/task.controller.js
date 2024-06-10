@@ -3,7 +3,7 @@ const { sendResponse } = require('../helpers/apiResponse');
 
 const getTasks = async (req, res) => {
     try {
-        const { connectionName } = req.query;
+        const connectionName = req.customerId;
         const tasks = await Task.getAll(connectionName);
         sendResponse(res, 200, 'Ok', 'Successfully retrieved all the tasks', null, tasks);
     } catch (err) {
@@ -13,7 +13,7 @@ const getTasks = async (req, res) => {
 
 const getSingleTask = async (req, res) => {
     try {
-        const { connectionName } = req.query;
+        const connectionName = req.customerId;
         const id = req.params.id;
         const singleTask = await Task.getTask(id, connectionName);
         sendResponse(res, 200, 'Ok', 'Successfully retrieved the task', null, singleTask);
@@ -24,7 +24,7 @@ const getSingleTask = async (req, res) => {
 
 const addTask = async (req, res) => {
     try {
-        const { connectionName } = req.query;
+        const connectionName = req.customerId;
         const task = new Task(req.body, connectionName);
         const task_id = await task.save();
         sendResponse(res, 201, 'Created', 'Successfully created a message.', null, { task_id: task_id });
@@ -35,7 +35,7 @@ const addTask = async (req, res) => {
 
 const addMultiTask = async (req, res) => {
     try {
-        const { connectionName } = req.query;
+        const connectionName = req.customerId;
         const task = new Task(req.body);
         const insertedTaskIds = await task.saveMulti(connectionName);
 
@@ -47,7 +47,7 @@ const addMultiTask = async (req, res) => {
 
 const updateTask = async (req, res) => {
     try {
-        const { connectionName } = req.query;
+        const connectionName = req.customerId;
         const id = req.params.id;
         const task = new Task(req.body);
         const data = await task.updateTask(id, connectionName);
@@ -65,7 +65,7 @@ const updateTask = async (req, res) => {
 
 const deleteTask = async (req, res) => {
     try {
-        const { connectionName } = req.query;
+        const connectionName = req.customerId;
         const id = req.params.id;
         const data = await Task.delete_Task(id, connectionName);
         if (data.affectedRows === 0) {
@@ -82,7 +82,7 @@ const deleteTask = async (req, res) => {
 
 const getTasksTypes = async (req, res) => {
     try {
-        const { connectionName } = req.query;
+        const connectionName = req.customerId;
         const types = await Task.getTypes(connectionName);
         sendResponse(res, 200, 'Ok', 'Successfully retrieved all the types', null, types);
     } catch (err) {

@@ -62,7 +62,7 @@ async function uploadImage(file, userID, connectionName) {
 
 const createUser = async (req, res) => {
     try {
-        const { connectionName } = req.query;
+        const connectionName = req.customerId;
         const { username, fname, lname, phone, email, role, password } = req.body;
         const checkUser = await User.checkIfUserExisted(email, username, connectionName);
 
@@ -110,7 +110,7 @@ const createUser = async (req, res) => {
 
 const getUsers = async (req, res) => {
     try {
-        const { connectionName } = req.query;
+        const connectionName = req.customerId;
         const users = await User.getAllUsers(connectionName);
 
         sendResponse(res, 200, 'Ok', 'Successfully retrieved all the users.', null, users);
@@ -121,7 +121,7 @@ const getUsers = async (req, res) => {
 
 const getSingleUser = async (req, res) => {
     try {
-        const { connectionName } = req.query;
+        const connectionName = req.customerId;
         const id = req.params.id;
         const singleUser = await User.getUserById(id, connectionName);
 
@@ -133,7 +133,7 @@ const getSingleUser = async (req, res) => {
 
 const updateUser = async (req, res) => {
     try {
-        const { connectionName } = req.query;
+        const connectionName = req.customerId;
         const { username, email } = req.body;
         const id = req.params.id;
 
@@ -169,7 +169,7 @@ const updateUser = async (req, res) => {
 };
 
 const updateUserPassword = async (req, res) => {
-    const { connectionName } = req.query;
+    const connectionName = req.customerId;
     const id = req.params.id;
     const { password, new_password, verify_password } = req.body;
 
@@ -203,7 +203,7 @@ const updateUserPassword = async (req, res) => {
 const deleteUser = async (req, res) => {
     try {
         const id = req.params.id;
-        const { connectionName } = req.query;
+        const connectionName = req.customerId;
         const data = await User.deleteUser(id, connectionName);
         if (data.affectedRows === 0) {
             return sendResponse(res, 406, 'Not Accepted', 'not user found to delete', null, null);
@@ -235,7 +235,7 @@ const deleteUser = async (req, res) => {
 const login = async (req, res) => {
     try {
         const { email_username, password, rememberMe, fingerprint } = req.body;
-        const { connectionName } = req.query;
+        const connectionName = req.customerId;
         const data = await User.loginUser(email_username, connectionName);
 
         if (data.length > 0) {
@@ -311,7 +311,7 @@ const verifyToken = async (req, res) => {
 
 const getUsersImage = async (req, res) => {
     // Extract the file name from the request parameters
-    const { connectionName }  = req.query
+    const connectionName = req.customerId
     const filename = req.params.filename;
     const uploadPath = `assets/${connectionName}/images/users`;
     const filePath = path.join(uploadPath, filename);
