@@ -2,7 +2,6 @@ module.exports = {
     PORT: process.env.PORT || 80,
     NODE_ENV: process.env.NODE_ENV || 'development',
     DB_HOST: process.env.DB_HOST || 'localhost',
-    // DB_PORT: process.env.DB_PORT || '80',
     DB_USERNAME: process.env.DB_USERNAME || 'root',
     DB_PASSWORD: process.env.DB_PASSWORD || '',
     DB_NAME: process.env.DB_NAME || 'deklarator',
@@ -12,14 +11,20 @@ module.exports = {
     JWT_SECRET_KEY: process.env.JWT_SECRET_KEY || '',
     ADMIN_EMAIL: 'ahmad996cyc@gmail.com',
     GENERATE_PASSWORD: process.env.GENERATE_PASSWORD,
-    ADMIN_EMAIL_1: process.env.ADMIN_EMAIL_1,
-    ADMIN_EMAIL_2: process.env.ADMIN_EMAIL_2,
-    ADMIN_EMAIL_3: process.env.ADMIN_EMAIL_3,
-    ADMIN_EMAIL_4: process.env.ADMIN_EMAIL_4,
-    ADMIN_EMAIL_5: process.env.ADMIN_EMAIL_5,
-    DATABASE_1: process.env.DATABASE_1,
-    DATABASE_2: process.env.DATABASE_2,
-    DATABASE_3: process.env.DATABASE_3,
-    DATABASE_4: process.env.DATABASE_4,
-    DATABASE_5: process.env.DATABASE_5,
+    CONNECTION_OPTIONS: {
+        deklarator: {
+            databaseOption: {
+                database: 'deklarator',
+                password: ''
+            },
+            AdminEmail: 'ahmad996cyc@gmail.com'
+        },
+        mcdonalds: {
+            databaseOption: {
+                database: 'mcdonalds',
+                password: ''
+            },
+            AdminEmail: 'ahmad996cyc@gmail.com'
+        },
+    }
 };
