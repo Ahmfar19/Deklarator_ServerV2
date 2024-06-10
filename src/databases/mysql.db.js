@@ -1,17 +1,17 @@
 const mysql = require('mysql2/promise');
 const config = require('config');
-const DB_HOST = config.get('DB_HOST');
-// const DB_PORT = config.get('DB_PORT');
-const DB_NAME = config.get('DB_NAME');
-const DB_USERNAME = config.get('DB_USERNAME');
-const DB_PASSWORD = config.get('DB_PASSWORD');
+const DB_HOST = process.env.NODE_ENV === 'development' ? 'localhost' : config.get('DB_HOST');
+const DB_NAME = process.env.NODE_ENV === 'development' ? 'deklarator' : config.get('DB_NAME');
+const DB_USERNAME = process.env.NODE_ENV === 'development' ? 'root' : config.get('DB_USERNAME');
+const DB_PASSWORD =  process.env.NODE_ENV === 'development' ? '' : config.get('DB_PASSWORD');
+
 const connectionOptions = {
     host: DB_HOST,
-    // port: DB_PORT,
     database: DB_NAME,
     user: DB_USERNAME,
     password: DB_PASSWORD,
 };
+
 const pool = mysql.createPool(connectionOptions);
 const connectToMySQL = async () => {
     try {
