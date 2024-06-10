@@ -88,6 +88,7 @@ const connectionOptions = {
         },
         AdminEmail: ADMIN_EMAIL_1
     },
+    
      db2: {
         databaseOption: {
             database: DATABASE_2,
