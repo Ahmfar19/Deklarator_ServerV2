@@ -11,6 +11,12 @@ const app = express();
 app.use(cookieParser());
 app.use(express.json());
 
+app.use((req, res, next) => { 
+    // console.error('req', req.originalUrl.split('/')[3]) 
+    req.customerId = req.originalUrl.split('/')[3] 
+    next(); 
+})
+
 const NODE_ENV = process.env.NODE_ENV || 'production';
 const whitelist = [];
 const corsOptions = {
@@ -31,7 +37,7 @@ app.use(NODE_ENV === 'development' ? cors() : cors(corsOptions));
 // To allow access to the assets from outside the server
 async function verifyInlogged(req, res, next) {
     const token = req.cookies?.accessToken;
-    const fingerprint = req.query?.cid + req.cookies?.staff_id;
+    const fingerprint = req.query?.cid + req.cookies?.staff_id + '@@' + req.customerId;
     const authenticated = await verifyToken(fingerprint, token);
     if (authenticated) {
         next();
@@ -40,21 +46,15 @@ async function verifyInlogged(req, res, next) {
     }
 }
 
-app.use('/server/api/assets', verifyInlogged, express.static('assets'));
+app.use('/:customerId/assets', verifyInlogged, express.static('assets'));
 
 // Setting an intervall every 6 hours that cehck for a reminder to send.
 sendReminderEmail();
 // Setting an intervall every 7 days to delete messages
 deleteOldMessages();
 
-app.use((req, res, next) => { 
-    // console.error('req', req.originalUrl.split('/')[3]) 
-    req.customerId = req.originalUrl.split('/')[3] 
-    next(); 
-})
-// app.get('/', (req, res) => res.send('It, works!'));
-app.use('/server/api/:customerId', apiRouter);
 
+app.use('/server/api/:customerId', apiRouter);
 
 // ***************** When testing the fronEnd by this server **************** //
 // const path = require('path');
@@ -79,3 +79,4 @@ module.exports = app;
 
 // Old main router for the api
 // app.use('/api', apiRouter);
+// app.get('/', (req, res) => res.send('It, works!'));

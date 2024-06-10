@@ -145,7 +145,7 @@ const getFiles = async (req, res) => {
         // Prepare file details
         const filesDetails = await Promise.all(files.map(async filename => {
             const filePath = path.join(directoryPath, filename);
-            const customPath = `assets/files/${company_id}/${filename}`;
+            const customPath = `assets/${connectionName}/files/${company_id}/${filename}`;
             const stats = fs.statSync(filePath);
             return {
                 filename,
