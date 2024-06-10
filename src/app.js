@@ -23,9 +23,10 @@ const corsOptions = {
             callback(false);
         }
     },
-    methods: ['GET, POST, DELETE', 'PUT'],
-    allowedHeaders: ['Content-Type'],
+    methods: ['GET', 'POST', 'DELETE', 'PUT'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
 };
+
 app.use(NODE_ENV === 'development' ? cors() : cors(corsOptions));
 
 // To allow access to the assets from outside the server
@@ -48,11 +49,12 @@ sendReminderEmail();
 deleteOldMessages();
 
 // app.get('/', (req, res) => res.send('It, works!'));
-app.use('/api', apiRouter);
+app.use('/server/api/', apiRouter);
+
 
 // ***************** When uploading to the production server **************** //
-// app.use('/server/api', apiRouter);
 // app.use('/server/assets', verifyInlogged, express.static('assets'));
+
 
 // ***************** When testing the fronEnd by this server **************** //
 // const path = require('path');
@@ -78,3 +80,6 @@ module.exports = app;
 //     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 //     next();
 // });
+
+// Old main router for the api
+// app.use('/api', apiRouter);
