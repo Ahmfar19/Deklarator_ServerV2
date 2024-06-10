@@ -81,7 +81,7 @@ class Message {
     }
 
     static async updateSeenBeforeId(beforeID, staff_id) {
-        const sql = `UPDATE message SET seen=1 WHERE message_id <= ${beforeID} AND staff_id = ${staff_id}`;
+        const sql = `UPDATE message SET seen=1 WHERE message_id >= ${beforeID} AND staff_id = ${staff_id}`;
         const [rows] = await pool.execute(sql);
         return rows;
     }
