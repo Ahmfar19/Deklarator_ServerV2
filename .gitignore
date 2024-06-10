@@ -11,6 +11,8 @@
 .env*
 *.env
 
+/config
+
 /config/production.json
 
 # IDE - VSCode

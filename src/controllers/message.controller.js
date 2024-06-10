@@ -2,9 +2,10 @@ const Message = require('../models/message.model');
 const { sendResponse } = require('../helpers/apiResponse');
 const { getLastWeekDate } = require('../helpers/utils');
 const { connectionManager } = require('../databases/connectionManagment');
+
 const getMessages = async (req, res) => {
     try {
-        const { connectionName } = req.query;
+        const connectionName = req.customerId;
         const messages = await Message.getAll(connectionName);
         sendResponse(res, 200, 'Ok', 'Successfully retrieved all the messages', null, messages);
     } catch (err) {
@@ -14,7 +15,7 @@ const getMessages = async (req, res) => {
 
 const getSingleMessage = async (req, res) => {
     try {
-        const { connectionName } = req.query;
+        const connectionName = req.customerId;
         const id = req.params.id;
         const singleMessage = await Message.getMessage(id, connectionName);
         sendResponse(res, 200, 'Ok', 'Successfully retrieved  the message', null, singleMessage);
@@ -25,8 +26,9 @@ const getSingleMessage = async (req, res) => {
 
 const getStaffMessages = async (req, res) => {
     try {
+        const connectionName = req.customerId;
         const staff_id = req.params.staff_id;
-        const staffMessages = await Message.getStaffMessages(staff_id);
+        const staffMessages = await Message.getStaffMessages(staff_id, connectionName);
         sendResponse(res, 200, 'Ok', 'Successfully retrieved the staff messages', null, staffMessages);
     } catch (err) {
         sendResponse(res, 500, 'Internal Server Error', null, err.message || err, null);
@@ -35,7 +37,7 @@ const getStaffMessages = async (req, res) => {
 
 const addMessage = async (req, res) => {
     try {
-        const { connectionName } = req.query;
+        const connectionName = req.customerId;
         const message = new Message(req.body, connectionName);
         await message.save();
         sendResponse(res, 201, 'Created', 'Successfully created a message.', null, message);
@@ -46,7 +48,7 @@ const addMessage = async (req, res) => {
 
 const updateMessage = async (req, res) => {
     try {
-        const { connectionName } = req.query;
+        const connectionName = req.customerId;
         const id = req.params.id;
         const message = new Message(req.body);
         const data = await message.update_Message(id, connectionName);
@@ -64,7 +66,7 @@ const updateMessage = async (req, res) => {
 
 const deleteMessage = async (req, res) => {
     try {
-        const { connectionName } = req.query;
+        const connectionName = req.customerId;
         const id = req.params.id;
         const data = await Message.delete_Message(id, connectionName);
         if (data.affectedRows === 0) {
@@ -90,7 +92,7 @@ const deleteBeforWeek = async (connectionName) => {
 };
 
 const updateSeenBeforeId = async (req, res) => {
-    const { connectionName } = req.query;
+    const connectionName = req.customerId;
     const id = req.params.id;
     const staffId = req.params.staff_id;
     try {
@@ -105,6 +107,7 @@ const deleteOldMessages = () => {
     const intervalInMilliseconds = 7 * 24 * 60 * 60 * 1000; // Calculate milliseconds in a week
     setInterval(async function() {
         const connections = await connectionManager.getConnections();
+        
         for (let key in connections) {
             deleteBeforWeek(key);
         }

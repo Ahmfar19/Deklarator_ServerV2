@@ -3,7 +3,7 @@ const { sendResponse } = require('../helpers/apiResponse');
 
 const getReportTemplate = async (req, res) => {
     try {
-        const { connectionName } = req.query;
+        const connectionName = req.customerId;
         const reportTemplates = await ReportTemplate.getAll(connectionName);
         sendResponse(res, 200, 'Ok', 'Successfully retrieved all the reportTemplates', null, reportTemplates);
     } catch (err) {

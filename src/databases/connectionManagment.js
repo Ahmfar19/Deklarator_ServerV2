@@ -1,18 +1,8 @@
 const mysql = require('mysql2/promise');
 const config = require('config');
-const DB_HOST = config.get('DB_HOST');
-const DB_USERNAME = config.get('DB_USERNAME');
-
-const ADMIN_EMAIL_1 = config.get('ADMIN_EMAIL_2');
-const ADMIN_EMAIL_2 = config.get('ADMIN_EMAIL_2');
-const ADMIN_EMAIL_3 = config.get('ADMIN_EMAIL_2');
-const ADMIN_EMAIL_4 = config.get('ADMIN_EMAIL_2');
-const ADMIN_EMAIL_5 = config.get('ADMIN_EMAIL_2');
-const DATABASE_1 = config.get('DATABASE_1');
-const DATABASE_2 = config.get('DATABASE_2');
-const DATABASE_3 = config.get('DATABASE_3');
-const DATABASE_4 = config.get('DATABASE_4');
-const DATABASE_5 = config.get('DATABASE_5');
+const DB_HOST = process.env.NODE_ENV === 'development' ? 'localhost' : config.get('DB_HOST');
+const DB_USERNAME = process.env.NODE_ENV === 'development' ? 'root' : config.get('DB_USERNAME');
+const CONNECTION_OPTIONS = config.get('CONNECTION_OPTIONS');
 
 class MySQLConnectionManager {
     constructor(connectionOptions) {
@@ -80,47 +70,7 @@ class MySQLConnectionManager {
     }
 }
 
-const connectionOptions = {
-    db1: {
-        databaseOption: {
-            database: DATABASE_1,
-            password: ''
-        },
-        AdminEmail: ADMIN_EMAIL_1
-    },
-    
-     db2: {
-        databaseOption: {
-            database: DATABASE_2,
-            password: ''
-        },
-        AdminEmail: ADMIN_EMAIL_2 
-
-     }, 
-     db3: {
-        databaseOption: {
-            database: DATABASE_3,
-            password: ''
-        },
-        AdminEmail: ADMIN_EMAIL_3
-     }, 
-     db4: {
-        databaseOption: {
-            database: DATABASE_4,
-            password: ''
-        },
-        AdminEmail: ADMIN_EMAIL_4
-     }, 
-     db5: {
-        databaseOption: {
-            database: DATABASE_5,
-            password: ''
-        },
-        AdminEmail: ADMIN_EMAIL_5
-     }, 
-};
-
-const connectionManager = new MySQLConnectionManager(connectionOptions);
+const connectionManager = new MySQLConnectionManager(CONNECTION_OPTIONS);
 connectionManager.connect().then();
 
-module.exports = { connectionManager, connectionOptions };
+module.exports = { connectionManager, CONNECTION_OPTIONS };

@@ -50,7 +50,7 @@ const handleResetPassword = async (req, res, checkUser, connectionName) => {
 
 const forgetPassword = async (req, res) => {
     try {
-        const { connectionName } = req.query;
+        const connectionName = req.customerId;
         if (req.body.guest) {
             const checkUser = await ResetPassword.checkIfGuestExists(req.body.email, connectionName);
             await handleResetPassword(req, res, checkUser, connectionName);
@@ -65,7 +65,7 @@ const forgetPassword = async (req, res) => {
 
 const checkPinCode = async (req, res) => {
     const { pinCode, email } = req.body;
-    const { connectionName } = req.query;
+    const connectionName = req.customerId;
 
     try {
         const ckeckPin = await ResetPassword.checkPinIfExisted(pinCode, email, connectionName);
@@ -89,7 +89,7 @@ const checkPinCode = async (req, res) => {
 
 const resetPassword = async (req, res) => {
     const { email, pinCode, new_password, verify_password, guest } = req.body;
-    const { connectionName } = req.query;
+    const connectionName = req.customerId;
 
     try {
         const resetPasswordInformation = await ResetPassword.getResetPassword(email, pinCode, connectionName);

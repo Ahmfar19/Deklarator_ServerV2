@@ -3,7 +3,7 @@ const { sendResponse } = require('../helpers/apiResponse');
 
 const getAllNoties = async (req, res) => {
     try {
-        const { connectionName } = req.query;
+        const connectionName = req.customerId;
         const noties = await Note.getAll(connectionName);
         sendResponse(res, 200, 'Ok', 'Successfully retrieved all the note', null, noties);
     } catch (err) {
@@ -13,7 +13,7 @@ const getAllNoties = async (req, res) => {
 
 const getSingleNote = async (req, res) => {
     try {
-        const { connectionName } = req.query;
+        const connectionName = req.customerId;
         const id = req.params.id;
         const note = await Note.getNoteById(id, connectionName);
         sendResponse(res, 200, 'Ok', 'Successfully retrieved single note', null, note);
@@ -24,7 +24,7 @@ const getSingleNote = async (req, res) => {
 
 const addNote = async (req, res) => {
     try {
-        const { connectionName } = req.query;
+        const connectionName = req.customerId;
         const note = new Note(req.body, connectionName);
         await note.save();
         sendResponse(res, 201, 'Created', 'Successfully created a note.', null, note);
@@ -35,7 +35,7 @@ const addNote = async (req, res) => {
 
 const updateNote = async (req, res) => {
     try {
-        const { connectionName } = req.query;
+        const connectionName = req.customerId;
         const id = req.params.id;
         const note = new Note(req.body);
 
@@ -51,7 +51,7 @@ const updateNote = async (req, res) => {
 
 const deleteNote = async (req, res) => {
     try {
-        const { connectionName } = req.query;
+        const connectionName = req.customerId;
         const id = req.params.id;
 
         const data = await Note.findByIdAndDelete(id, connectionName);
@@ -67,7 +67,7 @@ const deleteNote = async (req, res) => {
 
 const getNotesBy_CompanyId = async (req, res) => {
     try {
-        const { connectionName } = req.query;
+        const connectionName = req.customerId;
         const id = req.params.id;
         const noties = await Note.getNotesByCompanyId(id, connectionName);
         sendResponse(res, 200, 'Ok', `Successfully retrieved all the notiesByCompanyId ${id}`, null, noties);

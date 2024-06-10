@@ -5,7 +5,7 @@ const { checkForReminder } = require('./sendReminder.controller');
 
 const getRemenders = async (req, res) => {
     try {
-        const { connectionName } = req.query;
+        const connectionName = req.customerId;
         const remenders = await Reminder.getAll(connectionName);
         sendResponse(res, 200, 'Ok', 'Successfully retrieved all the remenders', null, remenders);
     } catch (err) {
@@ -15,7 +15,7 @@ const getRemenders = async (req, res) => {
 
 const getSingleRemender = async (req, res) => {
     try {
-        const { connectionName } = req.query;
+        const connectionName = req.customerId;
         const id = req.params.id;
         const singleRemender = await Reminder.getReminder(id, connectionName);
         sendResponse(res, 200, 'Ok', 'Successfully retrieved the remender', null, singleRemender);
@@ -26,7 +26,7 @@ const getSingleRemender = async (req, res) => {
 
 const addRemender = async (req, res) => {
     try {
-        const { connectionName } = req.query;
+        const connectionName = req.customerId;
         const remender = new Reminder(req.body, connectionName);
         await remender.save();
         const today = isToday(remender.remender_date);
@@ -42,7 +42,7 @@ const addRemender = async (req, res) => {
 
 const addMultiReminder = async (req, res) => {
     try {
-        const { connectionName } = req.query;
+        const connectionName = req.customerId;
         const reminder = new Reminder(req.body);
         const addedReminders = await reminder.saveMulti(connectionName);
         const today = isToday(req.body.remender_date);
@@ -57,7 +57,7 @@ const addMultiReminder = async (req, res) => {
 
 const updateRemender = async (req, res) => {
     try {
-        const { connectionName } = req.query;
+        const connectionName = req.customerId;
         const id = req.params.id;
         const remender = new Reminder(req.body);
         const data = await remender.updateReminder(id, connectionName);
@@ -82,7 +82,7 @@ const updateRemender = async (req, res) => {
 
 const deleteRemender = async (req, res) => {
     try {
-        const { connectionName } = req.query;
+        const connectionName = req.customerId;
         const id = req.params.id;
         const data = await Reminder.deleteReminder(id, connectionName);
         if (data.affectedRows === 0) {
@@ -99,7 +99,7 @@ const deleteRemender = async (req, res) => {
 
 const getCompanyReminders = async (req, res) => {
     try {
-        const { connectionName } = req.query;
+        const connectionName = req.customerId;
         const id = req.params.id;
         const remenders = await Reminder.getReminderByCompanyId(id, connectionName);
         sendResponse(res, 200, 'Ok', 'Successfully retrieved all the remenders', null, remenders);
@@ -109,7 +109,8 @@ const getCompanyReminders = async (req, res) => {
 };
 
 const getFilterdReminder = async (req, res) => {
-    const { key, value, connectionName } = req.query;
+    const { key, value } = req.query;
+    const connectionName = req.customerId;
     try {
         const remenders = await Reminder.getReminderByFilter(key, value, connectionName);
         sendResponse(res, 200, 'Ok', 'Successfully retrieved the remenders', null, remenders);

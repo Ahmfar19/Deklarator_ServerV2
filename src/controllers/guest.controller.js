@@ -4,9 +4,9 @@ const { hashPassword, generatePassword, comparePassword } = require('../helpers/
 const { sendCCEmail } = require('./sendEmail.controller');
 const mailMessags = require('../helpers/emailMessages');
 const config = require('config');
+const { connectionManager } = require('../databases/connectionManagment');
 const JWT_SECRET_KEY = config.get('JWT_SECRET_KEY');
 var jwt = require('jsonwebtoken');
-const ADMIN_EMAIL = config.get('ADMIN_EMAIL');
 
 const createGuestAccount = async (company_id, connectionName) => {
     const data = await Guest.getEmail(company_id, connectionName);
@@ -27,13 +27,14 @@ const createGuestAccount = async (company_id, connectionName) => {
 
     const title = mailMessags.guestEmail.title.replace('{0}', data[0].company_name);
     const body = mailMessags.guestEmail.body.replace('{0}', data[0].email).replace('{1}', password);
-
-    sendCCEmail(data[0].email, ADMIN_EMAIL, title, body);
+    const connections = await connectionManager.getConnections();
+    const adminEmail = connections[connectionName].adminEmai;
+    sendCCEmail(data[0].email, adminEmail, title, body);
 };
 
 const addGuest = async (req, res) => {
     const { companyIds } = req.body;
-    const { connectionName } = req.query;
+    const connectionName = req.customerId;
     if (!Array.isArray(companyIds) && !companyIds.length) {
         sendResponse(res, 500, 'Invalid argument', null, null);
         return;
@@ -50,7 +51,7 @@ const addGuest = async (req, res) => {
 
 const deleteGuest = async (req, res) => {
     try {
-        const { connectionName } = req.query;
+        const connectionName = req.customerId;
         const id = req.params.company_id;
         const data = await Guest.deleteAccount(id, connectionName);
         if (data.affectedRows === 0) {
@@ -67,7 +68,7 @@ const deleteGuest = async (req, res) => {
 
 const getGuests = async (req, res) => {
     try {
-        const { connectionName } = req.query;
+        const connectionName = req.customerId;
         const guests = await Guest.getAllAccounts(connectionName);
         sendResponse(res, 200, 'Ok', 'Successfully retrieved all the guests.', null, guests);
     } catch (err) {
@@ -78,7 +79,7 @@ const getGuests = async (req, res) => {
 const loginGuest = async (req, res) => {
     try {
         const { email, password, fingerprint } = req.body;
-        const { connectionName } = req.query;
+        const connectionName = req.customerId;
         const data = await Guest.checkGuest(email, connectionName);
 
         if (data.length > 1) {

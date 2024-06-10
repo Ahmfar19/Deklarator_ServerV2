@@ -9,7 +9,7 @@ const { sendResponse } = require('../helpers/apiResponse');
 const updateReport = async (req, res) => {
     try {
         const { employee_id } = req.params;
-        const { connectionName } = req.query;
+        const connectionName = req.customerId;
         const reportItemsData = req.body;
 
         await EmployeeReport.updateByReportId(employee_id, reportItemsData, connectionName);
@@ -22,7 +22,7 @@ const updateReport = async (req, res) => {
 
 const getEmployeeReport = async (req, res) => {
     try {
-        const { connectionName } = req.query;
+        const connectionName = req.customerId;
         const id = req.params.id;
         const employeeReports = await EmployeeReport.getByEmployeeId(id, connectionName);
         sendResponse(res, 200, 'Ok', 'Successfully retrieved all the employeeReports', null, employeeReports);
@@ -34,7 +34,7 @@ const getEmployeeReport = async (req, res) => {
 const addEmployeeReport = async (req, res) => {
     try {
         const { employee_id } = req.params;
-        const { connectionName } = req.query;
+        const connectionName = req.customerId;
         const reportItemsData = req.body; // Assuming req.body contains the array of report items
 
         const data = await EmployeeReport.createEmployeeReport(employee_id, reportItemsData, connectionName);
@@ -72,7 +72,7 @@ const addEmployeeReport = async (req, res) => {
 
 const getReportsEmployeesByCompanyId = async (req, res) => {
     try {
-        const { connectionName } = req.query;
+        const connectionName = req.customerId;
         const companyId = req.params.companyId;
         const reportsEmployessByCompanyId = await EmployeeReport.getAllReportItemsByCompanyId(
             companyId,
@@ -94,7 +94,7 @@ const getReportsEmployeesByCompanyId = async (req, res) => {
 
 const getAllReportItems = async (req, res) => {
     try {
-        const { connectionName } = req.query;
+        const connectionName = req.customerId;
         const reportsEmployess = await EmployeeReport.getAllReportItems(connectionName);
         sendResponse(
             res,
@@ -110,7 +110,8 @@ const getAllReportItems = async (req, res) => {
 };
 
 const getFilterdReports = async (req, res) => {
-    const { key, value, connectionName } = req.query;
+    const { key, value } = req.query;
+    const connectionName = req.customerId;
     try {
         const reportsEmployess = await EmployeeReport.getReportItemsByFilter(key, value, connectionName);
         sendResponse(res, 200, 'Ok', 'Successfully retrieved the remenders', null, reportsEmployess);
@@ -121,7 +122,7 @@ const getFilterdReports = async (req, res) => {
 
 const deleteEmployeeReport = async (req, res) => {
     try {
-        const { connectionName } = req.query;
+        const connectionName = req.customerId;
         const id = req.params.id;
 
         await EmployeeReport.deleteEmployeeReport(id, connectionName);
@@ -134,7 +135,7 @@ const deleteEmployeeReport = async (req, res) => {
 
 const deleteEmployeeItemReport = async (req, res) => {
     try {
-        const { connectionName } = req.query;
+        const connectionName = req.customerId;
         const values = req.body;
         await EmployeeReport.deleteReportItems(values, connectionName);
 

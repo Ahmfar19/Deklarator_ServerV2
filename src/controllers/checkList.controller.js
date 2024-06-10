@@ -3,7 +3,7 @@ const { sendResponse } = require('../helpers/apiResponse');
 
 const getcheckListItems = async (req, res) => {
     try {
-        const { connectionName } = req.query;
+        const connectionName = req.customerId;
         const chicklistItems = await CheckList.getAll(connectionName);
         sendResponse(res, 200, 'Ok', 'Successfully retrieved all the chicklistItems', null, chicklistItems);
     } catch (err) {
@@ -14,7 +14,7 @@ const getcheckListItems = async (req, res) => {
 const getCompanyCheckList = async (req, res) => {
     try {
         const id = req.params.id;
-        const { connectionName } = req.query;
+        const connectionName = req.customerId;
         const chicklistItems = await CheckList.getByCompanyId(id, connectionName);
         sendResponse(res, 200, 'Ok', 'Successfully retrieved all the chicklistItems', null, chicklistItems);
     } catch (err) {
@@ -25,7 +25,7 @@ const getCompanyCheckList = async (req, res) => {
 const updateStatus = async (req, res) => {
     try {
         const id = req.params.id;
-        const { connectionName } = req.query;
+        const connectionName = req.customerId;
         const item = new CheckList(req.body);
 
         const data = await item.updateCheck(id, connectionName);
@@ -46,7 +46,7 @@ const updateStatus = async (req, res) => {
 
 const createCopmpanyCheckList = async (req, res) => {
     try {
-        const { connectionName } = req.query;
+        const connectionName = req.customerId;
         const company_id = req.params.id;
         await CheckList.createCompanyCheckList(company_id, connectionName);
         sendResponse(res, 202, 'Accepted', 'Checklist created successfully.', null, null);
@@ -57,7 +57,7 @@ const createCopmpanyCheckList = async (req, res) => {
 
 const updateChecklist = async (req, res) => {
     try {
-        const { connectionName } = req.query;
+        const connectionName = req.customerId;
         const { list, company_id } = req.body;
         await CheckList.updateChecklist(company_id, list, connectionName);
         sendResponse(res, 202, 'Accepted', 'Checklist updated successfully.', null, null);

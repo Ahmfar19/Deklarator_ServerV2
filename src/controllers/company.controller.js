@@ -6,7 +6,7 @@ const fs = require('fs');
 
 const getSingleCompany = async (req, res) => {
     try {
-        const { connectionName } = req.query;
+        const connectionName = req.customerId;
         const id = req.params.id;
         const singleCompany = await Company.getCompany(id, connectionName);
         sendResponse(res, 200, 'Ok', 'Successfully retrieved  the company', null, singleCompany);
@@ -16,7 +16,7 @@ const getSingleCompany = async (req, res) => {
 };
 const getCompanys = async (req, res) => {
     try {
-        const { connectionName } = req.query;
+        const connectionName = req.customerId;
         const companys = await Company.getAll(connectionName);
         sendResponse(res, 200, 'Ok', 'Successfully retrieved all the company', null, companys);
     } catch (err) {
@@ -25,7 +25,7 @@ const getCompanys = async (req, res) => {
 };
 const addCompany = async (req, res) => {
     try {
-        const { connectionName } = req.query;
+        const connectionName = req.customerId;
 
         const checkCompany = await Company.checkIfCompanyExisted(req.body.email, connectionName);
 
@@ -52,7 +52,7 @@ const addCompany = async (req, res) => {
 };
 const updateCompany = async (req, res) => {
     try {
-        const { connectionName } = req.query;
+        const connectionName = req.customerId;
 
         const id = req.params.id;
 
@@ -83,7 +83,7 @@ const updateCompany = async (req, res) => {
 };
 const deleteCompany = async (req, res) => {
     try {
-        const { connectionName } = req.query;
+        const connectionName = req.customerId;
         const id = req.params.id;
         const data = await Company.findByIdAndDelete(id, connectionName);
         if (data.affectedRows === 0) {
