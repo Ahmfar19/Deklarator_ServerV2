@@ -11,6 +11,8 @@
 .env*
 *.env
 
+/config
+
 # IDE - VSCode
 .vscode/*
 !.vscode/settings.json
