@@ -85,7 +85,7 @@ class Message {
     }
 
     static async updateSeenBeforeId(beforeID, staff_id, connectionName) {
-        const sql = `UPDATE message SET seen=1 WHERE message_id <= ${beforeID} AND staff_id = ${staff_id}`;
+        const sql = `UPDATE message SET seen=1 WHERE message_id >= ${beforeID} AND staff_id = ${staff_id}`;
         const result = await connectionManager.executeQuery(connectionName, sql);
         return result;
     }
