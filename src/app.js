@@ -18,7 +18,7 @@ app.use((req, res, next) => {
 });
 
 const NODE_ENV = process.env.NODE_ENV || 'production';
-const whitelist = [];
+const whitelist = ['https://administreramer.se'];
 const corsOptions = {
     origin: function(origin = '', callback) {
         if (whitelist.indexOf(origin) !== -1) {
