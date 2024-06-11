@@ -35,10 +35,12 @@ class MySQLConnectionManager {
             const connectionOptions = Object.assign({}, this.defaultOptions, databaseOption);
             const pool = mysql.createPool(connectionOptions);
             this.pools[key] = pool;
-            this.connectionOptions[key] = {
-                databaseOption,
-                AdminEmail: AdminEmail,
-            };
+            this.connectionOptions = Object.assign({}, this.connectionOptions, {
+                [key]: {
+                    databaseOption,
+                    AdminEmail: AdminEmail,
+                }
+            });
             console.log(`Connected to ${key} database!`);
         } catch (err) {
             console.error(`Error connecting to ${option.key} database: ${err.message}`);

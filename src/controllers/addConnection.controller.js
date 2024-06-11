@@ -3,11 +3,12 @@ const { sendResponse } = require('../helpers/apiResponse');
 
 const addConnection = async (req, res) => {
     try {
-        const { key, databaseName, password, adminEmail } = req.body;
-        connectionManager.addConnect(key, {
+        const { key, databaseName, password, adminEmail, user } = req.body;
+        await connectionManager.addConnect(key, {
             databaseOption: {
                 database: databaseName,
                 password: password,
+                user,
             },
             AdminEmail: adminEmail,
         });
