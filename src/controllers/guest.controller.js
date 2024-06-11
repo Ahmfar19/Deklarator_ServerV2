@@ -88,7 +88,8 @@ const loginGuest = async (req, res) => {
             const match = await comparePassword(password, data[0].password);
             if (match) {
                 const expiresIn = '1d';
-                const finger_print = fingerprint + String(data[0].gust_id);
+                const customerId = `@@${req.customerId}`;
+                const finger_print = fingerprint + String(data[0].gust_id) + customerId;
                 const token = jwt.sign({ id: finger_print }, JWT_SECRET_KEY, { expiresIn });
 
                 res.json({
