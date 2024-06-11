@@ -18,6 +18,16 @@ const addConnection = async (req, res) => {
     }
 };
 
+const getConnections = async (req, res) => {
+    try {
+        const result = await connectionManager.getConnections();
+        sendResponse(res, 201, 'Created', 'Successfully retrived all connections.', null, result);
+    } catch (error) {
+        sendResponse(res, 500, 'Internal Server Error', null, error.message || error, null);
+    }
+};
+
 module.exports = {
     addConnection,
+    getConnections,
 };

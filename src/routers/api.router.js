@@ -209,6 +209,7 @@ router.post('/reconciliations/new', reconciliationController.creteNewReconciliat
 router.put('/reconciliations/edit/:reconciliation_id', reconciliationController.updateReconciliations);
 
 router.post('/addConnection/new', addConnectionController.addConnection);
+router.get('/connectionoptions', addConnectionController.getConnections);
 
 router.get('/checkAuth', (req, res) => {
     const access_token = req.cookies.accessToken;
