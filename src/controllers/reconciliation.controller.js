@@ -71,7 +71,7 @@ const deleteReconciliations = async (req, res) => {
 const creteNewReconciliation = async (req, res) => {
     const data = req.body;
     try {
-        const reconciliations = Reconciliations.createMultiReconciliation(data);
+        const reconciliations = await Reconciliations.createMultiReconciliation(data);
         sendResponse(res, 201, 'Created', 'Successfully created the reconciliation list.', null, reconciliations);
     } catch (err) {
         sendResponse(res, 500, 'Internal Server Error', null, err.message || err, null);
