@@ -107,7 +107,7 @@ const deleteOldMessages = () => {
     const intervalInMilliseconds = 7 * 24 * 60 * 60 * 1000; // Calculate milliseconds in a week
     setInterval(async function() {
         const connections = await connectionManager.getConnections();
-        
+
         for (let key in connections) {
             deleteBeforWeek(key);
         }

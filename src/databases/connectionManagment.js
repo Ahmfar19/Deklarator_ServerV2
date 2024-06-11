@@ -6,14 +6,18 @@ class MySQLConnectionManager {
     constructor(connectionOptions) {
         this.defaultOptions = {
             host: 'localhost',
-        }
+        };
         this.connectionOptions = connectionOptions;
         this.pools = {};
     }
 
     async connect() {
         for (const key in this.connectionOptions) {
-            const connectionOptions = Object.assign({}, this.defaultOptions, this.connectionOptions[key].databaseOption);
+            const connectionOptions = Object.assign(
+                {},
+                this.defaultOptions,
+                this.connectionOptions[key].databaseOption,
+            );
             try {
                 const pool = mysql.createPool(connectionOptions);
                 this.pools[key] = pool;
@@ -33,8 +37,8 @@ class MySQLConnectionManager {
             this.pools[key] = pool;
             this.connectionOptions[key] = {
                 databaseOption,
-                AdminEmail: AdminEmail
-            }
+                AdminEmail: AdminEmail,
+            };
             console.log(`Connected to ${key} database!`);
         } catch (err) {
             console.error(`Error connecting to ${option.key} database: ${err.message}`);

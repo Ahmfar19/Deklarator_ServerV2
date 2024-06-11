@@ -15,7 +15,7 @@ const transporter = nodemailer.createTransport({
     },
 });
 
-const sendEmailToGroup = async (to, bccEmails, subject, htmlTemplate) => {
+const sendEmailToGroup = async (to, bccEmails, subject, htmlTemplate, connectionName) => {
     let mailOptions = {
         from: EMAIL,
         to: to,
@@ -24,7 +24,7 @@ const sendEmailToGroup = async (to, bccEmails, subject, htmlTemplate) => {
         html: htmlTemplate,
         attachments: [{
             filename: 'bb.png',
-            path: path.join('assets/tampletes/bb.png'),
+            path: path.join(`assets/${connectionName}/tampletes/bb.png`),
             cid: 'unique@kreata.ee', // same cid value as in the html img src
         }],
     };
@@ -88,10 +88,10 @@ const sendEmail = async (mailOptions) => {
         // eslint-disable-next-line no-unused-vars
         transporter.sendMail(mailOptions, function(error, info) {
             if (error) {
-                //  console.log('Error sending email', error);
+                console.log('Error sending email', error);
                 resolve(false);
             } else {
-                //  console.log('Email sent: ' + info.response);
+                console.log('Email sent: ' + info.response);
                 resolve(true);
             }
         });

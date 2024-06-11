@@ -32,10 +32,10 @@ const storage = multer.diskStorage({
         // Decode the file name using iconv-lite
         originalName = iconv.decode(Buffer.from(originalName, 'latin1'), 'utf8');
         const directoryPath = path.join(uploadPath, originalName);
-       
+
         if (fs.existsSync(directoryPath)) {
             const uniqueFilename = getUniqueFilename(file);
-    
+
             cb(null, uniqueFilename);
         } else {
             cb(null, originalName);
@@ -47,25 +47,25 @@ const uploadFiles = multer({ storage: storage });
 const deleteFile = async (req, res) => {
     try {
         const { company_id } = req.params;
-        const connectionName = req.customerId;;
+        const connectionName = req.customerId;
         const { filename } = req.body;
-        
+
         const filePath = path.join(__dirname, `../../assets/${connectionName}/files`, company_id, filename);
-       
-         if (fs.existsSync(filePath)) {
-             fs.unlink(filePath, (err) => {
-                 if (err) {
-                     return sendResponse(res, 500, 'Internal Server Error', null, 'Error deleting file', err);
-                 }
-                 return sendResponse(res, 200, 'Ok', 'File deleted successfully', null, null);
-             });
-         } else {
-             return sendResponse(res, 404, 'Not Found', null, 'File not found', null);
-         }
+
+        if (fs.existsSync(filePath)) {
+            fs.unlink(filePath, (err) => {
+                if (err) {
+                    return sendResponse(res, 500, 'Internal Server Error', null, 'Error deleting file', err);
+                }
+                return sendResponse(res, 200, 'Ok', 'File deleted successfully', null, null);
+            });
+        } else {
+            return sendResponse(res, 404, 'Not Found', null, 'File not found', null);
+        }
     } catch (error) {
         sendResponse(res, 500, 'Internal Server Error', null, error.message || error, error);
     }
-}
+};
 
 const folderCounters = {};
 
@@ -110,7 +110,7 @@ const getFile = async (req, res) => {
         const { filename, company_id } = req.params;
         const connectionName = req.customerId;
         const filePath = path.join(__dirname, `../../assets/${connectionName}/files`, company_id, filename);
-        console.log(filePath);
+
         if (fs.existsSync(filePath)) {
             res.download(filePath, (err) => {
                 if (err) {
@@ -130,7 +130,7 @@ const getFiles = async (req, res) => {
         const { company_id } = req.params;
         const connectionName = req.customerId;
         const directoryPath = path.join(__dirname, `../../assets/${connectionName}/files`, company_id);
-       
+
         // Read all files in the directory
         const files = fs.readdirSync(directoryPath);
 

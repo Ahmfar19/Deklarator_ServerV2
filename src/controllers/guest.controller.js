@@ -28,7 +28,7 @@ const createGuestAccount = async (company_id, connectionName) => {
     const title = mailMessags.guestEmail.title.replace('{0}', data[0].company_name);
     const body = mailMessags.guestEmail.body.replace('{0}', data[0].email).replace('{1}', password);
     const connections = await connectionManager.getConnections();
-    const adminEmail = connections[connectionName].adminEmai;
+    const adminEmail = connections[connectionName].AdminEmail;
     sendCCEmail(data[0].email, adminEmail, title, body);
 };
 

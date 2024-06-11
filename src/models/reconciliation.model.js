@@ -63,8 +63,7 @@ class Case {
             SELECT reconciliation.*, company.company_name
             FROM reconciliation
             JOIN company ON company.company_id = reconciliation.company_id
-            WHERE reconciliation_date = ${year}`
-        ;
+            WHERE reconciliation_date = ${year}`;
         const result = await connectionManager.executeQuery(connectionName, sql);
         return result;
     }

@@ -31,8 +31,6 @@ const path = require('path');
 // import validation register schema
 const { signUpValidation } = require('../helpers/validation');
 
-
-
 const upload = multer({
     dest: path.join(__dirname, 'assets/images/users'),
     limits: {
@@ -210,7 +208,7 @@ router.delete('/reconciliations/delete/entry/:id', reconciliationController.dele
 router.post('/reconciliations/new', reconciliationController.creteNewReconciliation);
 router.put('/reconciliations/edit/:reconciliation_id', reconciliationController.updateReconciliations);
 
-router.post('/addConnection/new', addConnectionController.addConnection)
+router.post('/addConnection/new', addConnectionController.addConnection);
 
 router.get('/checkAuth', (req, res) => {
     const access_token = req.cookies.accessToken;

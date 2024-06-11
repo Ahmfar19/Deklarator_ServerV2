@@ -11,11 +11,11 @@ const app = express();
 app.use(cookieParser());
 app.use(express.json());
 
-app.use((req, res, next) => { 
-    // console.error('req', req.originalUrl.split('/')[3]) 
-    req.customerId = req.originalUrl.split('/')[3] 
-    next(); 
-})
+app.use((req, res, next) => {
+    // console.error('req', req.originalUrl.split('/')[3])
+    req.customerId = req.originalUrl.split('/')[3];
+    next();
+});
 
 const NODE_ENV = process.env.NODE_ENV || 'production';
 const whitelist = [];
@@ -53,18 +53,17 @@ sendReminderEmail();
 // Setting an intervall every 7 days to delete messages
 deleteOldMessages();
 
-
 app.use('/server/api/:customerId', apiRouter);
 
 // ***************** When testing the fronEnd by this server **************** //
-// const path = require('path');
-// app.use(express.static(path.join(__dirname, '../dist')));
-// app.get('/*', (req, res, next) => {
-//     if (req.path.startsWith('/assets')) {
-//         return next();
-//     }
-//     res.sendFile(path.join(__dirname, '../dist/index.html'));
-// });
+//  const path = require('path');
+//  app.use(express.static(path.join(__dirname, '../dist')));
+//  app.get('/*', (req, res, next) => {
+//      if (req.path.startsWith('/assets')) {
+//          return next();
+//      }
+//      res.sendFile(path.join(__dirname, '../dist/index.html'));
+//  });
 // ***************** END fronEnd testing **************** //
 
 module.exports = app;

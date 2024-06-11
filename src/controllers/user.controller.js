@@ -209,7 +209,7 @@ const deleteUser = async (req, res) => {
             return sendResponse(res, 406, 'Not Accepted', 'not user found to delete', null, null);
         }
         const userId = id;
-        const dirPath = path.resolve('assets/images/users');
+        const dirPath = path.resolve(`assets/${connectionName}/images/users`);
         const pattern = new RegExp(`^user_${userId}\\..*$`);
         fs.readdir(dirPath, (err, files) => {
             if (err) {
@@ -312,7 +312,7 @@ const verifyToken = async (req, res) => {
 
 const getUsersImage = async (req, res) => {
     // Extract the file name from the request parameters
-    const connectionName = req.customerId
+    const connectionName = req.customerId;
     const filename = req.params.filename;
     const uploadPath = `assets/${connectionName}/images/users`;
     const filePath = path.join(uploadPath, filename);

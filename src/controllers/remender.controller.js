@@ -2,6 +2,7 @@ const Reminder = require('../models/reminder.model');
 const { sendResponse } = require('../helpers/apiResponse');
 const { isToday } = require('../helpers/utils');
 const { checkForReminder } = require('./sendReminder.controller');
+const { connectionManager } = require('../databases/connectionManagment');
 
 const getRemenders = async (req, res) => {
     try {
@@ -31,7 +32,9 @@ const addRemender = async (req, res) => {
         await remender.save();
         const today = isToday(remender.remender_date);
         if (today) {
-            checkForReminder();
+            const connections = await connectionManager.getConnections();
+            const adminEmail = connections[connectionName].AdminEmail;
+            checkForReminder(connectionName, adminEmail);
         }
 
         sendResponse(res, 201, 'Created', 'Successfully created a remender.', null, remender);
@@ -47,7 +50,9 @@ const addMultiReminder = async (req, res) => {
         const addedReminders = await reminder.saveMulti(connectionName);
         const today = isToday(req.body.remender_date);
         if (today) {
-            checkForReminder();
+            const connections = await connectionManager.getConnections();
+            const adminEmail = connections[connectionName].AdminEmail;
+            checkForReminder(connectionName, adminEmail);
         }
         sendResponse(res, 201, 'Created', 'Successfully created the reminders.', null, addedReminders || []);
     } catch (err) {
@@ -71,7 +76,9 @@ const updateRemender = async (req, res) => {
 
         const today = isToday(remender.remender_date);
         if (today) {
-            checkForReminder();
+            const connections = await connectionManager.getConnections();
+            const adminEmail = connections[connectionName].AdminEmail;
+            checkForReminder(connectionName, adminEmail);
         }
 
         sendResponse(res, 202, 'Accepted', 'Successfully updated a remender.', null, remender);

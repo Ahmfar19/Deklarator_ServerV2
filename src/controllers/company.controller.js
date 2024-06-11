@@ -89,7 +89,7 @@ const deleteCompany = async (req, res) => {
         if (data.affectedRows === 0) {
             throw new Error('No company found for deletion');
         }
-        const filePath = path.join(__dirname, '../../assets/files', id);
+        const filePath = path.join(__dirname, `../../assets/${connectionName}/files`, id);
 
         if (fs.existsSync(filePath)) {
             fs.rmSync(filePath, { recursive: true });

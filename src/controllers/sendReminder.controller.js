@@ -12,7 +12,6 @@ const { connectionManager } = require('../databases/connectionManagment');
 
 const checkForReminder = async (connectionName, adminEamil) => {
     try {
-
         const data = await Reminder.getReminders(connectionName);
 
         if (!data.length) return;
@@ -64,11 +63,12 @@ const checkForReminder = async (connectionName, adminEamil) => {
                 });
 
                 const htmlTemplatePath = path.resolve(`assets/${connectionName}/tampletes/index.html`);
+
                 let htmlTemplate = fs.readFileSync(htmlTemplatePath, 'utf-8');
 
                 htmlTemplate = htmlTemplate.replace('{{tamplateBody}}', tamplateBody);
 
-                const emailSent = await sendEmailToGroup(adminEamil, bccEmails, title, htmlTemplate);
+                const emailSent = await sendEmailToGroup(adminEamil, bccEmails, title, htmlTemplate, connectionName);
 
                 if (!emailSent) {
                     const title = mailMessags.message.title;
@@ -160,7 +160,7 @@ const checkForSingleReminder = async () => {
 
 const sendReminderEmail = () => {
     const intervalInMilliseconds = 6 * 60 * 60 * 1000;
-    setInterval(async function () {
+    setInterval(async function() {
         const connections = await connectionManager.getConnections();
         for (let key in connections) {
             console.log(connections);

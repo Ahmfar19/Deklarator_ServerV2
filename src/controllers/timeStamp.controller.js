@@ -137,11 +137,11 @@ const getFilterByUserCompanyType = async (req, res) => {
             to_yearMonth,
             from_date,
             to_date,
-            stamp_id
+            stamp_id,
         } = req.query;
 
-        const connectionName = req.customerId
-        
+        const connectionName = req.customerId;
+
         const filter = await TimeStamp.getFilterBy_User_Company_type(
             staff_id,
             company_id,
