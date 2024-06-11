@@ -34,7 +34,8 @@ class Case {
         }
     }
 
-    static async createMultiReconciliation(data) {
+    static async createMultiReconciliation(data, connectionName) {
+        this.connectionName = connectionName;
         if (!Array.isArray(data.companyIds) || data.companyIds.length === 0) {
             throw new Error('companyIds should be a non-empty array');
         }
@@ -43,17 +44,29 @@ class Case {
         const defaultData = JSON.stringify([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
         const promises = companies.map(async company_id => this.save(company_id, year, defaultData));
         await Promise.all(promises);
+        const insertedData = await this.getByYear(year, connectionName);
+        return insertedData;
     }
 
-    static async getAll(year, connectionName) {
+    static async getAll(connectionName) {
+        const sql = `
+            SELECT reconciliation.*, company.company_name
+            FROM reconciliation
+            JOIN company ON company.company_id = reconciliation.company_id;
+        `;
+        const result = await connectionManager.executeQuery(connectionName, sql);
+        return result;
+    }
+
+    static async getByYear(year, connectionName) {
         const sql = `
             SELECT reconciliation.*, company.company_name
             FROM reconciliation
             JOIN company ON company.company_id = reconciliation.company_id
-            WHERE reconciliation_date = ${year}`;
-
-            const result = await connectionManager.executeQuery(connectionName, sql);
-            return result;
+            WHERE reconciliation_date = ${year}`
+        ;
+        const result = await connectionManager.executeQuery(connectionName, sql);
+        return result;
     }
 
     static async getGroups(connectionName) {

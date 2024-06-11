@@ -3,8 +3,7 @@ const { sendResponse } = require('../helpers/apiResponse');
 
 const getReconciliations = async (req, res) => {
     try {
-        const connectionName = req.customerId;
-        const reconciliations = await Reconciliations.getAll(connectionName);
+        const reconciliations = await Reconciliations.getAll(req.customerId);
         sendResponse(res, 200, 'Ok', 'Successfully retrieved all the reconciliations', null, reconciliations);
     } catch (err) {
         sendResponse(res, 500, 'Internal Server Error', null, err.message || err, null);
@@ -13,8 +12,7 @@ const getReconciliations = async (req, res) => {
 
 const getReconciliationsGroup = async (req, res) => {
     try {
-        const connectionName = req.customerId;
-        const reconciliationsGrops = await Reconciliations.getGroups(connectionName);
+        const reconciliationsGrops = await Reconciliations.getGroups(req.customerId);
         sendResponse(
             res,
             200,
@@ -30,12 +28,11 @@ const getReconciliationsGroup = async (req, res) => {
 
 const getYearReconciliations = async (req, res) => {
     try {
-        const connectionName = req.customerId;
         const year = req.params.year;
         if (!year) {
-            sendResponse(res, 500, 'Invaöid argument', null, null, null);
+            sendResponse(res, 500, 'Invalid argument', null, null, null);
         } else {
-            const singleReconciliations = await Reconciliations.getAll(year, connectionName);
+            const singleReconciliations = await Reconciliations.getByYear(year, req.customerId);
             sendResponse(res, 200, 'Ok', 'Successfully retrieved all the reconciliations', null, singleReconciliations);
         }
     } catch (err) {
@@ -45,12 +42,11 @@ const getYearReconciliations = async (req, res) => {
 
 const deleteYearReconciliations = async (req, res) => {
     try {
-        const connectionName = req.customerId;
         const year = req.params.year;
         if (!year) {
             sendResponse(res, 500, 'Invalid argument', null, null, null);
         } else {
-            await Reconciliations.deleteByYear(year, connectionName);
+            await Reconciliations.deleteByYear(year, req.customerId);
             sendResponse(res, 200, 'Ok', 'Successfully deletion', null, null);
         }
     } catch (err) {
@@ -60,12 +56,11 @@ const deleteYearReconciliations = async (req, res) => {
 
 const deleteReconciliations = async (req, res) => {
     try {
-        const connectionName = req.customerId;
         const year = req.params.id;
         if (!year) {
             sendResponse(res, 500, 'Invalid argument', null, null, null);
         } else {
-            await Reconciliations.deleteReconciliation(year, connectionName);
+            await Reconciliations.deleteReconciliation(year, req.customerId);
             sendResponse(res, 200, 'Ok', 'Successfully deletion', null, null);
         }
     } catch (err) {
@@ -75,9 +70,8 @@ const deleteReconciliations = async (req, res) => {
 
 const creteNewReconciliation = async (req, res) => {
     const data = req.body;
-    const connectionName = req.customerId;
     try {
-        const reconciliations = Reconciliations.createMultiReconciliation(data, connectionName);
+        const reconciliations = await Reconciliations.createMultiReconciliation(data, req.customerId);
         sendResponse(res, 201, 'Created', 'Successfully created the reconciliation list.', null, reconciliations);
     } catch (err) {
         sendResponse(res, 500, 'Internal Server Error', null, err.message || err, null);
@@ -87,9 +81,8 @@ const creteNewReconciliation = async (req, res) => {
 const updateReconciliations = async (req, res) => {
     const id = req.params.reconciliation_id;
     const data = req.body.reconciliation_data;
-    const connectionName = req.customerId;
     try {
-        await Reconciliations.updateDataById(id, data, connectionName);
+        await Reconciliations.updateDataById(id, data, req.customerId);
         sendResponse(res, 201, 'Created', 'Successfully updated the reconciliation data', null, null);
     } catch (err) {
         sendResponse(res, 500, 'Internal Server Error', null, err.message || err, null);
