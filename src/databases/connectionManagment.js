@@ -1,14 +1,11 @@
 const mysql = require('mysql2/promise');
 const config = require('config');
-const DB_HOST = process.env.NODE_ENV === 'development' ? 'localhost' : config.get('DB_HOST');
-const DB_USERNAME = process.env.NODE_ENV === 'development' ? 'root' : config.get('DB_USERNAME');
 const CONNECTION_OPTIONS = config.get('CONNECTION_OPTIONS');
 
 class MySQLConnectionManager {
     constructor(connectionOptions) {
         this.defaultOptions = {
-            host: DB_HOST,
-            user: DB_USERNAME,
+            host: 'localhost',
         }
         this.connectionOptions = connectionOptions;
         this.pools = {};
