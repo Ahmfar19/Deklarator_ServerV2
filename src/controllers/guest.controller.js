@@ -26,7 +26,7 @@ const createGuestAccount = async (company_id, connectionName) => {
     await guest.save();
 
     const title = mailMessags.guestEmail.title.replace('{0}', data[0].company_name);
-    const body = mailMessags.guestEmail.body.replace('{0}', data[0].email).replace('{1}', password);
+    const body = mailMessags.guestEmail.body.replace('{0}', data[0].email).replace('{1}', password).replace('{2}', `https://system.administreramer.se/${connectionName}/reporting`);
     const connections = await connectionManager.getConnections();
     const adminEmail = connections[connectionName].AdminEmail;
     sendCCEmail(data[0].email, adminEmail, title, body);
@@ -78,10 +78,11 @@ const getGuests = async (req, res) => {
 
 const loginGuest = async (req, res) => {
     try {
+       
         const { email, password, fingerprint } = req.body;
         const connectionName = req.customerId;
         const data = await Guest.checkGuest(email, connectionName);
-
+        
         if (data.length > 1) {
             return sendResponse(res, 409, 'Conflict', null, 'User already exists in the database', null);
         } else if (data.length === 1) {
