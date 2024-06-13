@@ -79,7 +79,7 @@ class Message {
     }
 
     static async deleteMessageBeforWeek(date, connectionName) {
-        const sql = `DELETE FROM message WHERE date_time <= ?`;
+        const sql = `DELETE FROM message WHERE DATE(message.date_time) <= ?`;
         const result = await connectionManager.executeQuery(connectionName, sql, [date]);
         return result;
     }

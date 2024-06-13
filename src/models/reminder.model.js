@@ -115,9 +115,9 @@ class Reminder {
 
     static async getReminders(connectionName) {
         const currentDate = new Date();
-        const isoDate = currentDate.toISOString(); // Convert to ISO format
-        const [year, month, day] = isoDate.split('T')[0].split('-'); // Extract year, month, and day from ISO format
-
+        const year = currentDate.getFullYear();
+        const month = currentDate.getMonth() + 1; // Adding 1 to match SQL month format
+        const day = currentDate.getDate();
         const sql = `SELECT YEAR(remender_date) AS year, 
         MONTH(remender_date) AS month, 
         DAY(remender_date) AS day,
@@ -143,7 +143,10 @@ class Reminder {
         // Add one month to the current date
         const remenderDate = new Date(currentDate.setMonth(currentDate.getMonth() + 1));
         // Format the date in the desired format (e.g., "YYYY-MM-DD")
-        const formattedRemenderDate = remenderDate.toISOString().slice(0, 10);
+        const year = remenderDate.getFullYear();
+        const month = String(remenderDate.getMonth() + 1).padStart(2, '0');
+        const day = String(remenderDate.getDate()).padStart(2, '0');
+        const formattedRemenderDate = `${year}-${month}-${day}`;
 
         const sql = `
           UPDATE reminder
@@ -157,12 +160,13 @@ class Reminder {
     // 2
     static async updateReminderEveryWeek(id, connectionName) {
         const currentDate = new Date();
-
         // Add 7 days (1 week) to the current date
         const reminderDate = new Date(currentDate.setDate(currentDate.getDate() + 7));
-
         // Format the date in the desired format (e.g., "YYYY-MM-DD")
-        const formattedReminderDate = reminderDate.toISOString().slice(0, 10);
+        const year = reminderDate.getFullYear();
+        const month = String(reminderDate.getMonth() + 1).padStart(2, '0');
+        const day = String(reminderDate.getDate()).padStart(2, '0');
+        const formattedReminderDate = `${year}-${month}-${day}`;
 
         const sql = `
         UPDATE reminder
@@ -180,8 +184,13 @@ class Reminder {
 
         // Add 14 days (2 weeks) to the current date
         const reminderDate = new Date(currentDate.setDate(currentDate.getDate() + 14));
+
         // Format the date in the desired format (e.g., "YYYY-MM-DD")
-        const formattedReminderDate = reminderDate.toISOString().slice(0, 10);
+        const year = reminderDate.getFullYear();
+        const month = String(reminderDate.getMonth() + 1).padStart(2, '0');
+        const day = String(reminderDate.getDate()).padStart(2, '0');
+        const formattedReminderDate = `${year}-${month}-${day}`;
+
 
         const sql = `
         UPDATE reminder
@@ -196,11 +205,14 @@ class Reminder {
     // 4
     static async updateReminderEveryThreeWeek(id, connectionName) {
         const currentDate = new Date();
-
         // Add 14 days (2 weeks) to the current date
         const reminderDate = new Date(currentDate.setDate(currentDate.getDate() + 21));
         // Format the date in the desired format (e.g., "YYYY-MM-DD")
-        const formattedReminderDate = reminderDate.toISOString().slice(0, 10);
+        const year = reminderDate.getFullYear();
+        const month = String(reminderDate.getMonth() + 1).padStart(2, '0');
+        const day = String(reminderDate.getDate()).padStart(2, '0');
+        const formattedReminderDate = `${year}-${month}-${day}`;
+
 
         const sql = `
         UPDATE reminder
