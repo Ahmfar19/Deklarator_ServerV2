@@ -51,7 +51,6 @@ deleteOldMessages();
 // app.get('/', (req, res) => res.send('It, works!'));
 app.use('/server/api/', apiRouter);
 
-
 // ***************** When testing the fronEnd by this server **************** //
 const path = require('path');
 app.use(express.static(path.join(__dirname, '../dist')));
