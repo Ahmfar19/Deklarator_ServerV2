@@ -36,8 +36,9 @@ app.use(NODE_ENV === 'development' ? cors() : cors(corsOptions));
 
 // To allow access to the assets from outside the server
 async function verifyInlogged(req, res, next) {
-    const token = req.cookies?.accessToken;
-    const fingerprint = req.query?.cid + req.cookies?.staff_id + '@@' + req.customerId;
+    const token = req.query?.token;
+    const staff_id = req.query?.staff_id;
+    const fingerprint = req.query?.cid + staff_id + '@@' + req.customerId;
     const authenticated = await verifyToken(fingerprint, token);
     if (authenticated) {
         next();
@@ -46,7 +47,7 @@ async function verifyInlogged(req, res, next) {
     }
 }
 
-app.use('/:customerId/assets', verifyInlogged, express.static('assets'));
+app.use('/server/api/:customerId/assets', verifyInlogged, express.static('assets'));
 
 // Setting an intervall every 6 hours that cehck for a reminder to send.
 sendReminderEmail();
