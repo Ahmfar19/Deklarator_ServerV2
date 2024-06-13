@@ -75,7 +75,7 @@ class Message {
     }
 
     static async deleteMessageBeforWeek(date) {
-        const sql = `DELETE FROM message WHERE date_time <= ?`;
+        const sql = `DELETE FROM message WHERE DATE(message.date_time) <= ?`;
         const [rows] = await pool.execute(sql, [date]);
         return rows;
     }

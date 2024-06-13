@@ -72,10 +72,13 @@ function isToday(dateString) {
 
 function getLastWeekDate() {
     const currentDate = new Date();
-    const isoDate = currentDate.toISOString();
-    const lastWeekDate = new Date(Date.parse(isoDate) - 7 * 24 * 60 * 60 * 1000);
+    const lastWeekDate = new Date(currentDate.getTime() - 7 * 24 * 60 * 60 * 1000);
+
     // Format the lastWeekDate to 'YYYY-MM-DD'
-    const formattedLastWeekDate = lastWeekDate.toISOString().slice(0, 10);
+    const year = lastWeekDate.getFullYear();
+    const month = String(lastWeekDate.getMonth() + 1).padStart(2, '0');
+    const day = String(lastWeekDate.getDate()).padStart(2, '0');
+    const formattedLastWeekDate = `${year}-${month}-${day}`;
     return formattedLastWeekDate;
 }
 
