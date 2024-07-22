@@ -124,10 +124,9 @@ class Reminder {
         FROM reminder 
         INNER JOIN company AS c ON reminder.company_id = c.company_id
         INNER JOIN tamplate AS t ON reminder.tamplate_id = t.tamplate_id
-        WHERE YEAR(remender_date) = ${year} AND MONTH(remender_date) = ${month} AND DAY(remender_date) = ${day}`;
+        WHERE remender_date = '${year}-${month}-${day}'`;
 
         const [rows] = await pool.execute(sql);
-
         return rows;
     }
 

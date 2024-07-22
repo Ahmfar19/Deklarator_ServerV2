@@ -4,7 +4,7 @@ const MessageType = require('../models/message_type.model');
 const User = require('../models/user.model');
 const Tamplate = require('../models/tamplate.model');
 const { sendEmailToGroup, sendEmailHtml } = require('./sendEmail.controller');
-const { getNowDate_time } = require('../helpers/utils');
+const { getNowDate_time, timeUntil } = require('../helpers/utils');
 const path = require('path');
 const fs = require('fs');
 const mailMessags = require('../helpers/emailMessages');
@@ -159,9 +159,17 @@ const checkForSingleReminder = async () => {
 };
 
 const sendReminderEmail = () => {
-    const intervalInMilliseconds = 6 * 60 * 60 * 1000;
-    setInterval(function() {
+    let intervalInMilliseconds = timeUntil(8);
+
+    const executeReminder = () => {
         checkForReminder();
+        // Schedule the next execution, 24 hours in milliseconds
+        intervalInMilliseconds = 24 * 60 * 60 * 1000;
+    };
+    const intervalId = setInterval(() => {
+        executeReminder();
+        clearInterval(intervalId);
+        setInterval(executeReminder, intervalInMilliseconds);
     }, intervalInMilliseconds);
 };
 
