@@ -104,6 +104,25 @@ const generatePassword = async (length = 12) => {
     return password;
 };
 
+
+function timeUntil(targetHour) {
+    const now = new Date(); // Current date and time
+    const target = new Date(now); // Create a date object for the target time
+
+    // Set the target hour
+    target.setHours(targetHour, 0, 0, 0); // Set hours, minutes, seconds, and milliseconds to 08:00
+
+    // If the target time is earlier than the current time, set the target to the next day
+    if (target <= now) {
+        target.setDate(target.getDate() + 1);
+    }
+
+    // Calculate the difference in milliseconds
+    const difference = target - now;
+
+    return difference; // Returns the time left in milliseconds
+}
+
 module.exports = {
     getCurrentDateTime,
     getFutureDateTime,
@@ -116,4 +135,5 @@ module.exports = {
     getLastWeekDate,
     verifyToken,
     generatePassword,
+    timeUntil
 };
