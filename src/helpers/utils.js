@@ -104,7 +104,6 @@ const generatePassword = async (length = 12) => {
     return password;
 };
 
-
 function timeUntil(targetHour) {
     const now = new Date(); // Current date and time
     const target = new Date(now); // Create a date object for the target time
@@ -135,5 +134,5 @@ module.exports = {
     getLastWeekDate,
     verifyToken,
     generatePassword,
-    timeUntil
+    timeUntil,
 };

@@ -39,7 +39,7 @@ class MySQLConnectionManager {
                 [key]: {
                     databaseOption,
                     AdminEmail: AdminEmail,
-                }
+                },
             });
             console.log(`Connected to ${key} database!`);
         } catch (err) {

@@ -62,9 +62,8 @@ const checkForReminder = async (connectionName, adminEamil) => {
                             await Reminder.deleteReminder(item.remender_id, connectionName);
                     }
                 });
-                console.log("!11");
+
                 const htmlTemplatePath = path.resolve(`assets/${connectionName}/tampletes/index.html`);
-                console.log("htmlTemplatePath", htmlTemplatePath);
                 let htmlTemplate = fs.readFileSync(htmlTemplatePath, 'utf-8');
 
                 htmlTemplate = htmlTemplate.replace('{{tamplateBody}}', tamplateBody);
@@ -160,17 +159,16 @@ const checkForSingleReminder = async () => {
 };
 
 const sendReminderEmail = () => {
-   
 };
 
-cron.schedule('0 6,7 * * *', async() => {
+cron.schedule('0 6,7 * * *', async () => {
     const connections = await connectionManager.getConnections();
-        for (let key in connections) {
-            checkForReminder(key, connections[key].AdminEmail);
-        }
-  }, {
-    timezone: "Europe/Stockholm"
-  });
+    for (let key in connections) {
+        checkForReminder(key, connections[key].AdminEmail);
+    }
+}, {
+    timezone: 'Europe/Stockholm',
+});
 
 module.exports = {
     sendReminderEmail,

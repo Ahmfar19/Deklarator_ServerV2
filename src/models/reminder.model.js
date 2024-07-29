@@ -191,7 +191,6 @@ class Reminder {
         const day = String(reminderDate.getDate()).padStart(2, '0');
         const formattedReminderDate = `${year}-${month}-${day}`;
 
-
         const sql = `
         UPDATE reminder
         SET remender_date = ?
@@ -212,7 +211,6 @@ class Reminder {
         const month = String(reminderDate.getMonth() + 1).padStart(2, '0');
         const day = String(reminderDate.getDate()).padStart(2, '0');
         const formattedReminderDate = `${year}-${month}-${day}`;
-
 
         const sql = `
         UPDATE reminder
