@@ -57,14 +57,14 @@ deleteOldMessages();
 app.use('/server/api/:customerId', apiRouter);
 
 // ***************** When testing the fronEnd by this server **************** //
- const path = require('path');
- app.use(express.static(path.join(__dirname, '../dist')));
- app.get('/*', (req, res, next) => {
-     if (req.path.startsWith('/assets')) {
-         return next();
-     }
-     res.sendFile(path.join(__dirname, '../dist/index.html'));
- });
+//  const path = require('path');
+//  app.use(express.static(path.join(__dirname, '../dist')));
+//  app.get('/*', (req, res, next) => {
+//      if (req.path.startsWith('/assets')) {
+//          return next();
+//      }
+//      res.sendFile(path.join(__dirname, '../dist/index.html'));
+//  });
 // ***************** END fronEnd testing **************** //
 
 module.exports = app;
