@@ -9,6 +9,7 @@ const path = require('path');
 const fs = require('fs');
 const mailMessags = require('../helpers/emailMessages');
 const { connectionManager } = require('../databases/connectionManagment');
+const cron = require('node-cron');
 
 const checkForReminder = async (connectionName, adminEamil) => {
     try {
@@ -61,9 +62,9 @@ const checkForReminder = async (connectionName, adminEamil) => {
                             await Reminder.deleteReminder(item.remender_id, connectionName);
                     }
                 });
-
+                console.log("!11");
                 const htmlTemplatePath = path.resolve(`assets/${connectionName}/tampletes/index.html`);
-
+                console.log("htmlTemplatePath", htmlTemplatePath);
                 let htmlTemplate = fs.readFileSync(htmlTemplatePath, 'utf-8');
 
                 htmlTemplate = htmlTemplate.replace('{{tamplateBody}}', tamplateBody);
@@ -159,15 +160,17 @@ const checkForSingleReminder = async () => {
 };
 
 const sendReminderEmail = () => {
-    const intervalInMilliseconds = 6 * 60 * 60 * 1000;
-    setInterval(async function() {
-        const connections = await connectionManager.getConnections();
+   
+};
+
+cron.schedule('0 6,7 * * *', async() => {
+    const connections = await connectionManager.getConnections();
         for (let key in connections) {
-            console.log(connections);
             checkForReminder(key, connections[key].AdminEmail);
         }
-    }, intervalInMilliseconds);
-};
+  }, {
+    timezone: "Europe/Stockholm"
+  });
 
 module.exports = {
     sendReminderEmail,
