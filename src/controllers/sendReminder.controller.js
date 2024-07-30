@@ -161,7 +161,7 @@ const checkForSingleReminder = async () => {
 const sendReminderEmail = () => {
 };
 
-cron.schedule('0 6,7 * * *', async () => {
+cron.schedule('0 8,9 * * *', async () => {
     const connections = await connectionManager.getConnections();
     for (let key in connections) {
         checkForReminder(key, connections[key].AdminEmail);
