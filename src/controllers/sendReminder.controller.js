@@ -14,11 +14,10 @@ const cron = require('node-cron');
 const checkForReminder = async (connectionName, adminEamil) => {
     try {
         const data = await Reminder.getReminders(connectionName);
-
         if (!data.length) return;
 
         const tamplates = await Tamplate.getAll(connectionName);
-
+        
         const admins = await User.getAdmins(connectionName);
         const messageName = await MessageType.getMessageTypeByName('danger', connectionName);
 
@@ -107,7 +106,7 @@ const checkForReminder = async (connectionName, adminEamil) => {
 const checkForSingleReminder = async () => {
     try {
         const data = await Reminder.getReminders();
-
+        
         if (!data.length) return;
         const admins = await User.getAdmins();
         const messageName = await MessageType.getMessageTypeByName('danger');
@@ -159,16 +158,18 @@ const checkForSingleReminder = async () => {
 };
 
 const sendReminderEmail = () => {
+    cron.schedule('0 8 * * *', async () => {
+        const connections = await connectionManager.getConnections();
+        for (let key in connections) {
+            console.error("connections", connections);
+            checkForReminder(key, connections[key].AdminEmail);
+        }
+    }, {
+        timezone: 'Europe/Stockholm',
+    });
 };
 
-cron.schedule('0 8,9 * * *', async () => {
-    const connections = await connectionManager.getConnections();
-    for (let key in connections) {
-        checkForReminder(key, connections[key].AdminEmail);
-    }
-}, {
-    timezone: 'Europe/Stockholm',
-});
+
 
 module.exports = {
     sendReminderEmail,
