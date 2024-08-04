@@ -4,12 +4,13 @@ const MessageType = require('../models/message_type.model');
 const User = require('../models/user.model');
 const Tamplate = require('../models/tamplate.model');
 const { sendEmailToGroup, sendEmailHtml } = require('./sendEmail.controller');
-const { getNowDate_time, timeUntil } = require('../helpers/utils');
+const { getNowDate_time } = require('../helpers/utils');
 const path = require('path');
 const fs = require('fs');
 const mailMessags = require('../helpers/emailMessages');
 const config = require('config');
 const ADMIN_EMAIL = config.get('ADMIN_EMAIL');
+const cron = require('node-cron');
 
 const checkForReminder = async () => {
     try {
@@ -159,18 +160,11 @@ const checkForSingleReminder = async () => {
 };
 
 const sendReminderEmail = () => {
-    let intervalInMilliseconds = timeUntil(8);
-
-    const executeReminder = () => {
+    cron.schedule('0 8 * * *', async () => {
         checkForReminder();
-        // Schedule the next execution, 24 hours in milliseconds
-        intervalInMilliseconds = 24 * 60 * 60 * 1000;
-    };
-    const intervalId = setInterval(() => {
-        executeReminder();
-        clearInterval(intervalId);
-        setInterval(executeReminder, intervalInMilliseconds);
-    }, intervalInMilliseconds);
+    }, {
+        timezone: 'Europe/Stockholm',
+    });
 };
 
 module.exports = {
