@@ -11,6 +11,10 @@ const app = express();
 app.use(cookieParser());
 app.use(express.json());
 
+app.get('/server/ping', (req, res) => {
+    res.send('Server is active.');
+});
+
 app.use((req, res, next) => {
     // console.error('req', req.originalUrl.split('/')[3])
     req.customerId = req.originalUrl.split('/')[3];
@@ -66,6 +70,22 @@ app.use('/server/api/:customerId', apiRouter);
 //      res.sendFile(path.join(__dirname, '../dist/index.html'));
 //  });
 // ***************** END fronEnd testing **************** //
+
+// ***************** Keep the server alive **************** //
+const url = "https://administreramer.se/server/ping";
+async function pingServer() {
+    try {
+        const response = await fetch(url);
+        if (response.ok) {
+            // console.error('Ping successful:', response.status);
+        } else {
+            // console.error(`Request failed. Status Code: ${response.status}`);
+        }
+    } catch (error) {
+        // console.error('Error during ping request:', error.message);
+    }
+}
+setInterval(pingServer, 4 * 60 * 1000);
 
 module.exports = app;
 

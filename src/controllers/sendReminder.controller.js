@@ -14,7 +14,7 @@ const cron = require('node-cron');
 const checkForReminder = async (connectionName, adminEamil) => {
     try {
         const data = await Reminder.getReminders(connectionName);
-        if (!data.length) return;
+        if (!data?.length) return;
 
         const tamplates = await Tamplate.getAll(connectionName);
         
