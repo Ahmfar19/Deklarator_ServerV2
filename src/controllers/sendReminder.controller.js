@@ -16,7 +16,7 @@ const checkForReminder = async () => {
     try {
         const data = await Reminder.getReminders();
 
-        if (!data.length) return;
+        if (!data?.length) return;
 
         const tamplates = await Tamplate.getAll();
 
