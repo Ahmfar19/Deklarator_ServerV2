@@ -1,6 +1,7 @@
 const Message = require('../models/message.model');
 const { sendResponse } = require('../helpers/apiResponse');
 const { getLastWeekDate } = require('../helpers/utils');
+const cron = require('node-cron');
 
 const getMessages = async (req, res) => {
     try {
@@ -77,6 +78,7 @@ const deleteMessage = async (req, res) => {
 const deleteBeforWeek = async () => {
     try {
         const oldDate = getLastWeekDate();
+        console.error("oldDate", oldDate);
         await Message.deleteMessageBeforWeek(oldDate);
     } catch (error) {
         return;
@@ -95,11 +97,12 @@ const updateSeenBeforeId = async (req, res) => {
 };
 
 const deleteOldMessages = () => {
-    const intervalInMilliseconds = 7 * 24 * 60 * 60 * 1000; // Calculate milliseconds in a week
-    setInterval(function() {
+    cron.schedule('0 0 * * 0', () => {
+        console.error("delete message");
         deleteBeforWeek();
-    }, intervalInMilliseconds);
+    }); 
 };
+
 module.exports = {
     getMessages,
     getStaffMessages,
