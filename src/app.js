@@ -67,7 +67,7 @@ app.get('/*', (req, res, next) => {
 // ***************** END fronEnd testing **************** //
 
 // ***************** Keep the server alive **************** //
-const url = "https://administreramer.se/server/ping";
+const url = 'https://administreramer.se/server/ping';
 async function pingServer() {
     try {
         const response = await fetch(url);

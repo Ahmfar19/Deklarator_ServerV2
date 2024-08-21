@@ -105,7 +105,6 @@ const generatePassword = async (length = 12) => {
     return password;
 };
 
-
 module.exports = {
     getCurrentDateTime,
     getFutureDateTime,

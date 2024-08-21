@@ -78,7 +78,6 @@ const deleteMessage = async (req, res) => {
 const deleteBeforWeek = async () => {
     try {
         const oldDate = getLastWeekDate();
-        console.error("oldDate", oldDate);
         await Message.deleteMessageBeforWeek(oldDate);
     } catch (error) {
         return;
@@ -98,9 +97,8 @@ const updateSeenBeforeId = async (req, res) => {
 
 const deleteOldMessages = () => {
     cron.schedule('0 0 * * 0', () => {
-        console.error("delete message");
         deleteBeforWeek();
-    }); 
+    });
 };
 
 module.exports = {
