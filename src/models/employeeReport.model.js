@@ -5,184 +5,230 @@ class EmployeeReport {
         this.connectionName = connectionName;
         this.employee_id = options.employee_id;
         this.report_item_id = options.report_item_id;
-        this.quantity = options.quantity;
-        this.sum = options.sum;
+        this.commited = options.commited;
         this.date = options.date;
     }
 
-    static async updateByReportId(employee_id, reportItemsData, connectionName) {
-        if (!Array.isArray(reportItemsData) || reportItemsData.length === 0) {
-            throw new Error('Invalid report items data');
+    static async createEmployeeReport(reportData, connectionName) {
+        if (!reportData) {
+            throw new Error('Invalid report data');
         }
 
-        const insertionPromises = reportItemsData.map(async (item) => {
-            const sql = `UPDATE employee_report SET 
-             report_item_id = ${item.report_item_id},
-             quantity = ${item.quantity},
-             sum = ${item.sum},
-             date = "${item.date}"
-             WHERE employee_id = ${employee_id}
-             AND report_id = ${item.report_id}
-             `;
-            await connectionManager.executeQuery(connectionName, sql);
-        });
+        const sql = `
+            INSERT INTO employee_report 
+            (
+                employee_id, 
+                date,
+                commited
+            ) 
+            VALUES (?, ?, ?)
+            `;
 
-        await Promise.all(insertionPromises);
+        const values = [reportData.employee_id, reportData.date, reportData.commited];
 
-        // Return success status
-        return true;
+        const result = await connectionManager.executeQuery(connectionName, sql, values);
+        return result;
     }
 
     static async getByEmployeeId(id, connectionName) {
         const sql = `
             SELECT 
-            report_id,
-            employee_id,
-            report_item_id,
-            quantity,
-            sum,
-            DATE_FORMAT(date, '%Y-%m-%d') AS date
-            FROM employee_report 
-            JOIN report_template ON report_template.item_id = employee_report.report_item_id
-            WHERE employee_id = ${id}
+                er.report_id,
+                er.employee_id,
+                CONCAT(e.fname, ' ', e.lname) AS employee_name,
+                DATE_FORMAT(er.date, '%Y-%m-%d') AS date,
+                er.commited,
+                eri.report_item_id,
+                eri.deviation_period,
+                eri.worked_hours,
+                eri.ob,
+                eri.comments,
+                rt.text AS template_text
+            FROM employee_report er
+            JOIN employee_report_items eri ON er.report_id = eri.report_id
+            JOIN report_template rt ON eri.report_item_id = rt.item_id
+            JOIN employee e ON er.employee_id = e.employee_id
+            WHERE er.employee_id = ?
         `;
-        const result = await connectionManager.executeQuery(connectionName, sql);
-        return result;
-    }
 
-    static async createEmployeeReport(employee_id, reportItemsData, connectionName) {
-        if (!Array.isArray(reportItemsData) || reportItemsData.length === 0) {
-            throw new Error('Invalid report items data');
-        }
-        // Create an array of promises for report item insertion
-        const insertionPromises = reportItemsData.map(async (item) => {
-            const sql =
-                'INSERT INTO employee_report (employee_id, report_item_id, quantity, sum, date) VALUES (?, ?, ?, ?, ?)';
-            const values = [employee_id, item.report_item_id, item.quantity, item.sum, item.date];
-            return await connectionManager.executeQuery(connectionName, sql, values);
+        const rows = await connectionManager.executeQuery(connectionName, sql, [id]);
+
+        // Initialize an object to hold the structured data by report_id
+        const result = {};
+
+        // Populate the result object
+        rows.forEach((row) => {
+            if (!result[row.report_id]) {
+                // Initialize the report entry in result object
+                result[row.report_id] = {
+                    reportData: {
+                        date: row.date,
+                        commited: Boolean(row.commited),
+                        employee_id: row.employee_id,
+                        employee_name: row.employee_name,
+                        report_id: row.report_id,
+                    },
+                    reportItems: [],
+                };
+            }
+
+            // Add report item to the appropriate report entry
+            result[row.report_id].reportItems.push({
+                report_item_id: row.report_item_id,
+                deviation_period: row.deviation_period,
+                worked_hours: row.worked_hours,
+                ob: row.ob,
+                comments: row.comments,
+                text: row.template_text,
+            });
         });
 
-        // Wait for all report items to be inserted
-        const results = await Promise.all(insertionPromises);
+        // Convert result object to an array of reports
+        const formattedResult = Object.values(result);
 
-        const from = results[0].insertId;
-        const to = from + results.length - 1;
+        return formattedResult;
+    }
 
-        const insertedReports = await this.geRangeReports(from, to, connectionName);
+    static async updateByReportId(reportData, connectionName) {
+        if (!reportData) {
+            throw new Error('Invalid report items data');
+        }
+        const sql = `UPDATE employee_report SET 
+                commited = ?, 
+                date = ?
+                WHERE report_id = ?`;
 
-        return insertedReports;
+        const values = [reportData.commited, reportData.date, reportData.report_id];
+
+        await connectionManager.executeQuery(connectionName, sql, values);
+        return true;
+    }
+
+    static async getAllEmployeeReports(filterKey = null, filterValue = null, connectionName) {
+        // Start the SQL query
+
+        let sql = `
+            SELECT 
+                er.report_id,
+                er.employee_id,
+                e.company_id,
+                e.personalnumber,
+                CONCAT(e.fname, ' ', e.lname) AS employee_name,
+                DATE_FORMAT(er.date, '%Y-%m-%d') AS date,
+                er.commited,
+                eri.report_item_id,
+                eri.deviation_period,
+                eri.worked_hours,
+                eri.ob,
+                eri.comments,
+                rt.text AS template_text
+            FROM employee_report er
+            JOIN employee_report_items eri ON er.report_id = eri.report_id
+            JOIN report_template rt ON eri.report_item_id = rt.item_id
+            JOIN employee e ON er.employee_id = e.employee_id
+        `;
+
+        // If a filter key and value are provided, add a WHERE clause
+        const values = [];
+        if (filterKey && filterValue) {
+            sql += ` WHERE ${filterKey} = ?`;
+            values.push(filterValue);
+        }
+
+        const rows = await connectionManager.executeQuery(connectionName, sql, values);
+
+        // Initialize an object to hold the structured data by report_id
+        const result = {};
+
+        // Populate the result object
+        rows.forEach((row) => {
+            if (!result[row.report_id]) {
+                // Initialize the report entry in result object
+                result[row.report_id] = {
+                    reportData: {
+                        date: row.date,
+                        commited: Boolean(row.commited),
+                        employee_id: row.employee_id,
+                        employee_name: row.employee_name,
+                        personalnumber: row.personalnumber,
+                        report_id: row.report_id,
+                    },
+                    reportItems: [],
+                };
+            }
+
+            // Add report item to the appropriate report entry
+            result[row.report_id].reportItems.push({
+                report_item_id: row.report_item_id,
+                deviation_period: row.deviation_period,
+                worked_hours: row.worked_hours,
+                ob: row.ob,
+                comments: row.comments,
+                text: row.template_text,
+            });
+        });
+
+        // Convert result object to an array of reports
+        const formattedResult = Object.values(result);
+
+        return formattedResult;
     }
 
     static async getAllReportItemsByCompanyId(companyId, connectionName) {
-        const sql = `SELECT 
-        er.report_id, 
-        er.employee_id,
-        er.report_item_id,
-        er.quantity,
-        er.sum,
-        e.personalnumber,
-        e.extent,
-        rt.text,
-        rt.item_id,
-        CONCAT(e.fname, ' ', e.lname) AS employee_name,
-        DATE_FORMAT(er.date, '%Y-%m-%d') AS date
-        FROM employee_report er
-        JOIN employee e ON er.employee_id = e.employee_id
-        JOIN report_template rt ON er.report_item_id = rt.item_id
-        WHERE company_id = ${companyId}
-       `;
-        const result = await connectionManager.executeQuery(connectionName, sql);
-        return result;
-    }
-
-    static async getAllReportItems(connectionName) {
-        const sql = `SELECT 
-        er.report_id, 
-        er.employee_id,
-        er.report_item_id,
-        er.quantity,
-        er.sum,
-        e.personalnumber,
-        e.extent,
-        rt.text,
-        rt.item_id,
-        co.company_name,
-        CONCAT(e.fname, ' ', e.lname) AS employee_name,
-        DATE_FORMAT(er.date, '%Y-%m-%d') AS date
-        FROM employee_report er
-        JOIN employee e ON er.employee_id = e.employee_id
-        JOIN report_template rt ON er.report_item_id = rt.item_id
-        JOIN company co ON co.company_id = e.company_id
-       `;
-        const result = await connectionManager.executeQuery(connectionName, sql);
-        return result;
-    }
-
-    static async getReportItemsByFilter(key, value, connectionName) {
-        const sql = `SELECT 
-        er.report_id, 
-        er.employee_id,
-        er.report_item_id,
-        er.quantity,
-        er.sum,
-        e.personalnumber,
-        e.extent,
-        rt.text,
-        rt.item_id,
-        co.company_name,
-        CONCAT(e.fname, ' ', e.lname) AS employee_name,
-        DATE_FORMAT(er.date, '%Y-%m-%d') AS date
-        FROM employee_report er
-        JOIN employee e ON er.employee_id = e.employee_id
-        JOIN report_template rt ON er.report_item_id = rt.item_id
-        JOIN company co ON co.company_id = e.company_id
-        WHERE ${key} = '${value}';
-       `;
-        const result = await connectionManager.executeQuery(connectionName, sql);
-        return result;
+        const sql = `
+            SELECT 
+                er.report_id,
+                er.employee_id,
+                er.date,
+                er.commited,
+                e.personalnumber,
+                e.extent,
+                CONCAT(e.fname, ' ', e.lname) AS employee_name,
+                DATE_FORMAT(er.date, '%Y-%m-%d') AS date
+            FROM employee_report er
+            JOIN employee e ON er.employee_id = e.employee_id
+            WHERE e.company_id = ?
+        `;
+        const rows = await connectionManager.executeQuery(connectionName, sql, [companyId]);
+        return rows;
     }
 
     static async deleteEmployeeReport(id, connectionName) {
-        const [empId, year, month] = id.split('-');
 
-        const sql = `DELETE FROM employee_report 
-            WHERE employee_id = ${empId}
-            AND YEAR(date) = ${year} 
-            AND MONTH(date) = ${month}
+
+        const sql = `
+            DELETE FROM employee_report 
+            WHERE report_id = ? 
         `;
-        const result = await connectionManager.executeQuery(connectionName, sql);
-        return result;
+
+        const rows = await connectionManager.executeQuery(connectionName, sql, [id]);
+        return rows;
     }
 
     static async geRangeReports(from, to, connectionName) {
-        const sql = `SELECT 
-        er.report_id,
-        er.employee_id,
-        er.report_item_id,
-        er.quantity,
-        er.sum,
-        e.personalnumber,
-        e.extent,
-        rt.text,
-        rt.item_id,
-        CONCAT(e.fname, ' ', e.lname) AS employee_name,
-        DATE_FORMAT(er.date, '%Y-%m-%d') AS date
-        FROM employee_report er
-        JOIN employee e ON er.employee_id = e.employee_id
-        JOIN report_template rt ON er.report_item_id = rt.item_id
-        WHERE report_id >= ${from} AND report_id <= ${to};
-       `;
-        const result = await connectionManager.executeQuery(connectionName, sql);
-        return result;
-    }
-
-    static async deleteReportItems(values, connectionName) {
-        const deleteReportEntries = values.map(async (item) => {
-            const sql = `DELETE FROM employee_report WHERE report_id = ${item.report_id}`;
-
-            await connectionManager.executeQuery(connectionName, sql);
-        });
-        await Promise.all(deleteReportEntries);
+        const sql = `
+            SELECT 
+                er.report_id,
+                er.employee_id,
+                er.report_item_id,
+                er.deviation_period,
+                er.worked_hours,
+                er.ob,
+                er.comments,
+                er.commited,
+                e.personalnumber,
+                e.extent,
+                rt.text,
+                rt.item_id,
+                CONCAT(e.fname, ' ', e.lname) AS employee_name,
+                DATE_FORMAT(er.date, '%Y-%m-%d') AS date
+            FROM employee_report er
+            JOIN employee e ON er.employee_id = e.employee_id
+            JOIN report_template rt ON er.report_item_id = rt.item_id
+            WHERE report_id BETWEEN ? AND ?
+        `;
+        const rows = await connectionManager.executeQuery(connectionName, sql, [from, to]);
+        return rows;
     }
 }
 

@@ -72,20 +72,6 @@ app.use('/server/api/:customerId', apiRouter);
 // ***************** END fronEnd testing **************** //
 
 // ***************** Keep the server alive **************** //
-const url = "https://administreramer.se/server/ping";
-async function pingServer() {
-    try {
-        const response = await fetch(url);
-        if (response.ok) {
-            // console.error('Ping successful:', response.status);
-        } else {
-            // console.error(`Request failed. Status Code: ${response.status}`);
-        }
-    } catch (error) {
-        // console.error('Error during ping request:', error.message);
-    }
-}
-setInterval(pingServer, 4 * 60 * 1000);
 
 module.exports = app;
 

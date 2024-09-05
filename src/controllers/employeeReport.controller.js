@@ -5,47 +5,24 @@ const User = require('../models/user.model');
 const mailMessags = require('../helpers/emailMessages');
 const { getNowDate_time } = require('../helpers/utils');
 const { sendResponse } = require('../helpers/apiResponse');
+const reportItemsModel = require('../models/report_items.model');
 
-const updateReport = async (req, res) => {
-    try {
-        const { employee_id } = req.params;
-        const connectionName = req.customerId;
-        const reportItemsData = req.body;
-
-        await EmployeeReport.updateByReportId(employee_id, reportItemsData, connectionName);
-
-        sendResponse(res, 202, 'Accepted', 'Successfully updated a report.', null, null);
-    } catch (err) {
-        sendResponse(res, 500, 'Internal Server Error', null, err.message || err, null);
-    }
-};
-
-const getEmployeeReport = async (req, res) => {
-    try {
-        const connectionName = req.customerId;
-        const id = req.params.id;
-        const employeeReports = await EmployeeReport.getByEmployeeId(id, connectionName);
-        sendResponse(res, 200, 'Ok', 'Successfully retrieved all the employeeReports', null, employeeReports);
-    } catch (err) {
-        sendResponse(res, 500, 'Internal Server Error', null, err.message || err, null);
-    }
-};
 
 const addEmployeeReport = async (req, res) => {
     try {
-        const { employee_id } = req.params;
+        const { reportItems, reportData } = req.body;
         const connectionName = req.customerId;
-        const reportItemsData = req.body; // Assuming req.body contains the array of report items
+        const report = await EmployeeReport.createEmployeeReport(reportData, connectionName);
 
-        const data = await EmployeeReport.createEmployeeReport(employee_id, reportItemsData, connectionName);
+        if (report && report.insertId) {
+            await reportItemsModel.createEmployeeReportItems(report.insertId, reportItems, connectionName);
 
-        if (data) {
             const title = mailMessags.employee.title;
             const body = mailMessags.employee.body;
             const bodyString = JSON.stringify({
                 key: body,
                 params: {
-                    0: `${data[0].employee_name}`,
+                    0: `${reportData.employee_name}`,
                 },
             });
             const admins = await User.getAdmins(connectionName);
@@ -63,46 +40,46 @@ const addEmployeeReport = async (req, res) => {
                 }, connectionName);
                 await message.save();
             }
-            return sendResponse(res, 202, 'Accepted', 'Employee reports created successfully.', null, data);
+            return sendResponse(res, 202, 'Accepted', 'Employee reports created successfully.', null, report);
+        } else {
+            return sendResponse(res, 400, 'Bad Request', 'Failed to create employee reports.', null, null);
         }
     } catch (err) {
-        sendResponse(res, 500, 'Internal Server Error', null, err.message || err, null);
+         sendResponse(res, 500, 'Internal Server Error', null, err.message || err, null);
     }
 };
 
-const getReportsEmployeesByCompanyId = async (req, res) => {
+const getReportsEmployeeByEmployeeId = async (req, res) => {
     try {
+        const empId = req.params.empId;
         const connectionName = req.customerId;
-        const companyId = req.params.companyId;
-        const reportsEmployessByCompanyId = await EmployeeReport.getAllReportItemsByCompanyId(
-            companyId,
-            connectionName,
-        );
-
+        const reports = await EmployeeReport.getByEmployeeId(empId, connectionName);
         sendResponse(
             res,
             200,
             'Ok',
-            'Successfully retrieved all the reportsEmployessByCompanyId',
+            'Successfully retrieved all the employee reports',
             null,
-            reportsEmployessByCompanyId,
+            reports,
         );
     } catch (err) {
         sendResponse(res, 500, 'Internal Server Error', null, err.message || err, null);
     }
 };
 
-const getAllReportItems = async (req, res) => {
+const getAllEmployeeReports = async (req, res) => {
+    
     try {
         const connectionName = req.customerId;
-        const reportsEmployess = await EmployeeReport.getAllReportItems(connectionName);
+
+        const reports = await EmployeeReport.getAllEmployeeReports('', '', connectionName);
         sendResponse(
             res,
             200,
             'Ok',
-            'Successfully retrieved all the reportsEmployess',
+            'Successfully retrieved all the employee reports',
             null,
-            reportsEmployess,
+            reports,
         );
     } catch (err) {
         sendResponse(res, 500, 'Internal Server Error', null, err.message || err, null);
@@ -113,8 +90,19 @@ const getFilterdReports = async (req, res) => {
     const { key, value } = req.query;
     const connectionName = req.customerId;
     try {
-        const reportsEmployess = await EmployeeReport.getReportItemsByFilter(key, value, connectionName);
+        const reportsEmployess = await EmployeeReport.getAllEmployeeReports(key, value, connectionName);
         sendResponse(res, 200, 'Ok', 'Successfully retrieved the remenders', null, reportsEmployess);
+    } catch (err) {
+        sendResponse(res, 500, 'Internal Server Error', null, err.message || err, null);
+    }
+};
+
+const updateReport = async (req, res) => {
+    try {
+        const connectionName = req.customerId;
+        const { reportData } = req.body;
+        await EmployeeReport.updateByReportId(reportData, connectionName);
+        sendResponse(res, 202, 'Accepted', 'Successfully updated a report.', null, null);
     } catch (err) {
         sendResponse(res, 500, 'Internal Server Error', null, err.message || err, null);
     }
@@ -124,34 +112,19 @@ const deleteEmployeeReport = async (req, res) => {
     try {
         const connectionName = req.customerId;
         const id = req.params.id;
-
         await EmployeeReport.deleteEmployeeReport(id, connectionName);
-
+    
         sendResponse(res, 200, 'Ok', 'Successfully deleted all the report for the specifid month', null, null);
     } catch (err) {
         sendResponse(res, 500, 'Internal Server Error', null, err.message || err, null);
     }
 };
 
-const deleteEmployeeItemReport = async (req, res) => {
-    try {
-        const connectionName = req.customerId;
-        const values = req.body;
-        await EmployeeReport.deleteReportItems(values, connectionName);
-
-        sendResponse(res, 200, 'Ok', 'Successfully deleted the specified entries', null, null);
-    } catch (err) {
-        sendResponse(res, 500, 'Internal Server Error', null, err.message || err, null);
-    }
-};
-
 module.exports = {
-    updateReport,
-    getEmployeeReport,
     addEmployeeReport,
-    getReportsEmployeesByCompanyId,
+    getReportsEmployeeByEmployeeId,
     deleteEmployeeReport,
-    getAllReportItems,
+    getAllEmployeeReports,
     getFilterdReports,
-    deleteEmployeeItemReport,
+    updateReport
 };

@@ -25,6 +25,7 @@ const employeeController = require('../controllers/employee.controller');
 const employeeReportController = require('../controllers/employeeReport.controller');
 const reconciliationController = require('../controllers/reconciliation.controller');
 const addConnectionController = require('../controllers/addConnection.controller');
+const employeeReportItemsController = require('../controllers/report_items.controller');
 
 const path = require('path');
 
@@ -191,14 +192,21 @@ router.delete('/employee/delete/:id', employeeController.deleteEmployee);
 router.get('/reportTemplates', reportTemaplteController.getReportTemplate);
 
 ///////////////////////  employee_Report   ////////////////////////////
-router.get('/employeeReports', employeeReportController.getAllReportItems);
+router.get('/employeeReports', employeeReportController.getAllEmployeeReports);
 router.get('/employeeReports/filter', employeeReportController.getFilterdReports);
-router.put('/employeeReport/edit/:employee_id', employeeReportController.updateReport);
-router.delete('/employeeReport/items/delete', employeeReportController.deleteEmployeeItemReport);
-router.get('/reportTaplate/employee/:id', employeeReportController.getEmployeeReport);
-router.post('/employeeReport/new/:employee_id', employeeReportController.addEmployeeReport);
-router.get('/reports/employees/:companyId', employeeReportController.getReportsEmployeesByCompanyId);
+router.get('/reports/employee/:empId', employeeReportController.getReportsEmployeeByEmployeeId);
+router.put('/employeeReport/edit', employeeReportController.updateReport);
+router.post('/employeeReport/new', employeeReportController.addEmployeeReport);
 router.delete('/report/delete/:id', employeeReportController.deleteEmployeeReport);
+
+///////////////////////  employee_Report_Items   ////////////////////////////
+router.get('/employeeReportItems', employeeReportItemsController.getAllEmployeeReportItems);
+router.get('/employeeReportItems/filter', employeeReportItemsController.getFilteredReportItems);
+router.put('/employeeReportItems/edit', employeeReportItemsController.updateEmployeeReportItem);
+router.delete('/employeeReportItems/delete', employeeReportItemsController.deleteMultipleEmployeeReportItems);
+router.get('/employeeReportItems/report/:report_id', employeeReportItemsController.getEmployeeReportItemsByReportId);
+router.post('/employeeReportItems/new', employeeReportItemsController.addEmployeeReportItem);
+router.delete('/employeeReportItems/delete/:item_id', employeeReportItemsController.deleteEmployeeReportItem);
 
 router.get('/reconciliations', reconciliationController.getReconciliations);
 router.get('/reconciliations/group', reconciliationController.getReconciliationsGroup);

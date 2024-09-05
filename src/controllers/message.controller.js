@@ -84,9 +84,7 @@ const deleteMessage = async (req, res) => {
 
 const deleteBeforWeek = async (connectionName) => {
     try {
-        console.error("connectionName", connectionName);
         const oldDate = getLastWeekDate();
-        console.error("oldDate", oldDate);
         await Message.deleteMessageBeforWeek(oldDate, connectionName);
     } catch (error) {
         return;
@@ -108,7 +106,7 @@ const updateSeenBeforeId = async (req, res) => {
 const deleteOldMessages = () => {
     cron.schedule('0 0 * * 0', async () => {
         const connections = await connectionManager.getConnections();
-        console.error("connections", connections);
+       
         for (let key in connections) {
             deleteBeforWeek(key);
         }
