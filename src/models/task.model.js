@@ -39,6 +39,29 @@ class Task {
         return this.task_id;
     }
 
+    static async getMulti(taskIds) {
+        const sql = `
+            SELECT 
+            task.*, 
+            CONCAT(assigned_staff.fname, ' ', assigned_staff.lname) AS assigned,
+            CONCAT(creator_staff.fname, ' ', creator_staff.lname) AS creator,
+            assigned_staff.image,
+            company.company_name
+            FROM 
+                task
+            JOIN 
+                staff AS assigned_staff ON task.staff_assigned = assigned_staff.staff_id
+            JOIN 
+                staff AS creator_staff ON task.staff_created = creator_staff.staff_id
+            JOIN 
+                company ON task.company_id = company.company_id
+
+            WHERE task_id IN (${taskIds})
+        `;
+        const [rows] = await pool.execute(sql);
+        return rows;
+    }
+
     async saveMulti() {
         // Validate that companyIds is an array
         if (!Array.isArray(this.company_id) || this.company_id.length === 0) {
@@ -85,7 +108,9 @@ class Task {
         for (let i = 0; i < result.affectedRows; i++) {
             insertedTaskIds.push(result.insertId + i);
         }
-        return insertedTaskIds;
+
+        const insertedTasks = await Task.getMulti(insertedTaskIds);
+        return insertedTasks || [];
     }
 
     static async getTask(id) {
@@ -106,6 +131,7 @@ class Task {
         task.*, 
         CONCAT(assigned_staff.fname, ' ', assigned_staff.lname) AS assigned,
         CONCAT(creator_staff.fname, ' ', creator_staff.lname) AS creator,
+        assigned_staff.image,
         company.company_name
         FROM 
             task
