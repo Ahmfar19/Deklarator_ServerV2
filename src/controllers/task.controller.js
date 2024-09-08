@@ -39,7 +39,7 @@ const addMultiTask = async (req, res) => {
         const task = new Task(req.body);
         const insertedTaskIds = await task.saveMulti(connectionName);
 
-        sendResponse(res, 201, 'Created', 'Successfully created a message.', null, { task_ids: insertedTaskIds });
+        sendResponse(res, 201, 'Created', 'Successfully created a message.', null, insertedTaskIds);
     } catch (err) {
         sendResponse(res, 500, 'Internal Server Error', null, err.message || err, null);
     }

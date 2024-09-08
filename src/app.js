@@ -38,6 +38,12 @@ const corsOptions = {
 
 app.use(NODE_ENV === 'development' ? cors() : cors(corsOptions));
 
+app.use('/server/api/:customerId/assets/:customerId/images/users', (req, res, next) => {
+    const customerId = req.params.customerId;
+    const staticPath = `assets/${customerId}/images/users`;
+    express.static(staticPath)(req, res, next);
+});
+
 // To allow access to the assets from outside the server
 async function verifyInlogged(req, res, next) {
     const token = req.query?.token;
