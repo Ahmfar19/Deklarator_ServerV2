@@ -159,15 +159,6 @@ const checkForSingleReminder = async () => {
     }
 };
 
-const sendReminderEmail = () => {
-    cron.schedule('0 8 * * *', async () => {
-        checkForReminder();
-    }, {
-        timezone: 'Europe/Stockholm',
-    });
-};
-
 module.exports = {
-    sendReminderEmail,
     checkForReminder,
 };

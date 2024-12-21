@@ -2,7 +2,7 @@ const express = require('express');
 const cookieParser = require('cookie-parser');
 const apiRouter = require('./routers/api.router');
 const cors = require('cors');
-const { sendReminderEmail } = require('./controllers/sendReminder.controller.js');
+const { checkForReminder } = require('./controllers/sendReminder.controller.js');
 const { deleteOldMessages } = require('./controllers/message.controller.js');
 const { verifyToken } = require('./helpers/utils.js');
 require('./databases/mysql.db');
@@ -13,6 +13,11 @@ app.use(cookieParser());
 app.use(express.json());
 
 app.get('/server/ping', (req, res) => {
+    res.send('Server is active.');
+});
+
+app.get('/server/senReminder', (req, res) => {
+    checkForReminder()
     res.send('Server is active.');
 });
 
@@ -51,7 +56,7 @@ async function verifyInlogged(req, res, next) {
 app.use('/server/api/assets', verifyInlogged, express.static('assets'));
 
 // Setting an intervall every 6 hours that cehck for a reminder to send.
-sendReminderEmail();
+checkForReminder();
 // Setting an intervall every 7 days to delete messages
 deleteOldMessages();
 
