@@ -39,7 +39,7 @@ class Company {
             "${this.email}",
             ${this.phone},
             ${this.hour_cost},
-            ${this.isActive || true}
+            ${this.isActive ?? true}
         )`;
         const result = await pool.execute(sql);
         this.company_id = result[0].insertId;
@@ -79,23 +79,22 @@ class Company {
             hour_cost = ?, 
             isActive = ? 
             WHERE company_id = ?`;
-    
+
         const values = [
-            this.type_id, 
-            this.company_name, 
-            this.organization_number, 
-            this.contact_person, 
-            this.address, 
-            this.postcode, 
-            this.city, 
-            this.email, 
-            this.phone, 
-            this.hour_cost, 
-            this.isActive, 
+            this.type_id,
+            this.company_name,
+            this.organization_number,
+            this.contact_person,
+            this.address,
+            this.postcode,
+            this.city,
+            this.email,
+            this.phone,
+            this.hour_cost,
+            this.isActive,
             id,
         ];
-    
-        
+
         const [rows] = await pool.execute(sql, values);
         return rows;
     }

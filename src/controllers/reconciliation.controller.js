@@ -26,13 +26,13 @@ const getReconciliationsGroup = async (req, res) => {
     }
 };
 
-const getYearReconciliations = async (req, res) => {
+const getReconciliationsListByName = async (req, res) => {
     try {
-        const year = req.params.year;
-        if (!year) {
-            sendResponse(res, 500, 'Invaöid argument', null, null, null);
+        const name = req.params.name;
+        if (!name) {
+            sendResponse(res, 500, 'Invalid argument', null, null, null);
         } else {
-            const singleReconciliations = await Reconciliations.getAll(year);
+            const singleReconciliations = await Reconciliations.getByName(name);
             sendResponse(res, 200, 'Ok', 'Successfully retrieved all the reconciliations', null, singleReconciliations);
         }
     } catch (err) {
@@ -40,13 +40,13 @@ const getYearReconciliations = async (req, res) => {
     }
 };
 
-const deleteYearReconciliations = async (req, res) => {
+const deleteReconciliationByName = async (req, res) => {
     try {
-        const year = req.params.year;
-        if (!year) {
+        const name = req.params.name;
+        if (!name) {
             sendResponse(res, 500, 'Invalid argument', null, null, null);
         } else {
-            await Reconciliations.deleteByYear(year);
+            await Reconciliations.deleteByName(name);
             sendResponse(res, 200, 'Ok', 'Successfully deletion', null, null);
         }
     } catch (err) {
@@ -93,8 +93,8 @@ module.exports = {
     getReconciliations,
     updateReconciliations,
     creteNewReconciliation,
-    getYearReconciliations,
+    getReconciliationsListByName,
     getReconciliationsGroup,
-    deleteYearReconciliations,
+    deleteReconciliationByName,
     deleteReconciliations,
 };

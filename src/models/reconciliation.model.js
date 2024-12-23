@@ -5,14 +5,14 @@ class Case {
     constructor(options) {
         this.reconciliation_id = options.reconciliation_id;
         this.company_id = options.company_id;
-        this.reconciliation_date = options.reconciliation_date;
+        this.reconciliation_name = options.reconciliation_name;
         this.reconciliation_data = options.reconciliation_data;
     }
 
     static async save(company_id, date, defaultData) {
         const sql = `INSERT INTO reconciliation (
             company_id,
-            reconciliation_date,
+            reconciliation_name,
             reconciliation_data
         ) VALUES (
             ${company_id},
@@ -38,11 +38,11 @@ class Case {
             throw new Error('companyIds should be a non-empty array');
         }
         const companies = data.companyIds;
-        const year = data.reconciliation_date;
+        const year = data.reconciliation_name;
         const defaultData = JSON.stringify([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
         const promises = companies.map(async company_id => this.save(company_id, year, defaultData));
         await Promise.all(promises);
-        const insertedData = await this.getByYear(year);
+        const insertedData = await this.getByName(year);
         return insertedData;
     }
 
@@ -52,28 +52,29 @@ class Case {
             FROM reconciliation
             JOIN company ON company.company_id = reconciliation.company_id
         `;
+        console.error('sql', sql);
         const [rows] = await pool.execute(sql);
         return rows;
     }
 
-    static async getByYear(year) {
+    static async getByName(name) {
         const sql = `
             SELECT reconciliation.*, company.company_name
             FROM reconciliation
             JOIN company ON company.company_id = reconciliation.company_id
-            WHERE reconciliation_date = ${year}`;
+            WHERE reconciliation_name = '${name}'`;
         const [rows] = await pool.execute(sql);
         return rows;
     }
 
     static async getGroups() {
-        const sql = 'SELECT reconciliation_date FROM reconciliation GROUP BY reconciliation_date';
+        const sql = 'SELECT reconciliation_name FROM reconciliation GROUP BY reconciliation_name';
         const [rows] = await pool.execute(sql);
         return rows;
     }
 
-    static async deleteByYear(year) {
-        const sql = `DELETE FROM reconciliation WHERE reconciliation_date = "${year}"`;
+    static async deleteByName(name) {
+        const sql = `DELETE FROM reconciliation WHERE reconciliation_name = "${name}"`;
         const [rows] = await pool.execute(sql);
         return rows;
     }

@@ -208,8 +208,8 @@ router.delete('/employeeReportItems/delete/:item_id', employeeReportItemsControl
 
 router.get('/reconciliations', reconciliationController.getReconciliations);
 router.get('/reconciliations/group', reconciliationController.getReconciliationsGroup);
-router.get('/reconciliations/:year', reconciliationController.getYearReconciliations);
-router.delete('/reconciliations/delete/:year', reconciliationController.deleteYearReconciliations);
+router.get('/reconciliations/:name', reconciliationController.getReconciliationsListByName);
+router.delete('/reconciliations/delete/:name', reconciliationController.deleteReconciliationByName);
 router.delete('/reconciliations/delete/entry/:id', reconciliationController.deleteReconciliations);
 router.post('/reconciliations/new', reconciliationController.creteNewReconciliation);
 router.put('/reconciliations/edit/:reconciliation_id', reconciliationController.updateReconciliations);

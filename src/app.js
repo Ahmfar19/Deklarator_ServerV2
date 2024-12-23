@@ -17,7 +17,7 @@ app.get('/server/ping', (req, res) => {
 });
 
 app.get('/server/senReminder', (req, res) => {
-    checkForReminder()
+    checkForReminder();
     res.send('Server is active.');
 });
 
@@ -39,7 +39,6 @@ const corsOptions = {
 app.use(NODE_ENV === 'development' ? cors() : cors(corsOptions));
 
 app.use('/server/api/assets/images/users', express.static('assets/images/users'));
-
 
 // To allow access to the assets from outside the server
 async function verifyInlogged(req, res, next) {
