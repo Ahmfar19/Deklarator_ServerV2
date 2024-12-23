@@ -16,7 +16,7 @@ app.get('/server/ping', (req, res) => {
     res.send('Server is active.');
 });
 
-app.get('/server/senReminder', (req, res) => {
+app.get('/server/sendReminder', (req, res) => {
     checkForReminder();
     res.send('Server is active.');
 });
