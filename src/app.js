@@ -44,10 +44,16 @@ app.use('/server/api/assets/images/users', express.static('assets/images/users')
 async function verifyInlogged(req, res, next) {
     const token = req.cookies?.accessToken;
     const fingerprint = req.query?.cid + req.cookies?.staff_id;
+
+    console.error('fingerprint', fingerprint);
+    console.error('token', token);
+
+
     const authenticated = await verifyToken(fingerprint, token);
     if (authenticated) {
         next();
     } else {
+        console.error('1', 1);
         res.status(403).send('Forbidden');
     }
 }
@@ -62,6 +68,7 @@ deleteOldMessages();
 // app.get('/', (req, res) => res.send('It, works!'));
 app.use('/server/api/', apiRouter);
 
+
 // ***************** When testing the fronEnd by this server **************** //
 const path = require('path');
 app.use(express.static(path.join(__dirname, '../dist')));
@@ -73,31 +80,4 @@ app.get('/*', (req, res, next) => {
 });
 // ***************** END fronEnd testing **************** //
 
-// ***************** Keep the server alive **************** //
-const url = 'https://administreramer.se/server/ping';
-async function pingServer() {
-    try {
-        const response = await fetch(url);
-        if (response.ok) {
-            // console.error('Ping successful:', response.status);
-        } else {
-            // console.error(`Request failed. Status Code: ${response.status}`);
-        }
-    } catch (error) {
-        // console.error('Error during ping request:', error.message);
-    }
-}
-setInterval(pingServer, 4 * 60 * 1000);
-
 module.exports = app;
-
-// ***************** To save **************** //
-// app.use(function(req, res, next) {
-//     res.setHeader('Access-Control-Allow-Origin', '*');
-//     res.setHeader('Access-Control-Allow-Methods', 'GET, POST');
-//     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-//     next();
-// });
-
-// Old main router for the api
-// app.use('/api', apiRouter);
