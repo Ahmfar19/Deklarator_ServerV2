@@ -12,6 +12,7 @@ class Company {
         this.email = options.email;
         this.phone = options.phone;
         this.hour_cost = options.hour_cost;
+        this.isActive = options.isActive;
     }
     // create
     async save() {
@@ -25,7 +26,8 @@ class Company {
             city,
             email,
             phone,
-            hour_cost
+            hour_cost,
+            isActive
         ) VALUES (
             ${this.type_id}, 
             "${this.company_name}", 
@@ -36,7 +38,8 @@ class Company {
             "${this.city}", 
             "${this.email}",
             ${this.phone},
-            ${this.hour_cost}
+            ${this.hour_cost},
+            ${this.isActive || true}
         )`;
         const result = await pool.execute(sql);
         this.company_id = result[0].insertId;
@@ -62,19 +65,38 @@ class Company {
     }
     // update
     async updateCompany(id) {
-        const sql = `UPDATE company SET 
-        type_id = "${this.type_id}", 
-        company_name = "${this.company_name}", 
-        organization_number = "${this.organization_number}",
-        contact_person = "${this.contact_person}", 
-        address = "${this.address}",
-        postcode = ${this.postcode}, 
-        city = "${this.city}",
-        email = "${this.email}", 
-        phone = ${this.phone},
-        hour_cost = ${this.hour_cost}
-        WHERE company_id = ${id}`;
-        const [rows] = await pool.execute(sql);
+        const sql = `
+            UPDATE company SET 
+            type_id = ?, 
+            company_name = ?, 
+            organization_number = ?, 
+            contact_person = ?, 
+            address = ?, 
+            postcode = ?, 
+            city = ?, 
+            email = ?, 
+            phone = ?, 
+            hour_cost = ?, 
+            isActive = ? 
+            WHERE company_id = ?`;
+    
+        const values = [
+            this.type_id, 
+            this.company_name, 
+            this.organization_number, 
+            this.contact_person, 
+            this.address, 
+            this.postcode, 
+            this.city, 
+            this.email, 
+            this.phone, 
+            this.hour_cost, 
+            this.isActive, 
+            id,
+        ];
+    
+        
+        const [rows] = await pool.execute(sql, values);
         return rows;
     }
     // delete
