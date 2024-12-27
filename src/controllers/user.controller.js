@@ -158,7 +158,9 @@ const updateUser = async (req, res) => {
         const user = new User(userData);
         await user.updateUser(id);
 
-        sendResponse(res, 202, 'Accepted', 'Successfully updated a user.', null, null);
+        delete user.password;
+
+        sendResponse(res, 202, 'Accepted', 'Successfully updated a user.', null, user);
     } catch (err) {
         sendResponse(res, 500, 'Internal Server Error', null, err.message || err, null);
     }
@@ -300,6 +302,7 @@ const verifyToken = async (req, res) => {
     }
 };
 
+// NOT USED ANY MORE
 const getUsersImage = async (req, res) => {
     // Extract the file name from the request parameters
     const filename = req.params.filename;
