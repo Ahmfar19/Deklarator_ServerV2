@@ -10,6 +10,15 @@ const getAllPayments = async (req, res) => {
     }
 };
 
+const getGroupedPayments = async (req, res) => {
+    try {
+        const payments = await Payment.getGroupedPayments();
+        sendResponse(res, 200, 'Ok', 'Successfully retrieved all the company payments group', null, payments);
+    } catch (err) {
+        sendResponse(res, 500, 'Internal Server Error', null, err.message || err, null);
+    }
+};
+
 const getSinglePayment = async (req, res) => {
     try {
         const id = req.params.id;
@@ -87,4 +96,5 @@ module.exports = {
     updatePayment,
     deletePayment,
     getPaymentsBy_CompanyId,
+    getGroupedPayments
 };

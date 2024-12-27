@@ -45,6 +45,22 @@ class Payment {
         const [rows] = await pool.execute(sql);
         return rows;
     }
+
+    static async getGroupedPayments() {
+        const sql = `
+            SELECT 
+                p.*,
+                DATE_FORMAT(p.payment_date, "%Y-%m-%d") AS payment_date,
+                c.company_name  -- Select the company_name from the company table
+            FROM 
+                payment p
+            JOIN 
+                company c ON c.company_id = p.company_id;
+        `;
+        const [rows] = await pool.execute(sql);
+        return rows;
+    }
+
     // update
     async update_Payment(id) {
         const sql = `UPDATE payment SET 

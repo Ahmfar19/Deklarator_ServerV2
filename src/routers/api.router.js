@@ -112,6 +112,7 @@ router.get('/timeStamps/filter', timeStampController.getFilterByUserCompanyType)
 
 /////////////// Payment Routes /////////////////
 router.get('/payments', paymentController.getAllPayments);
+router.get('/payments/company/group', paymentController.getGroupedPayments);
 router.get('/payment/:id', paymentController.getSinglePayment);
 router.post('/payment/new', paymentController.createPayment);
 router.put('/payment/edit/:id', paymentController.updatePayment);
