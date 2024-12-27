@@ -121,8 +121,11 @@ const getSingleUser = async (req, res) => {
     try {
         const id = req.params.id;
         const singleUser = await User.getUserById(id);
-
-        sendResponse(res, 200, 'Ok', 'Successfully retrieved the single user.', null, singleUser);
+        if (!singleUser) {
+            throw new Error('The user is not found');
+        }
+        delete singleUser[0]?.password;
+        sendResponse(res, 200, 'Ok', 'Successfully retrieved the single user22.', null, singleUser);
     } catch (err) {
         sendResponse(res, 500, 'Internal Server Error', null, err.message || err, null);
     }
