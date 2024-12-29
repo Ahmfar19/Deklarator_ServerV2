@@ -7,7 +7,7 @@ const companyController = require('../controllers/company.controller');
 const noteController = require('../controllers/note.controller');
 const timerController = require('../controllers/timer.controller');
 const userController = require('../controllers/user.controller');
-const caseController = require('../controllers/case.controller');
+const companyCaseController = require('../controllers/companyCase.controller');
 const timeStampController = require('../controllers/timeStamp.controller');
 const paymentController = require('../controllers/payment.controller');
 const resetPassword = require('../controllers/reset_password.controller');
@@ -25,6 +25,7 @@ const employeeController = require('../controllers/employee.controller');
 const employeeReportController = require('../controllers/employeeReport.controller');
 const reconciliationController = require('../controllers/reconciliation.controller');
 const employeeReportItemsController = require('../controllers/report_items.controller');
+const commonController = require('../controllers/common.controller');
 
 const path = require('path');
 
@@ -85,10 +86,12 @@ router.delete('/note/delete/:id', noteController.deleteNote);
 router.get('/notes/companyId/:id', noteController.getNotesBy_CompanyId);
 
 ///////////////// Case Routes /////////////////
-router.get('/cases', caseController.getCases);
-router.get('/case/:id', caseController.getSingleCase);
-router.post('/case/new', caseController.addCase);
-router.put('/case/edit/:id', caseController.updateCase);
+router.get('/cases', companyCaseController.getCases);
+router.get('/case/:id', companyCaseController.getSingleCase);
+router.get('/case/company/:id', companyCaseController.getCompanyeCase);
+router.post('/case/new', companyCaseController.addCase);
+router.put('/case/edit/:id', companyCaseController.updateCase);
+router.delete('/case/:id', companyCaseController.deleteCase);
 
 ///////////////// Timer Routes /////////////////
 router.get('/timers', timerController.getTimers);
@@ -207,6 +210,7 @@ router.get('/employeeReportItems/report/:report_id', employeeReportItemsControll
 router.post('/employeeReportItems/new', employeeReportItemsController.addEmployeeReportItem);
 router.delete('/employeeReportItems/delete/:item_id', employeeReportItemsController.deleteEmployeeReportItem);
 
+///////////////////////  ReconciliationController   ////////////////////////////
 router.get('/reconciliations', reconciliationController.getReconciliations);
 router.get('/reconciliations/group', reconciliationController.getReconciliationsGroup);
 router.get('/reconciliations/:name', reconciliationController.getReconciliationsListByName);
@@ -214,6 +218,9 @@ router.delete('/reconciliations/delete/:name', reconciliationController.deleteRe
 router.delete('/reconciliations/delete/entry/:id', reconciliationController.deleteReconciliations);
 router.post('/reconciliations/new', reconciliationController.creteNewReconciliation);
 router.put('/reconciliations/edit/:reconciliation_id', reconciliationController.updateReconciliations);
+
+///////////////////////  employee_Report_Items   ////////////////////////////
+router.get('/table/:table', commonController.getAll);
 
 router.get('/checkAuth', (req, res) => {
     const access_token = req.cookies.accessToken;
