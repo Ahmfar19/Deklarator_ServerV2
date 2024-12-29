@@ -37,12 +37,10 @@ const corsOptions = {
 };
 app.use(NODE_ENV === 'development' ? cors() : cors(corsOptions));
 
-
 // Setting an intervall every 6 hours that cehck for a reminder to send.
 checkForReminder();
 // Setting an intervall every 7 days to delete messages
 deleteOldMessages();
-
 
 // ***************** When uploading to the production server **************** //
 app.use('/server/assets/images/users', express.static('assets/images/users'));
@@ -50,10 +48,6 @@ app.use('/server/assets', verifyInlogged, express.static('assets'));
 app.use('/server/api', apiRouter);
 
 module.exports = app;
-
-
-
-
 
 // ***************** When testing the fronEnd by this server **************** //
 // const path = require('path');

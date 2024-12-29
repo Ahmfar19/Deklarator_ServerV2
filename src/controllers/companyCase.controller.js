@@ -23,6 +23,19 @@ const getSingleCase = async (req, res) => {
     }
 };
 
+const getSingleCaseActivity = async (req, res) => {
+    try {
+        const id = req.params.id;
+        const singleCase = await CompanyCase.getCaseActivity(id);
+        if (!singleCase) {
+            return sendResponse(res, 404, 'Not Found', 'No case found with the given ID.', null, null);
+        }
+        sendResponse(res, 200, 'Ok', 'Successfully retrieved the case', null, singleCase);
+    } catch (err) {
+        sendResponse(res, 500, 'Internal Server Error', null, err.message || err, null);
+    }
+};
+
 const getCompanyeCase = async (req, res) => {
     try {
         const id = req.params.id;
@@ -76,5 +89,6 @@ module.exports = {
     addCase,
     updateCase,
     getCompanyeCase,
-    deleteCase
+    deleteCase,
+    getSingleCaseActivity,
 };

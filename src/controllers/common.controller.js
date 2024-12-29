@@ -3,7 +3,7 @@ const { sendResponse } = require('../helpers/apiResponse');
 
 const getAll = async (req, res) => {
     try {
-        const { table } = req.params ;
+        const { table } = req.params;
         const cases = await CommonModel.getAll(table);
         sendResponse(res, 200, 'Ok', 'Successfully retrieved all entries', null, cases);
     } catch (err) {

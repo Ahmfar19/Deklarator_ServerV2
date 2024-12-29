@@ -96,5 +96,5 @@ module.exports = {
     updatePayment,
     deletePayment,
     getPaymentsBy_CompanyId,
-    getGroupedPayments
+    getGroupedPayments,
 };

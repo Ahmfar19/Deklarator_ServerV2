@@ -4,8 +4,8 @@ class CompanyCase {
     constructor(options) {
         this.case_id = options.case_id;
         this.staff_created = +options.staff_created;
-        this.staff_assigned  = +options.staff_assigned;
-        this.company_id  = +options.company_id;
+        this.staff_assigned = +options.staff_assigned;
+        this.company_id = +options.company_id;
         this.case_name = options.case_name;
         this.case_description = options.case_description;
         this.case_status = +options.case_status;
@@ -43,7 +43,20 @@ class CompanyCase {
     }
 
     static async getCase(id) {
-        const sql = `SELECT * FROM company_case WHERE case_id = ${id}`;
+        const sql = `
+        SELECT 
+            company_case.*,
+            DATE_FORMAT(company_case.case_created, "%Y-%m-%d") AS case_created,
+            DATE_FORMAT(company_case.case_completed,"%Y-%m-%d") AS case_completed,
+            CONCAT(staff.fname, ' ', staff.lname) AS staff_assigned_name,
+            company.company_name,
+            company_case_status.case_status_name AS status_name
+        FROM company_case
+        JOIN company ON company_case.company_id = company.company_id
+        JOIN staff ON company_case.staff_assigned = staff.staff_id
+        JOIN company_case_status ON company_case.case_status = company_case_status.case_status_id
+        WHERE company_case.case_id = ${id}
+        ORDER BY company_case.case_id ASC`;
         const [rows] = await pool.execute(sql);
         return rows[0];
     }
@@ -53,7 +66,8 @@ class CompanyCase {
         SELECT 
             company_case.*,
             DATE_FORMAT(company_case.case_created, "%Y-%m-%d") AS case_created,
-            CONCAT(staff.fname, ' ', staff.lname) AS staff_assigned,
+            DATE_FORMAT(company_case.case_completed,"%Y-%m-%d") AS case_completed,
+            CONCAT(staff.fname, ' ', staff.lname) AS staff_assigned_name,
             company.company_name,
             company_case_status.case_status_name AS status_name
         FROM company_case
@@ -63,13 +77,25 @@ class CompanyCase {
         WHERE company_case.company_id = ${id}
         ORDER BY company_case.case_id ASC`;
         const [rows] = await pool.execute(sql);
-        return rows ;
+        return rows;
     }
 
+    static async getCaseActivity(id) {
+        const sql = `
+        SELECT 
+            company_case_activity.*,
+            DATE_FORMAT(company_case_activity.activity_date, "%Y-%m-%d") AS activity_date,
+            CONCAT(staff.fname, ' ', staff.lname) AS staff_name
+        FROM company_case_activity
+        JOIN staff ON company_case_activity.staff_id = staff.staff_id
+        WHERE company_case_activity.case_id = ${id}
+        ORDER BY company_case_activity.activity_id ASC`;
+        const [rows] = await pool.execute(sql);
+        return rows;
+    }
 
     async update(id) {
         const sql = `UPDATE company_case SET 
-            staff_created = ${this.staff_created},
             staff_assigned = ${this.staff_assigned},
             case_name = "${this.case_name}",
             case_description = "${this.case_description}",
