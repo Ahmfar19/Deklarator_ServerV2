@@ -57,6 +57,15 @@ const addCase = async (req, res) => {
     }
 };
 
+const addCaseActivity = async (req, res) => {
+    try {
+        const cases = await CompanyCase.addActivity(req.body);
+        sendResponse(res, 200, 'Ok', 'Successfully created the cases activity', null, cases);
+    } catch (err) {
+        sendResponse(res, 500, 'Internal Server Error', null, err.message || err, null);
+    }
+};
+
 const updateCase = async (req, res) => {
     try {
         const id = req.params.id;
@@ -91,4 +100,5 @@ module.exports = {
     getCompanyeCase,
     deleteCase,
     getSingleCaseActivity,
+    addCaseActivity,
 };

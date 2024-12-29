@@ -116,6 +116,27 @@ class CompanyCase {
         const [rows] = await pool.execute(sql);
         return rows.length > 0;
     }
+
+    static async addActivity(values) {
+        const sql = `INSERT INTO company_case_activity
+            (
+                activity_text,
+                case_id,
+                staff_id,
+                activity_title,
+                activity_date
+            )
+            VALUES (?, ?, ?, ?, ?)
+
+        `;
+        await pool.execute(sql, [
+            values.activity_text,
+            values.case_id,
+            values.staff_id,
+            values.activity_title,
+            values.activity_date,
+        ]);
+    }
 }
 
 module.exports = CompanyCase;

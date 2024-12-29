@@ -87,10 +87,11 @@ router.get('/notes/companyId/:id', noteController.getNotesBy_CompanyId);
 
 ///////////////// Case Routes /////////////////
 router.get('/cases', companyCaseController.getCases);
-router.get('/case/company/activity/:id', companyCaseController.getSingleCaseActivity);
+router.get('/case/activity/:id', companyCaseController.getSingleCaseActivity);
 router.get('/case/:id', companyCaseController.getSingleCase);
 router.get('/case/company/:id', companyCaseController.getCompanyeCase);
 router.post('/case/new', companyCaseController.addCase);
+router.post('/case/activity/new', companyCaseController.addCaseActivity);
 router.put('/case/edit/:id', companyCaseController.updateCase);
 router.delete('/case/:id', companyCaseController.deleteCase);
 
