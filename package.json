@@ -29,6 +29,7 @@
         "cross-env": "^7.0.3",
         "dotenv": "^16.0.0",
         "dprint": "^0.47.2",
+        "ejs": "^3.1.10",
         "express": "^4.17.3",
         "express-async-handler": "^1.2.0",
         "express-validator": "^7.0.1",

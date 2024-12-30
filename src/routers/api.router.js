@@ -93,7 +93,9 @@ router.get('/case/company/:id', companyCaseController.getCompanyeCase);
 router.post('/case/new', companyCaseController.addCase);
 router.post('/case/activity/new', companyCaseController.addCaseActivity);
 router.put('/case/edit/:id', companyCaseController.updateCase);
+router.put('/case/activity/edit', companyCaseController.updateCaseActivity);
 router.delete('/case/:id', companyCaseController.deleteCase);
+router.delete('/case/activity/:id', companyCaseController.deleteCaseActivity);
 
 ///////////////// Timer Routes /////////////////
 router.get('/timers', timerController.getTimers);

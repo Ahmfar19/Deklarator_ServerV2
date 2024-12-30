@@ -1,5 +1,8 @@
 const CompanyCase = require('../models/companyCase.model');
 const { sendResponse } = require('../helpers/apiResponse');
+const { sendEmailHtml } = require('./sendEmail.controller');
+const path = require('path');
+const ejs = require('ejs');
 
 const getCases = async (req, res) => {
     try {
@@ -49,8 +52,15 @@ const getCompanyeCase = async (req, res) => {
 const addCase = async (req, res) => {
     try {
         const myCase = new CompanyCase(req.body);
-        await myCase.save();
-        const addedCase = await CompanyCase.getCompanyCase(myCase.company_id);
+        const insertedId = await myCase.save();
+        const addedCase = await CompanyCase.getCase(insertedId);
+        const { company_id, case_id, case_name } = addedCase;
+        if (req.body.email) {
+            const title = `Nytt Ärende Skapat: ${company_id}-${case_id}`;
+            const templatePath = path.resolve(`assets/tampletes/newCompanyCase.ejs`);
+            const renderedHtml = await ejs.renderFile(templatePath, { case_name });
+            sendEmailHtml(req.body.email, title, renderedHtml);
+        }
         sendResponse(res, 201, 'Created', 'Successfully created a case.', null, addedCase);
     } catch (err) {
         sendResponse(res, 500, 'Internal Server Error', null, err.message || err, null);
@@ -59,8 +69,10 @@ const addCase = async (req, res) => {
 
 const addCaseActivity = async (req, res) => {
     try {
-        const cases = await CompanyCase.addActivity(req.body);
-        sendResponse(res, 200, 'Ok', 'Successfully created the cases activity', null, cases);
+        const activity_id = await CompanyCase.addActivity(req.body);
+        const insertedCase = req.body;
+        insertedCase.activity_id = activity_id
+        sendResponse(res, 200, 'Ok', 'Successfully created the cases activity', null, insertedCase);
     } catch (err) {
         sendResponse(res, 500, 'Internal Server Error', null, err.message || err, null);
     }
@@ -69,14 +81,25 @@ const addCaseActivity = async (req, res) => {
 const updateCase = async (req, res) => {
     try {
         const id = req.params.id;
-        const checkCase = await CompanyCase.checkIfCaseExisted(id);
-        if (!checkCase) {
-            return sendResponse(res, 404, 'Not Found', 'No case found for update', null, null);
-        }
-
         const updatedCase = new CompanyCase(req.body);
         await updatedCase.update(id);
+        const { company_id, case_id, case_name, case_completed } = updatedCase;
+        if (+updatedCase.case_status === 2 && req.body.email) {
+            const title = `Ett ärende är stängd: ${company_id}-${case_id}`;
+            const templatePath = path.resolve(`assets/tampletes/closedCompanyCase.ejs`);
+            const renderedHtml = await ejs.renderFile(templatePath, { case_name, case_completed });
+            sendEmailHtml(req.body.email, title, renderedHtml);
+        }
         sendResponse(res, 202, 'Accepted', 'Successfully updated the case.', null, updatedCase);
+    } catch (err) {
+        sendResponse(res, 500, 'Internal Server Error', null, err.message || err, null);
+    }
+};
+
+const updateCaseActivity = async (req, res) => {
+    try {
+        await CompanyCase.updateCaseActivity(req.body);
+        sendResponse(res, 202, 'Accepted', 'Successfully updated the case.', null, null);
     } catch (err) {
         sendResponse(res, 500, 'Internal Server Error', null, err.message || err, null);
     }
@@ -92,6 +115,16 @@ const deleteCase = async (req, res) => {
     }
 };
 
+const deleteCaseActivity = async (req, res) => {
+    try {
+        const id = req.params.id;
+        await CompanyCase.deleteByActivityId(id);
+        sendResponse(res, 202, 'Accepted', 'Successfully deleted the case activity.', null, null);
+    } catch (err) {
+        sendResponse(res, 500, 'Internal Server Error', null, err.message || err, null);
+    }
+};
+
 module.exports = {
     getCases,
     getSingleCase,
@@ -101,4 +134,6 @@ module.exports = {
     deleteCase,
     getSingleCaseActivity,
     addCaseActivity,
+    deleteCaseActivity,
+    updateCaseActivity
 };

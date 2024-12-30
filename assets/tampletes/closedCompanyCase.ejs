@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ärende Stängt</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f8f9fa;
+            color: #343a40;
+        }
+        .email-container {
+            max-width: 600px;
+            margin: 20px auto;
+            background: #ffffff;
+            border: 1px solid #dddddd;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .email-header {
+            background-color: #28a745;
+            color: #ffffff;
+            padding: 20px;
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+        }
+        .email-body {
+            padding: 20px;
+            font-size: 16px;
+            line-height: 1.6;
+        }
+        .email-body p {
+            margin: 10px 0;
+        }
+        .email-body ul {
+            list-style: none;
+            padding: 0;
+        }
+        .email-body ul li {
+            background: #f1f1f1;
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 4px;
+        }
+        .email-footer {
+            background-color: #f1f1f1;
+            text-align: center;
+            padding: 15px;
+            font-size: 14px;
+            color: #6c757d;
+        }
+        a {
+            color: #007bff;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="email-container">
+        <div class="email-header">
+            Ärendet är Stängt
+        </div>
+        <div class="email-body">
+            <p>Hej,</p>
+            <p>Ärendet med följande detaljer har nu stängts:</p>
+            <ul>
+                <li><strong>Titel:</strong> <%= case_name %></li>
+                <li><strong>Stängd Datum:</strong> <%= case_completed %></li>
+            </ul>
+            <p>
+                Du kan fortfarande logga in på: 
+                <a href="https://system.deklarator.se/reporting" target="_blank">
+                    https://system.deklarator.se/reporting
+                </a>
+                för att granska ärendets historik och status.
+            </p>
+            <p>
+                Har du några ytterligare frågor? Kontakta oss på: 
+                <a href="mailto:ghazi.alhabib@deklarator.se">ghazi.alhabib@deklarator.se</a>.
+            </p>
+            <p>Med vänliga hälsningar,<br />Deklarator Team</p>
+        </div>
+        <div class="email-footer">
+            © 2024 Deklarator. Alla rättigheter förbehållna.
+        </div>
+    </div>
+</body>
+</html>
