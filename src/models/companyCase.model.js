@@ -10,7 +10,7 @@ class CompanyCase {
         this.case_description = options.case_description;
         this.case_status = +options.case_status;
         this.case_created = options.case_created;
-        this.case_completed = options.case_completed || null;
+        this.case_completed = options.case_completed || '0000-00-00';
     }
 
     async save() {
